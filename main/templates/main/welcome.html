@@ -1,0 +1,11 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block content%}
+<!--TODO PIOTR - Stworzyć strone startową, pokoleji mają wyświetlac sie powiaty wyśrodkowac je, dodac tytół i obrazek gwiazdy policji-->
+{%for county in counties%}
+{%if not county.id == 1%}
+<span>{{county}}</span>
+{%endif%}
+{%endfor%}
+
+{%endblock%}

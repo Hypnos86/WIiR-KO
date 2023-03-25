@@ -1,0 +1,84 @@
+{%load static%}
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--Bootstrap-->
+    <link href="{%static 'main/bootstrap/css/bootstrap.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap.rtl.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap.rtl.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-grid.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-grid.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-grid.rtl.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-grid.rtl.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-reboot.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-reboot.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-reboot.rtl.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-reboot.rtl.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-utilities.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-utilities.min.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-utilities.rtl.css'%}" rel="stylesheet">
+    <link href="{%static 'main/bootstrap/css/bootstrap-utilities.rtl.min.css'%}" rel="stylesheet">
+    <!--Frontend styles-->
+    <link href="{%static 'main/style.css'%}" rel="stylesheet">
+    <!--Icon source-->
+    <link href="{%static 'main/bootstrap-icons/bootstrap-icons.css'%}" rel="stylesheet">
+    <!--logo-->
+    <link rel="shortcut icon" href="{%static 'main/media/logo.ico'%}" type="x-icon">
+    <!-- Bootstrap JS -->
+    <script src="{%static 'main/bootstrap/js/bootstrap.bundle.js'%}"></script>
+    <!--jquery-->
+    <script src="{%static 'main/bootstrap/jquery/jquery-3.6.0.min.js'%}"></script>
+    <script src="{%static 'main/bootstrap/jquery/select2.min.js'%}"></script>
+
+    <title>Karty Utrzymania Jednostek Wielkopolskiej Policji</title>
+
+</head>
+<body>
+<div class="footer body">
+    {%block content%}
+
+    {%endblock%}
+</div>
+<section class="fixed-bottom">
+    <!-- Footer -->
+    <footer class="text-center text-white" style="background-color: #0a4275;">
+        <!-- Grid container -->
+        <div class="container py-1">
+            <!-- Section: CTA -->
+            <section class="">
+                <button class="btn btn-light btn-sm bi bi-info-square-fill" data-url="{%url 'main:showHelpModal'%}"
+                        onclick="openHelpModal(this)"></button>
+            </section>
+            <!-- Section: CTA -->
+        </div>
+        <!-- Grid container -->
+        <!-- Copyright -->
+        <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.2);">
+            <span>© 2023 Wydział inwestycji i Remontów KWP w Poznaniu</span>
+        </div>
+        <!-- Copyright -->
+    </footer>
+    <!-- Footer -->
+</section>
+<!--Help Modal-->
+<div class="modal fade" id="helpModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function openHelpModal(button){
+        var url = $(button).data("url");
+        $("#helpModal .modal-content").load(url);
+        $("#helpModal").modal("show");
+        }
+
+</script>
+</body>
+</html>

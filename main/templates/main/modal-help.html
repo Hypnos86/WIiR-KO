@@ -1,0 +1,14 @@
+{%load static%}
+
+{%block content%}
+<div class="container ">
+<!--TODO PIOTR -  stworzyć popap informacyjny z informacjami z kim się kontaktowac w razie problemów-->
+<form class="m-2 p-4" method="GET" action="{% url 'main:showHelpModal'%}">
+    {%csrf_token%}
+    <div class="container">
+        <h3 class="bi bi-info-square-fill text-center"></h3>
+    </div>
+</form>
+</div>
+{%endblock%}
+
