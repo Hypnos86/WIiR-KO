@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import View
-from main.models import CountyCard
+from main.models import CountyCard, HelpInfo
 
 
 # Create your views here.
@@ -17,4 +17,16 @@ class HelpModalView(View):
     template_name = 'main/modal-help.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        text = HelpInfo.objects.last()
+        context = {'text': text}
+        return render(request, self.template_name, context)
+
+
+class UnitCountyMainView(View):
+    template_name = 'main/unit_county_main.html'
+
+    def get(self, request, slug):
+        counties = CountyCard.objects.filter(slug=slug)
+
+        context = {'counties': counties}
+        return render(request, self.template_name, context)

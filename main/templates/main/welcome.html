@@ -3,9 +3,11 @@
 {%block content%}
 <!--TODO PIOTR - Stworzyć strone startową, pokoleji mają wyświetlac sie powiaty wyśrodkowac je, dodac tytół i obrazek gwiazdy policji-->
 {%for county in counties%}
-{%if not county.id == 1%}
-<span>{{county}}</span>
-{%endif%}
+
+
+<a href="{%url 'main:unit_county_main' county.slug%}">{{county}}</a>
+
 {%endfor%}
+
 
 {%endblock%}

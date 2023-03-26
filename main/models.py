@@ -10,6 +10,23 @@ class CountyCard(models.Model):
 
     name = models.CharField(max_length=15, null=False, verbose_name="Jednostka powiatowa", unique=True)
     id_order = models.IntegerField("Kolejność", unique=True, null=True)
+    slug = models.SlugField(max_length=20)
 
     def __str__(self):
         return f"{self.name}"
+
+
+class HelpInfo(models.Model):
+    class Meta:
+        verbose_name = 'Pomoc'
+        verbose_name_plural = 'Treść - Pomoc'
+
+    related_name = "help_view"
+
+    information = models.TextField('Informacja')
+    create_date = models.DateField("Data dodania", auto_now_add=True)
+    change = models.DateTimeField(auto_now=True, verbose_name="Zmiany")
+    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
+
+    def __str__(self):
+        return f'Id informacji: {self.id}'

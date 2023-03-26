@@ -1,0 +1,11 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block content%}
+
+{%for county in counties%}
+<span>{{county.unit_county.all}}</span>
+{%endfor%}
+
+
+
+{%endblock%}

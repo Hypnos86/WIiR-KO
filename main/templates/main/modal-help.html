@@ -2,13 +2,15 @@
 
 {%block content%}
 <div class="container ">
-<!--TODO PIOTR -  stworzyć popap informacyjny z informacjami z kim się kontaktowac w razie problemów-->
-<form class="m-2 p-4" method="GET" action="{% url 'main:showHelpModal'%}">
-    {%csrf_token%}
-    <div class="container">
-        <h3 class="bi bi-info-square-fill text-center"></h3>
-    </div>
-</form>
+    <!--TODO PIOTR -  stworzyć popap informacyjny z informacjami z kim się kontaktowac w razie problemów-->
+    <form class="m-2 p-4" method="GET" action="{% url 'main:showHelpModal'%}">
+        {%csrf_token%}
+        <div class="container">
+            <h3 class="bi bi-info-square-fill text-center"></h3>
+        </div>
+        <p class="mt-3">{{text.information}}</p>
+        {{text}}
+    </form>
 </div>
 {%endblock%}
 
