@@ -1,11 +1,9 @@
 {%extends 'base.html'%}
 {%load static%}
 {%block content%}
-
-{%for county in counties%}
-<span>{{county.unit_county.all}}</span>
-{%endfor%}
-
-
-
+<div class="container">
+    {%for unit in units%}
+    <a href="{%url 'main:unit_details' slug unit.slug%}">{{unit}}</a>
+    {%endfor%}
+</div>
 {%endblock%}

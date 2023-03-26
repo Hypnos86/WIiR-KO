@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from main.models import CountyCard, HelpInfo
+from units.models import Unit
 
 
 # Create your views here.
@@ -26,7 +27,16 @@ class UnitCountyMainView(View):
     template_name = 'main/unit_county_main.html'
 
     def get(self, request, slug):
-        counties = CountyCard.objects.filter(slug=slug)
+        units = Unit.objects.filter(county_unit__slug=slug)
 
-        context = {'counties': counties}
+        context = {'units': units, 'slug':slug}
+        return render(request, self.template_name, context)
+
+
+class UnitDetailsView(View):
+    template_name = 'main/unit_details.html'
+
+    def get(self, request, slug, slug_unit):
+        unit = Unit.objects.get(slug=slug_unit)
+        context = {'unit':unit}
         return render(request, self.template_name, context)

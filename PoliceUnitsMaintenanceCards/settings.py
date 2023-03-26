@@ -29,6 +29,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Moduł do ustawień admina
+    'main.apps.MainConfig',
     # Defaultowe ustawienia
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,7 +42,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'import_export',
     # Moduły projektu
-    'main.apps.MainConfig',
+
     'units.apps.UnitsConfig',
 ]
 
