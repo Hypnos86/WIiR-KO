@@ -24,6 +24,7 @@ class TypeUnit(models.Model):
 
     type_short = models.CharField(max_length=30, null=False, verbose_name="Skrócona nazwa")
     type_full = models.CharField(max_length=100, null=False, verbose_name="Pełna nazwa")
+    id_order = models.IntegerField("Kolejność", unique=True, null=True)
 
     def __str__(self):
         return f"{self.type_short}"
