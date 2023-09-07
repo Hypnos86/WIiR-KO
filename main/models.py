@@ -10,7 +10,7 @@ class CountyCard(models.Model):
 
     name = models.CharField(max_length=15, null=False, verbose_name="Jednostka powiatowa", unique=True)
     id_order = models.IntegerField("Kolejność", unique=True, null=True)
-    slug = models.SlugField(max_length=20)
+    slug = models.SlugField(max_length=20, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name}"

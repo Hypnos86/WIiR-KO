@@ -10,8 +10,18 @@ class WelcomeView(View):
 
     def get(self, request):
         counties = CountyCard.objects.all()
+        if not request.user.is_authenticated:
+            counties = counties.exclude(name="KWP")
+
         context = {'counties': counties}
         return render(request, self.template_name, context)
+
+
+class LoginView(View):
+    template_name = 'main/registration/login.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
 
 
 class HelpModalView(View):
@@ -29,7 +39,7 @@ class UnitCountyMainView(View):
     def get(self, request, slug):
         units = Unit.objects.filter(county_unit__slug=slug)
 
-        context = {'units': units, 'slug':slug}
+        context = {'units': units, 'slug': slug}
         return render(request, self.template_name, context)
 
 
@@ -38,5 +48,5 @@ class UnitDetailsView(View):
 
     def get(self, request, slug, slug_unit):
         unit = Unit.objects.get(slug=slug_unit)
-        context = {'unit':unit}
+        context = {'unit': unit}
         return render(request, self.template_name, context)

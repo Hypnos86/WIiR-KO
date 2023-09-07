@@ -1,12 +1,15 @@
-{%extends 'base.html'%}
-{%load static%}
-{%block content%}
-<!--TODO PIOTR - Stworzyć strone startową, pokoleji mają wyświetlac sie powiaty wyśrodkowac je, dodac tytół i obrazek gwiazdy policji-->
-{%for county in counties%}
+{% extends 'base.html' %}
+{% load static %}
 
-<a href="{%url 'main:unit_county_main' county.slug%}">{{county}}</a>
+{% block content %}
 
-{%endfor%}
-
-
-{%endblock%}
+<div class="container pt-5">
+    <div class="row">
+        {% for county in counties %}
+        <div class="col-md-2 mb-5 text-center">
+            <a href="{% url 'main:unit_county_main' county.slug %}" class="btn btn-primary btn-block">{{ county }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

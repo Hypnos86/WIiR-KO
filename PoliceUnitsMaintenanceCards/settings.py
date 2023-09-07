@@ -131,9 +131,9 @@ STATICFILES_DIRS = [BASE_DIR / 'main/static']
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / 'media'
 
-# LOGIN_URL = 'login'
+# LOGIN_URL = 'registration'
 # LOGIN_REDIRECT_URL = 'main:welcome'
-# LOGOUT_REDIRECT_URL = 'login'
+# LOGOUT_REDIRECT_URL = 'registration'
 
 
 # Default primary key field type
@@ -144,3 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Shell Plus Option
 
 SHELL_PLUS_PRINT_SQL = True
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'login'

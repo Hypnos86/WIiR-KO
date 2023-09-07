@@ -8,3 +8,5 @@ from main.models import CountyCard
 def create_slug(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.name, )
+
+
