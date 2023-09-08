@@ -18,8 +18,8 @@ class CountyCard(models.Model):
 
 class HelpInfo(models.Model):
     class Meta:
-        verbose_name = 'Pomoc'
-        verbose_name_plural = 'Treść - Pomoc'
+        verbose_name = 'Informacja'
+        verbose_name_plural = 'Informacje'
 
     related_name = "help_view"
 
@@ -29,4 +29,4 @@ class HelpInfo(models.Model):
     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
 
     def __str__(self):
-        return f'Id informacji: {self.id}'
+        return f'Informacja: {self.id}'
