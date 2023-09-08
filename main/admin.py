@@ -7,7 +7,7 @@ admin.site.index_title = "Administrator Kart Obiektów Wydziału Inwestycji i Re
 
 @admin.register(CountyCard)
 class ContractorAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
+    list_display = ['name', 'id_order', 'slug']
 
 
 @admin.register(HelpInfo)

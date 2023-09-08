@@ -1,0 +1,29 @@
+/* CSS Reset Erica Meyera */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+html {
+    font-family: Arial, Helvetica, sans-serif
+}
+
+.btn-county{
+    background-color: #0a4275 !important;
+    font-color: white;
+    border-color: #0a4275;
+    transition: transform .2s;
+}
+
+.btn-county:hover{
+    border-color: white;
+    transform:scale(1.2);
+}
+
+
+.list-county{
+    display:inline;
+}

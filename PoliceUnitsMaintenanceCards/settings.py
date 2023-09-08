@@ -1,3 +1,4 @@
+import os
 """
 Django settings for PoliceUnitsMaintenanceCards project.
 
@@ -127,13 +128,10 @@ DATE_FORMAT = "d.m.Y"
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'main/static']
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-# MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'media'
-
-# LOGIN_URL = 'registration'
-# LOGIN_REDIRECT_URL = 'main:welcome'
-# LOGOUT_REDIRECT_URL = 'registration'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
