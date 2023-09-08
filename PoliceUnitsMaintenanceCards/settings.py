@@ -1,4 +1,5 @@
 import os
+import datetime
 """
 Django settings for PoliceUnitsMaintenanceCards project.
 
@@ -107,7 +108,35 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
+# Konfiguraja loggera
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': datetime.datetime.now().strftime("logError_%Y-%m-%d_%H.log"),
+            'when': 'H',
+            'interval': 12,
+            'backupCount': 50,
+            'formatter': 'verbose',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - %(levelname)s - %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M',  # Dodaj datefmt tutaj
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 

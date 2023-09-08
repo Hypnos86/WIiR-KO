@@ -2,6 +2,9 @@ from django.shortcuts import render
 from django.views import View
 from main.models import CountyCard, HelpInfo
 from units.models import Unit
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -9,12 +12,15 @@ class WelcomeView(View):
     template_name = 'main/welcome.html'
 
     def get(self, request):
-        counties = CountyCard.objects.all()
-        if not request.user.is_authenticated:
-            counties = counties.exclude(name="KWP Poznań")
+        try:
+            counties = CountyCard.objects.all()
+            if not request.user.is_authenticated:
+                counties = counties.exclude(name="KWP Poznań")
 
-        context = {'counties': counties}
-        return render(request, self.template_name, context)
+            context = {'counties': counties}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)
 
 
 class LoginView(View):
@@ -48,5 +54,5 @@ class UnitDetailsView(View):
 
     def get(self, request, slug, slug_unit):
         unit = Unit.objects.get(slug=slug_unit)
-        context = {'unit': unit}
+        context = {'unit': unit, 'slug': slug}
         return render(request, self.template_name, context)
