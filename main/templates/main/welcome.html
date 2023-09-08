@@ -4,13 +4,22 @@
 {% block content %}
 
 <div class="container pt-5">
-    <div class="text-center mb-5">
+    <div class="text-center mb-3">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Policji</span>
     </div>
+    {% if user.is_authenticated %}
+    <div class="d-flex justify-content-around mb-3">
+        <div>
+            <a class="btn-menu" href="#" data-toggle="info" title="Nowa faktura">
+                <i class="bi bi-plus-circle custom-icon"></i>
+            </a>
+        </div>
+    </div>
+    {% endif %}
     <div class="row">
         {% for county in counties %}
         <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center ">
-            <a href="{% url 'main:unit_county_main' county.slug %}" class="btn  btn-county d-block">{{ county }}</a>
+            <a href="{% url 'main:unit_county_main' county.slug %}" class="btn btn-main d-block">{{ county }}</a>
         </div>
         {% endfor %}
     </div>

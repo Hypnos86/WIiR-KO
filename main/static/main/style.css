@@ -7,24 +7,25 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font: inherit;
   vertical-align: baseline;
 }
+
 html {
     font-family: Arial, Helvetica, sans-serif
 }
 
-.btn-county{
+.btn-main{
     background-color: #0a4275 !important;
     color: white;
     border-color: #0a4275;
     transition: transform .2s;
 }
 
-.btn-county:hover{
+.btn-main:hover {
     border-color: white;
     color:white;
-    transform:scale(1.2);
+    transform:scale(1.1);
 }
 
-.btn-county:focus {
+.btn-main:focus {
     box-shadow: 0 0 0 0.50 rem rgba(10, 66, 177, .25) !important;
 }
 
@@ -34,7 +35,7 @@ html {
 
 .back-button{
     color: #0a4275;
-    border-color: #0a4275
+    border-color: #0a4275;
     display: inline-block;
     font-weight: 400;
     line-height: 1.5;
@@ -48,8 +49,41 @@ html {
     transition: transform .2s;
 }
 
-.back-button:hover{
+.back-button: hover{
     background-color: #0a4275;
     color:white;
     transform:scale(1.2);
+}
+
+.background-login {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    background-color: #0a4275;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    color:white;
+}
+
+.btn-menu {
+    color: #0a4275;
+    border-color: #0a4275;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #0a4275;
+    border-radius: 30%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: transform .2s;
+}
+
+.btn-menu:hover {
+    color: white;
+    background-color: #0a4275;
+}
+
+.custom-icon {
+    font-size: 20px; /* Możesz dostosować ten rozmiar do swoich potrzeb */
 }

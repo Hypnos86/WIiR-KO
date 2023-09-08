@@ -65,7 +65,7 @@
 </nav>
 {% else %}
 <div class="d-flex flex-row-reverse">
-    <div class="p-3">
+    <div class="p-2">
         <button type="button" class="btn btn-outline-dark btn-sm"
                 data-url="{% url 'main:loginApp' %}" onclick="openModal(this)">Zaloguj
         </button>
@@ -108,7 +108,7 @@
 </div>
 <!-- Modal -->
 <div class="modal fade" id="login">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog " role="document">
         <div class="modal-content">
 
         </div>
@@ -116,16 +116,20 @@
 </div>
 <script type="text/javascript">
     function openModal(button){
-    var url = $(button).data("url");
-    $("#login .modal-content").load(url);
-    $("#login").modal("show");
-}
+        var url = $(button).data("url");
+        $("#login .modal-content").load(url);
+        $("#login").modal("show");
+    }
 
     function openHelpModal(button){
         var url = $(button).data("url");
         $("#helpModal .modal-content").load(url);
         $("#helpModal").modal("show");
     }
+
+    $(function () {
+        $('[data-toggle="info"]').tooltip()
+    })
 </script>
 </body>
 </html>

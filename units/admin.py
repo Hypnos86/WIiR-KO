@@ -9,9 +9,10 @@ class ContractorAdmin(admin.ModelAdmin):
 
 @admin.register(TypeUnit)
 class TypeUnitAdmin(admin.ModelAdmin):
-    list_display = ['type_short', 'type_full']
+    list_display = ['type_short', 'id_order', 'type_full']
 
 
 @admin.register(Unit)
 class ContractorAdmin(admin.ModelAdmin):
-    list_display = ['county_swop', 'type', 'city', 'manager', 'status']
+    list_display = ['county_swop', 'type', 'address', 'city', 'manager', 'status']
+    list_filter = ['county_swop']

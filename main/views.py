@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
 from django.views import View
 from main.models import CountyCard, HelpInfo
 from units.models import Unit
@@ -25,9 +26,25 @@ class WelcomeView(View):
 
 class LoginView(View):
     template_name = 'main/registration/login.html'
+    template_welcome = 'main/welcome.html'
 
     def get(self, request):
         return render(request, self.template_name)
+
+    def post(self, request):
+        if request.method == 'POST':
+            username = request.POST['username']
+            password = request.POST['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('main:welcome')  # Przekierowanie po zalogowaniu
+            else:
+                # Obsługa błędnych danych logowania
+                return redirect('main:welcome')
+                # return render(request, self.template_welcome, {'error_message': 'Błędna nazwa użytkownika lub hasło.'})
+        else:
+            return render(request, self.template_name)
 
 
 class HelpModalView(View):
@@ -44,13 +61,14 @@ class UnitCountyMainView(View):
 
     def get(self, request, slug):
         units = Unit.objects.filter(county_unit__slug=slug)
+        county = CountyCard.objects.get(slug=slug)
 
-        context = {'units': units, 'slug': slug}
+        context = {'units': units, 'slug': slug, 'county': county}
         return render(request, self.template_name, context)
 
 
 class UnitDetailsView(View):
-    template_name = 'main/unit_details.html'
+    template_name = 'main/unit_list.html'
 
     def get(self, request, slug, slug_unit):
         unit = Unit.objects.get(slug=slug_unit)

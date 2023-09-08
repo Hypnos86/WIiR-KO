@@ -48,6 +48,7 @@ class Unit(models.Model):
     zip_code = models.CharField(max_length=6, verbose_name='Kod pocztowy')
     city = models.CharField(max_length=40, verbose_name='Miasto')
     unit_full_name = models.CharField(max_length=200, blank=True, verbose_name='Obiekt')
+    object_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Nazwa obiektu')
     manager = models.CharField(max_length=150, verbose_name='Administrator', default='Policja')
     information = models.TextField(null=True, blank=True, verbose_name='Informacje')
     status = models.BooleanField(default=True, verbose_name='Aktualna')
