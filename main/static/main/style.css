@@ -22,9 +22,11 @@ html {
     border-color: white;
     color:white;
     transform:scale(1.2);
-
 }
 
+.btn-county:focus {
+    box-shadow: 0 0 0 0.50 rem rgba(10, 66, 177, .25) !important;
+}
 
 .list-county{
     display:inline;
