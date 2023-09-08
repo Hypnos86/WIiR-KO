@@ -11,7 +11,7 @@ class WelcomeView(View):
     def get(self, request):
         counties = CountyCard.objects.all()
         if not request.user.is_authenticated:
-            counties = counties.exclude(name="KWP")
+            counties = counties.exclude(name="KWP Poznań")
 
         context = {'counties': counties}
         return render(request, self.template_name, context)

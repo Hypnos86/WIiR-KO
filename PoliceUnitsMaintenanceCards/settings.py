@@ -147,4 +147,4 @@ SHELL_PLUS_PRINT_SQL = True
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'login'
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = 'main:welcome'
