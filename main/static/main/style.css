@@ -87,3 +87,7 @@ html {
 .custom-icon {
     font-size: 20px; /* Możesz dostosować ten rozmiar do swoich potrzeb */
 }
+
+.mb-footer{
+    margin-bottom: 5rem;
+}

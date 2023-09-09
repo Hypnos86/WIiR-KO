@@ -14,12 +14,17 @@
                 <i class="bi bi-plus-circle custom-icon"></i>
             </a>
         </div>
+        <div>
+            <a class="btn-menu" href="{% url 'units:addUnit' %}" data-toggle="info" title="Nowa jednostka">
+                <i class="bi bi-building-add custom-icon"></i>
+            </a>
+        </div>
     </div>
     {% endif %}
     <div class="row">
         {% for county in counties %}
         <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center ">
-            <a href="{% url 'main:unit_county_main' county.slug %}" class="btn btn-main d-block">{{ county }}</a>
+            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn btn-main d-block">{{ county }}</a>
         </div>
         {% endfor %}
     </div>
