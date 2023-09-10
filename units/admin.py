@@ -2,6 +2,11 @@ from django.contrib import admin
 from units.models import County, TypeUnit, Unit
 
 
+# @admin.register(CostType)
+# class ContractorAdmin(admin.ModelAdmin):
+#     list_display = ['name']
+
+
 @admin.register(County)
 class ContractorAdmin(admin.ModelAdmin):
     list_display = ['name', 'swop_id', 'id_order']

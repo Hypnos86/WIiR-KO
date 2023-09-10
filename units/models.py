@@ -5,7 +5,7 @@ from main.models import CountyCard
 class County(models.Model):
     class Meta:
         verbose_name = "Jednostka SWOP"
-        verbose_name_plural = "Jednostki SWOP"
+        verbose_name_plural = "01 - Jednostki (SWOP)"
         ordering = ["id_order"]
 
     swop_id = models.CharField(max_length=4, verbose_name="ID SWOP")
@@ -19,7 +19,7 @@ class County(models.Model):
 class TypeUnit(models.Model):
     class Meta:
         verbose_name = "Rodzaj obiektu"
-        verbose_name_plural = "Rodzaje obiektów"
+        verbose_name_plural = "02 - Rodzaje obiektów"
         ordering = ["id"]
 
     type_short = models.CharField(max_length=30, null=False, verbose_name="Skrócona nazwa")
@@ -30,10 +30,24 @@ class TypeUnit(models.Model):
         return f"{self.type_short}"
 
 
+# class CostType(models.Model):
+#     class Meta:
+#         verbose_name = "Rodzaj kosztów"
+#         verbose_name_plural = "03 - Karty Rodzajów kosztów"
+#         # ordering = ["county_swop__swop_id", "type"]
+#
+#     related_name = "costType"
+#
+#     name = models.CharField(max_length=40, verbose_name='Rodzaj kosztu')
+#
+#     def __str__(self):
+#         return f"{self.name}"
+
+
 class Unit(models.Model):
     class Meta:
         verbose_name = "Obiekt"
-        verbose_name_plural = "Obiekty"
+        verbose_name_plural = "04 - Obiekty"
         ordering = ["county_swop__swop_id", "type"]
 
     related_name = "unit"
@@ -49,6 +63,7 @@ class Unit(models.Model):
     city = models.CharField(max_length=40, verbose_name='Miasto')
     unit_full_name = models.CharField(max_length=200, blank=True, verbose_name='Obiekt')
     object_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Nazwa obiektu')
+    # cost_type = models.ManyToManyField(CostType, verbose_name='Rodzaj kosztów', related_name=related_name)
     manager = models.CharField(max_length=150, verbose_name='Administrator', default='Policja')
     information = models.TextField(null=True, blank=True, verbose_name='Informacje')
     status = models.BooleanField(default=True, verbose_name='Aktualna')

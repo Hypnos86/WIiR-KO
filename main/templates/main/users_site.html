@@ -1,0 +1,54 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block content%}
+<div class="container pt-5">
+    <div class="row mb-4">
+        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+            <a href="{% url 'main:welcome' %}" class="btn-menu">
+                <span class="bi bi-arrow-90deg-left"></span>
+            </a>
+        </div>
+        <div class="col-sm-10 col-md-10 col-lg-8">
+            <div class="text-center">
+                <h5 class="h5 m-0 font-weight-bold text-uppercase">Użytkownicy z dostępem</h5>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <table class="table">
+            <tr>
+                <th>
+                    <span>Nazwa użytkownika</span>
+                </th>
+                <th>
+                    <span>Rola</span>
+                </th>
+                <th>
+                    <span>Aktywny</span>
+                </th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {% if user.first_name and user.last_name %}
+                    <span>{{ user.first_name }} {{ user.last_name }}</span>
+                    {% else %}
+                    <span>{{ user.username }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_staff %}
+                    <span>Administrator</span>
+                    {% else %}
+                    <span>Użytkownik zarejestrowany</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span>{{ user.is_active }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%endblock%}

@@ -5,7 +5,7 @@ from django.db import models
 class CountyCard(models.Model):
     class Meta:
         verbose_name = 'Jednostka powiatowa'
-        verbose_name_plural = 'Jednostki powiatowe'
+        verbose_name_plural = '01 - Nazwy kart'
         ordering = ['id_order']
 
     name = models.CharField(max_length=15, null=False, verbose_name="Jednostka powiatowa", unique=True)
@@ -19,7 +19,7 @@ class CountyCard(models.Model):
 class HelpInfo(models.Model):
     class Meta:
         verbose_name = 'Informacja'
-        verbose_name_plural = 'Informacje'
+        verbose_name_plural = '02 - Informacje'
 
     related_name = "help_view"
 
