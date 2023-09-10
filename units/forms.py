@@ -21,11 +21,6 @@ class UnitForm(ModelForm):
                   'change': 'Zmiany',
                   'author': 'Autor'
                   }
-        # widgets = {'no_contractor': widgets.TextInput(attrs={'placeholder': 'nr kontrahenta zgodny z nr SWOP'}),
-        #            'name': widgets.TextInput(attrs={'placeholder': 'Nazwa kontrahenta'}),
-        #            'address': widgets.TextInput(attrs={'placeholder': 'Ulica'}),
-        #            'information': Textarea(attrs={'rows': 5}),
-        #            'nip': widgets.TextInput(attrs={'pattern': '^[0-9]{10}$', 'placeholder': '0123456789'}),
-        #            'zip_code': widgets.TextInput(attrs={'pattern': '^[0-9]{2}-[0-9]{3}$', 'placeholder': '00-000'}),
-        #            'city': widgets.TextInput(attrs={'placeholder': 'Miasto'})
-        #            }
+        widgets = {'information': Textarea(attrs={'rows': 3}),
+                   'zip_code': widgets.TextInput(attrs={'pattern': '^[0-9]{2}-[0-9]{3}$', 'placeholder': '00-000'}),
+                   }

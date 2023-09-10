@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'import_export',
     # Moduły projektu
     'units.apps.UnitsConfig',
+    'invoices.apps.InvoicesConfig',
 ]
 
 MIDDLEWARE = [

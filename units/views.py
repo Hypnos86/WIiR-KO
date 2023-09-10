@@ -42,8 +42,9 @@ class EditUnitView(LoginRequiredMixin, View):
     def get(self, request, slug):
         try:
             unit = get_object_or_404(Unit, slug=slug)
+            slugCard = unit.county_unit.slug
             form = self.form_class(instance=unit)
-            context = {'form': form, 'new': False}
+            context = {'form': form, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -52,13 +53,14 @@ class EditUnitView(LoginRequiredMixin, View):
     def post(self, request, slug):
         try:
             unit = get_object_or_404(Unit, slug=slug)
+            slugCard = unit.county_unit.slug
             form = self.form_class(request.POST or None, instance=unit)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.author = request.user
                 form.save()
                 return redirect(reverse('main:unitCountyMain', kwargs={'slug': unit.county_unit.slug}))
-            context = {'form': form, 'new': False}
+            context = {'form': form, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)

@@ -14,6 +14,16 @@
             </div>
         </div>
     </div>
+    {% if user.is_authenticated %}
+    <div class="d-flex justify-content-around mb-3">
+        <div>
+            <span>Aktywnych: {{activeUnits}}</span>
+        </div>
+        <div>
+            <span>Zarchiwizowanych: {{archiveUnits}} </span>
+        </div>
+    </div>
+    {% endif %}
 
     <div class="d-flex justify-content-center">
         <div class="list-group">
@@ -30,7 +40,8 @@
                     {%endif%}
                 </a>
                 {% if user.is_authenticated %}
-                <a class="text-info" data-toggle="info" title="Edycja" href="{% url 'units:editUnit' unit.slug %}"><i class="bi bi-pencil-square"></i></a>
+                <a class="color-sea" data-toggle="info" title="Edycja" href="{% url 'units:editUnit' unit.slug %}"><i
+                        class="bi bi-pencil-square"></i></a>
                 {% endif %}
             </div>
             {%endfor%}

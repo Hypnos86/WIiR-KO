@@ -51,10 +51,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Analiza</a>
+                    <a class="nav-link" href="{% url 'main:analysisSite' %}">Analiza</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Archiwum</a>
+                    <a class="nav-link" href="{% url 'main:archiveSite'%}">Archiwum</a>
                 </li>
                 <li>
                     <a href="{%url 'logout'%}" type="button" class="nav-link">Wylogowanie</a>

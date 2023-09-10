@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from main.models import CountyCard, HelpInfo
@@ -61,9 +62,11 @@ class UnitCountyMainView(View):
 
     def get(self, request, slug):
         units = Unit.objects.filter(county_unit__slug=slug)
+        activeUnits = len(units.filter(status=True))
+        archiveUnits = len(units.filter(status=False))
         county = CountyCard.objects.get(slug=slug)
-
-        context = {'units': units, 'slug': slug, 'county': county}
+        context = {'units': units, 'slug': slug, 'county': county, 'activeUnits': activeUnits,
+                   'archiveUnits': archiveUnits}
         return render(request, self.template_name, context)
 
 
@@ -74,3 +77,17 @@ class UnitDetailsView(View):
         unit = Unit.objects.get(slug=slug_unit)
         context = {'unit': unit, 'slug': slug}
         return render(request, self.template_name, context)
+
+
+class ArchiveView(LoginRequiredMixin, View):
+    template_name = 'main/archive_site.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+
+class AnalysisView(LoginRequiredMixin, View):
+    template_name = 'main/analysis_site.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
