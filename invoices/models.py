@@ -20,6 +20,17 @@ class DocumentTypes(models.Model):
         return f"{self.type}"
 
 
+class ContractTypes(models.Model):
+    class Meta:
+        verbose_name = "Rodzaj umowy"
+        verbose_name_plural = "05 - Rodzaje umów"
+
+    type = models.CharField("Typ dokumentu", max_length=20)
+
+    def __str__(self):
+        return f"{self.type}"
+
+
 class Invoice(models.Model):
     class Meta:
         verbose_name = "Faktura"
@@ -36,6 +47,7 @@ class Invoice(models.Model):
                                   related_name=related_name)
     sum = models.DecimalField("Kwota [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
     date_of_payment = models.DateField("Termin płatności")
+    type_contract = models.ForeignKey(ContractTypes, null=False, on_delete=models.CASCADE, related_name=related_name)
     information = models.TextField("Informacje", blank=True, null=True)
     creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField("Zmiana", auto_now=True)

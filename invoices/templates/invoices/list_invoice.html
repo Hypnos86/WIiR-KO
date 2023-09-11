@@ -14,6 +14,10 @@
             </div>
         </div>
     </div>
-
+    <div>
+        {%for invoice in invoices%}
+        <span>{{invoice}}</span>
+        {%endfor%}
+    </div>
 </div>
 {%endblock%}

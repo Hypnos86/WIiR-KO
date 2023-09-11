@@ -12,8 +12,15 @@ import datetime
 logger = logging.getLogger(__name__)
 
 
-def current_year():
-    return datetime.date.today().year
+class CurrentDate():
+    def current_year(self):
+        return datetime.date.today().year
+
+    def current_date(self):
+        return datetime.date.today()
+
+
+currentDate = CurrentDate()
 
 
 # Create your views here.
@@ -106,7 +113,7 @@ class ArchiveView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
-            now_year = current_year()
+            now_year = currentDate.current_year()
             archiveYears = Invoice.objects.all().values('date__year').exclude(date__year=now_year)
             archiveYearsSet = set([year['date__year'] for year in archiveYears])
             archiveYearsList = sorted(archiveYearsSet, reverse=True)
