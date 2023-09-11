@@ -104,6 +104,6 @@ body {
 .form-control:focus {
     color: #212529;
     background-color: white;
-    border-color: #062542;
-    box-shadow: 0 0 0 0.25rem rgb(7, 137, 194, 25%);
+    border-color: white;
+    box-shadow: 0 0 0 0.25rem rgb(7, 137, 194, 50%);
 }

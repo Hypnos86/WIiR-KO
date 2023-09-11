@@ -116,6 +116,7 @@ class Paragraph(models.Model):
     class Meta:
         verbose_name = "Paragraf i pozycja"
         verbose_name_plural = "03 - Paragrafy i pozycje"
+        ordering = ['paragraph']
 
     paragraph = models.CharField("Paragraf", max_length=7, unique=True)
     name = models.CharField("Nazwa", max_length=50)
