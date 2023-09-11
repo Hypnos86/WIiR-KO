@@ -27,7 +27,7 @@ class TypeUnit(models.Model):
     id_order = models.IntegerField("Kolejność", unique=True, null=True)
 
     def __str__(self):
-        return f"{self.type_short}"
+        return f"{self.type_full}"
 
 
 # class CostType(models.Model):

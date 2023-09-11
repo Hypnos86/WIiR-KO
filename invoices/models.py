@@ -40,6 +40,7 @@ class Invoice(models.Model):
     creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField("Zmiana", auto_now=True)
     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name)
+    slug = models.SlugField(max_length=30, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"{self.no_invoice} z dnia {self.date.strftime('%d.%m.%Y')} r."
