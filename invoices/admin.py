@@ -1,8 +1,13 @@
 from django.contrib import admin
-from invoices.models import DocumentTypes, Invoice, Section, Group, Paragraph, ContractTypes
+from invoices.models import DocumentTypes, Invoice, Section, Group, Paragraph, ContractTypes, InvoiceItems
 
 # Register your models here.
 admin.site.register(Section)
+
+
+@admin.register(InvoiceItems)
+class GroupAdmin(admin.ModelAdmin):
+    list_display = ['invoice_id', 'unit', 'section', 'group', 'paragraph', 'sum']
 
 
 @admin.register(Group)

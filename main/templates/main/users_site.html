@@ -24,7 +24,7 @@
                     <span>Rola</span>
                 </th>
                 <th>
-                    <span>Aktywny</span>
+                    <span>Status użytkownika</span>
                 </th>
             </tr>
             {% for user in users %}
@@ -44,7 +44,11 @@
                     {% endif %}
                 </td>
                 <td>
-                    <span>{{ user.is_active }}</span>
+                    {% if user.is_active%}
+                    <i class="bi bi-check-circle-fill mx-4 text-success" data-toggle="info" title="Aktywny"></i>
+                    {%else%}
+                    <i class="bi bi-dash-circle mx-4 text-danger" data-toggle="info" title="Nie aktywny"></i>
+                    {%endif%}
                 </td>
             </tr>
             {% endfor %}

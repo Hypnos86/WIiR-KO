@@ -34,7 +34,7 @@ class ContractTypes(models.Model):
 class Invoice(models.Model):
     class Meta:
         verbose_name = "Faktura"
-        verbose_name_plural = "06 - Faktury"
+        verbose_name_plural = "07 - Faktury"
         ordering = ["-date_receipt"]
 
     related_name = "invoices"
@@ -56,48 +56,6 @@ class Invoice(models.Model):
 
     def __str__(self):
         return f"{self.no_invoice} z dnia {self.date.strftime('%d.%m.%Y')} r."
-
-
-# class InvoiceItems(models.Model):
-#     class Meta:
-#         verbose_name = "Element faktury"
-#         verbose_name_plural = "Elementy faktury"
-#         ordering = ["invoice_id"]
-#
-#     relatedName = "invoice_items"
-#
-#     invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name="Faktura",
-#                                    related_name=relatedName)
-#     account = models.ForeignKey(FinanceSource, on_delete=models.CASCADE, verbose_name="Konto",
-#                                 related_name=relatedName)
-#     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name="Jednostka",
-#                              related_name=relatedName)
-#     sum = models.DecimalField("Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
-#
-#     def __str__(self):
-#         return f"{self.account} - {self.county} - {self.sum} zł."
-
-
-# class CorrectiveNote(models.Model):
-#     class Meta:
-#         verbose_name = "Nota korygująca"
-#         verbose_name_plural = "F.02 - Noty korygujące"
-#         ordering = ["-date"]
-#
-#     relatedName = "correctivenote"
-#
-#     date = models.DateField("Data wystawienia")
-#     no_note = models.CharField("Nr. noty", max_length=15)
-#     contractor = models.ForeignKey(Contractor, on_delete=models.CASCADE, verbose_name="Kontrahent",
-#                                    related_name=relatedName)
-#     corrective_invoice = models.CharField("Korygowana faktura", max_length=70)
-#     information = models.TextField("Korygowana treść", blank=True, default="")
-#     creation_date = models.DateField("Data uworzenia", auto_now_add=True)
-#     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, verbose_name="Autor",
-#                                related_name=relatedName)
-#
-#     def __str__(self):
-#         return f"{self.no_note} z dnia {self.date}"
 
 
 class Section(models.Model):
@@ -138,27 +96,23 @@ class Paragraph(models.Model):
         return f"{self.paragraph}"
 
 
-# class Source(models.Model):
-#     class Meta:
-#         verbose_name = "Źródło finansowania"
-#         verbose_name_plural = "Źródła finansowania"
-#
-#     source = models.CharField("Źródło", max_length=80, null=True, unique=True)
-#
-#     def __str__(self):
-#         return f"{self.source}"
-
-
-class FinanceSource(models.Model):
+class InvoiceItems(models.Model):
     class Meta:
-        verbose_name = "Konto"
-        verbose_name_plural = "Konta"
+        verbose_name = "Element faktury"
+        verbose_name_plural = "06 - Elementy faktury"
+        ordering = ["invoice_id"]
 
-    section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name="Rozdział")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name="Grupa")
-    paragraph = models.ForeignKey(Paragraph, on_delete=models.CASCADE, verbose_name="Paragraf")
+    related_name = "invoice_items"
 
-    # source = models.ForeignKey(Source, on_delete=models.CASCADE, verbose_name="Źródło finansowania")
+    invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
+                                   related_name=related_name)
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name='Rozdział', related_name=related_name)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
+    paragraph = models.ForeignKey(Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
+                                  related_name=related_name)
+    sum = models.DecimalField("Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
+    information = models.CharField(max_length=400, verbose_name='Uwagi')
 
     def __str__(self):
-        return f"{self.section.section}-{self.group.group}-{self.paragraph}-{self.source}"
+        return f"{self.section} - {self.group} - {self.paragraph} zł."
