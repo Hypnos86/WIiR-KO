@@ -1,6 +1,7 @@
 from django.db import models
 from enum import Enum
 from units.models import Unit
+from polymorphic.models import PolymorphicModel
 from main.static_data import SECTION
 import datetime
 
