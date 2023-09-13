@@ -1,12 +1,11 @@
 from django.db import models
 from enum import Enum
-from units.models import Unit
+from units.models import Unit, County
 from polymorphic.models import PolymorphicModel
 from main.static_data import SECTION
 import datetime
 
 sectionOptions = [(item['id'], item['section'], item['name']) for item in SECTION]
-print(sectionOptions)
 
 
 class DocumentsTypeEnum(Enum):
@@ -69,8 +68,11 @@ class Section(models.Model):
         verbose_name_plural = "01 - Rozdziały"
         ordering = ["section"]
 
-    section = models.CharField("Rozdział", max_length=5, unique=True)
-    name = models.CharField("Nazwa", max_length=20)
+    related_name = 'section'
+
+    section = models.CharField(verbose_name="Rozdział", max_length=5, unique=True)
+    name = models.CharField(verbose_name="Nazwa", max_length=20)
+    swop_id = models.ManyToManyField(County, verbose_name="SWOP", related_name=related_name)
 
     def __str__(self):
         return f"{self.section} ({self.name})"
@@ -101,13 +103,11 @@ class Paragraph(models.Model):
         return f"{self.paragraph}"
 
 
-class InvoiceItems(models.Model):
+class InvoiceItemsPattern(PolymorphicModel):
     class Meta:
-        verbose_name = "Element faktury"
-        verbose_name_plural = "06 - Elementy faktury"
         ordering = ["invoice_id"]
 
-    related_name = "invoice_items"
+    related_name = "invoiceItemsP"
 
     invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
                                    related_name=related_name)
@@ -121,3 +121,12 @@ class InvoiceItems(models.Model):
 
     def __str__(self):
         return f"{self.section} - {self.group} - {self.paragraph} zł."
+
+
+class InvoiceItems(InvoiceItemsPattern):
+    class Meta:
+        verbose_name = "Element faktury"
+        verbose_name_plural = "06 - Elementy faktury"
+
+        def __str__(self):
+            return f"{self.section} - {self.group} - {self.paragraph} zł."

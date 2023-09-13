@@ -21,3 +21,5 @@ class TypeUnitAdmin(admin.ModelAdmin):
 class ContractorAdmin(admin.ModelAdmin):
     list_display = ['county_swop', 'type', 'address', 'city', 'manager', 'status']
     list_filter = ['county_swop']
+    search_fields = ['address', 'city']
+    search_help_text = "Szukaj po adresie lub mieście"

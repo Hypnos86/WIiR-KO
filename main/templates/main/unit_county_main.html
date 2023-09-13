@@ -3,18 +3,18 @@
 {%block content%}
 <div class="container pt-5">
     <div class="row mb-3">
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+        <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
             <a href="{% url 'main:welcome' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left"></span>
             </a>
         </div>
-        <div class="col-sm-10 col-md-10 col-lg-8">
+        <div class="col-10 col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
                 <h5 class="h5 m-0 font-weight-bold text-uppercase">{{county}}</h5>
             </div>
         </div>
         {% if user.is_authenticated %}
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
+        <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
             <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                 <i class="bi bi-plus-circle custom-icon"></i>
             </a>
@@ -31,7 +31,6 @@
         </div>
     </div>
     {% endif %}
-
     <div class="d-flex justify-content-center">
         <div class="list-group">
             {%for unit in units%}
