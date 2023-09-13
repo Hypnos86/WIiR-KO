@@ -1,7 +1,11 @@
 from django.db import models
 from enum import Enum
 from units.models import Unit
+from main.static_data import SECTION
 import datetime
+
+sectionOptions = [(item['id'], item['section'], item['name']) for item in SECTION]
+print(sectionOptions)
 
 
 class DocumentsTypeEnum(Enum):
