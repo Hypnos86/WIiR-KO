@@ -12,13 +12,11 @@ class InvoiceForm(ModelForm):
         fields = (
             'date_receipt', 'date', 'no_invoice', 'doc_types', 'sum', 'date_of_payment', 'type_contract', 'information',
             'creation_date', 'change_date', 'author')
-        exclude = ['creation_date',
-                   'change_date', 'author']
         labels = {'date_receipt': 'Data wpływu', 'date': 'Data wystawienia', 'no_invoice': 'Nr. dokumentu',
                   'doc_types': 'Rodzaj dokumentu', 'sum': 'Kwota faktury', 'date_of_payment': 'Data płatności',
                   'type_contract': 'Typ umowy', 'information': 'Informacje ', 'creation_date': 'Data utworzenia',
-                  'change_date': 'Data zmian', 'author': 'Autor'
-                  }
+                  'change_date': 'Data zmian', 'author': 'Autor'}
+        exclude = ['creation_date', 'change_date', 'author']
         widgets = {'information': Textarea(attrs={'rows': 3}),
                    'date': DateField(),
                    'date_receipt': DateField(),
@@ -29,6 +27,10 @@ class InvoiceForm(ModelForm):
 class InvoiceItemsForm(ModelForm):
     class Meta:
         model = InvoiceItems
-        fields = ('invoice_id', 'unit', 'section', 'group', 'paragraph', 'sum', 'information')
-        labels = {'invoice_id': 'Faktura', 'unit': 'Jednostka', 'section': 'Rozdział', 'group': 'Grupa',
+        fields = (
+            'invoice_id', 'period_from', 'period_to', 'measurementSystemNumber', 'counterReading', 'consumption',
+            'unit', 'section', 'group', 'paragraph', 'sum', 'information')
+        labels = {'invoice_id': 'Faktura', 'period_from': 'Okres od;', 'period_to': 'Okres do',
+                  'measurementSystemNumber': 'Nr. licznika', 'counterReading': 'Stan licznika',
+                  'consumption': 'Zużycie', 'unit': 'Jednostka', 'section': 'Rozdział', 'group': 'Grupa',
                   'paragraph': 'Paragraf', 'sum': 'Kwota', 'infomation': 'Uwagi'}
