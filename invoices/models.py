@@ -114,11 +114,11 @@ class InvoiceItems(models.Model):
 
     invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
                                    related_name=related_name)
-    period_from = models.DateField(verbose_name='Okres od')
-    period_to = models.DateField(verbose_name='Okres do')
+    period_from = models.DateField(verbose_name='Okres od', null=True, blank=True)
+    period_to = models.DateField(verbose_name='Okres do', null=True, blank=True)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
-    counterReading = models.IntegerField(verbose_name='Stan licznika')
-    consumption = models.IntegerField(verbose_name='Zużycie')
+    counterReading = models.IntegerField(verbose_name='Stan licznika', null=True, blank=True)
+    consumption = models.IntegerField(verbose_name='Zużycie', null=True, blank=True)
     unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
     section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name='Rozdział', related_name=related_name)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)

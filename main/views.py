@@ -1,11 +1,11 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit
-from invoices.models import Invoice
+from invoices.models import Invoice, InvoiceItems
 import logging
 import datetime
 
@@ -97,12 +97,14 @@ class UnitCountyMainView(View):
 
 
 class UnitDetailsView(View):
-    template_name = 'main/unit_list.html'
+    template_name = 'main/unit_details.html'
 
     def get(self, request, slug, slug_unit):
         try:
-            unit = Unit.objects.get(slug=slug_unit)
-            context = {'unit': unit, 'slug': slug}
+            unit = get_object_or_404(Unit, slug=slug_unit)
+            invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id)
+            print(invoiceItems)
+            context = {'unit': unit, 'invoiceItems': invoiceItems, 'slug': slug}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)
