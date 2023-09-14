@@ -14,7 +14,7 @@ class InvoicesListView(LoginRequiredMixin, View):
     template_name = 'invoices/list_invoice.html'
 
     def get(self, request):
-        invoices = Invoice.objects.filter(date__year=currentDate.current_year())
+        invoices = Invoice.objects.all()
         context = {'invoices': invoices}
         return render(request, self.template_name, context)
 

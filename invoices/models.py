@@ -41,7 +41,7 @@ class Invoice(models.Model):
         verbose_name_plural = "07 - Faktury"
         ordering = ["-date_receipt"]
 
-    related_name = "invoices"
+    related_name = "invoice"
 
     date_receipt = models.DateField("Data wpływu")
     date = models.DateField("Data wystawienia")
@@ -110,22 +110,25 @@ class InvoiceItems(models.Model):
         verbose_name = "Element faktury"
         verbose_name_plural = "06 - Elementy faktury"
 
-    related_name = "invoiceItemsP"
+    related_name = "invoiceItems"
 
-    invoice_id = models.ForeignKey(Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
+    invoice_id = models.ForeignKey(to=Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
                                    related_name=related_name)
+    contract_types = models.ForeignKey(to=ContractTypes, on_delete=models.CASCADE, verbose_name='Typ umowy')
     period_from = models.DateField(verbose_name='Okres od', null=True, blank=True)
     period_to = models.DateField(verbose_name='Okres do', null=True, blank=True)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
     counterReading = models.IntegerField(verbose_name='Stan licznika', null=True, blank=True)
     consumption = models.IntegerField(verbose_name='Zużycie', null=True, blank=True)
-    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
-    section = models.ForeignKey(Section, on_delete=models.CASCADE, verbose_name='Rozdział', related_name=related_name)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
-    paragraph = models.ForeignKey(Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
+    unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
+    section = models.ForeignKey(to=Section, on_delete=models.CASCADE, verbose_name='Rozdział',
+                                related_name=related_name)
+    group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
+    paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
                                   related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
     information = models.CharField(max_length=400, verbose_name='Uwagi', null=True, blank=True)
+    creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
 
     def __str__(self):
-        return f"{self.section} - {self.group} - {self.paragraph} zł."
+        return f"{self.section} - {self.group} - {self.paragraph}"

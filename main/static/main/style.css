@@ -70,7 +70,6 @@ body {
 
 .btn-menu {
     color: #0a4275;
-    border-color: #0a4275;
     display: inline-block;
     font-weight: 400;
     line-height: 1.5;
@@ -87,7 +86,31 @@ body {
 .btn-menu:hover {
     color: white;
     background-color: #0a4275;
+    border: 1px solid #0a4275;
 }
+
+.btn-menu-reverse {
+    color: white;
+    display: inline-block;
+    background-color:#5E1250;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #5E1250;
+    border-radius: 30%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: transform .2s;
+}
+
+.btn-menu-reverse:hover {
+    color: #4378AB;
+    border: 1px solid #4378AB;
+    background-color: white;
+}
+
 
 .custom-icon {
     font-size: 20px; /* Możesz dostosować ten rozmiar do swoich potrzeb */
@@ -106,4 +129,17 @@ body {
     background-color: white;
     border-color: white;
     box-shadow: 0 0 0 0.25rem rgb(7, 137, 194, 50%);
+}
+
+.table-caption{
+    caption-side: top;
+}
+.title-caption{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+caption {
+    font-size:1.2rem;
 }
