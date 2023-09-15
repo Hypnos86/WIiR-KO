@@ -1,0 +1,55 @@
+{% load static %}
+{% load humanize %}
+{% block content %}
+<div class="m-2 ">
+    <form class="m-2 p-4" method="GET" action="{% url 'invoices:infoInvoice' id%}">
+        {%csrf_token%}
+        <div class="">
+            <div class="d-flex justify-content-around mb-2">
+                <div class="d-flex align-items-center">
+                    <span class="text-muted">Nr. dokumentu: </span>
+                    <span class="">{{invoice}}</span>
+                </div>
+                {% if user.is_authenticated %}
+                <a class="btn-menu" data-toggle="info" title="Edytuj"><i class="bi bi-pencil-square custom-icon"></i></a>
+                {%endif%}
+            </div>
+            <span class="text-muted">Rodzaj dokumentu: </span>
+            <span> {{invoice.doc_types}}</span><br>
+            <span class="text-muted">Data wpływu: </span>
+            <span>{{invoice.date_receipt|date:"m.d.Y"}} r.</span><br>
+            <span class="text-muted">Termin płatności: </span>
+            <span>{{invoice.date_of_payment|date:"m.d.Y"}} r.</span><br>
+            <span class="text-muted">Kwota faktury: </span>
+            <span>{{invoice.sum|intcomma}} zł</span><br>
+            {% if invoice.information %}
+            <span class="text-muted">Informacje: </span>
+            <p>{{invoice.information}}</p>
+            {% endif %}
+            <span class="text-muted">Data wprowadzenia do systemu: </span><span>{{invoice.creation_date|date:"d.m.Y"}} r.</span>
+        </div>
+        <div class="mt-2">
+            <ul class="list-group">
+                {% for item in items %}
+                <li class="list-group-item d-flex justify-content-between">
+                    <span>
+                    {{item.unit.type.type_short}} {{item.unit.city}} ({{item.unit.county_unit}})
+                    | {{item.section.section}} - §{{item.paragraph.paragraph}} | {{item.sum}} zł
+                    </span>
+                    <p>
+                        {% if item.information %}
+                        {{item.information}}
+                        {% endif %}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </form>
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="info"]').tooltip()
+    })
+</script>
+{%endblock%}
+

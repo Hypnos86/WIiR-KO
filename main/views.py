@@ -100,28 +100,24 @@ class UnitCountyMainView(View):
 class UnitDetailsView(View):
     template_name = 'main/unit_details.html'
 
-    def get(self, request, slug, slug_unit):
+    def get(self, request, countyCardSlug, slug_unit):
         try:
-            now_year = currentDate.current_year()
+            currentYear = currentDate.current_year()
             unit = get_object_or_404(Unit, slug=slug_unit)
-            invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=now_year)
+            invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=currentYear)
             paragraphs = Paragraph.objects.all()
-
             paragraph_data = []
 
             # for paragraph in paragraphs:
             #     items = invoiceItems.filter(paragraph=paragraph)[:4]
             #     paragraph_data.append({'paragraph': paragraph, 'items': items})
 
-            # Wybierz tylko niektóre propertisy z modelu Invoice
-            last_update = []
-
             for paragraph in paragraphs:
                 paragraph_items = invoiceItems.filter(paragraph=paragraph).order_by('-invoice_id__date')[:4]
-
                 items = []
                 for item in paragraph_items:
                     selected_properties = {
+                        'id': item.invoice_id.id,
                         'date': item.invoice_id.date,
                         'no_invoice': item.invoice_id.no_invoice,
                         'doc_types': item.invoice_id.doc_types,
@@ -133,12 +129,14 @@ class UnitDetailsView(View):
                         'consumption': item.consumption,
                         'paragraph': str(item.paragraph),
                         'sum': item.sum,
+                        'creation_date': item.creation_date,
+                        'invoice_slug': item.invoice_id.slug
                         # Dodaj inne wybrane propertisy tutaj
                     }
                     items.append(selected_properties)
                 paragraph_data.append({'paragraph': paragraph, 'items': items})
-
-            context = {'unit': unit, 'paragraph_data': paragraph_data, 'now_year': now_year, 'slug': slug}
+            context = {'unit': unit, 'paragraph_data': paragraph_data, 'currentYear': currentYear,
+                       'countyCardSlug': countyCardSlug}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -177,3 +175,11 @@ class UsersSiteView(LoginRequiredMixin, View):
         users = User.objects.all()
         context = {'users': users}
         return render(request, self.template, context)
+
+
+class ArchiveYearListView(View):
+    template_name = 'main/archive_years.html'
+
+    def get(self, request, unit_slug):
+        context = {}
+        return render(request, self.template_name, context)

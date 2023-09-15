@@ -97,8 +97,9 @@ class Paragraph(models.Model):
         verbose_name_plural = "03 - Paragrafy i pozycje"
         ordering = ['paragraph']
 
-    paragraph = models.CharField("Paragraf", max_length=7, unique=True)
-    name = models.CharField("Nazwa", max_length=50)
+    paragraph = models.CharField(verbose_name="Paragraf", max_length=7, unique=True)
+    name = models.CharField(verbose_name="Nazwa", max_length=50)
+    slug = models.SlugField(max_length=7, null=True, blank=True, unique=True)
 
     def __str__(self):
         return f"{self.paragraph}"

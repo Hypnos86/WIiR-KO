@@ -4,8 +4,9 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from invoices.models import DocumentTypes, ContractTypes
 from invoices.forms import InvoiceForm
-from invoices.models import Invoice
-from main.views import currentDate
+from invoices.models import Invoice, InvoiceItems, Paragraph
+from units.models import Unit
+from main.views import CurrentDate
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +54,55 @@ class NewInvoiceView(LoginRequiredMixin, View):
             logger.error("Error: %s", e)
 
 
+class EditInvoiceView(LoginRequiredMixin, View):
+    template_name = 'invoices/form_invoice.html'
+
+    # slugCard
+    def get(self, request, invoice_slug):
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoice_slug)
+            form = InvoiceForm(instance=invoice)
+
+            # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
+            # type_contract = form.fields["type_contract"].queryset = ContractTypes.objects.all()
+            # 'doc_types': doc_types, 'type_contract': type_contract,
+            context = {'form': form, 'new': False}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)
+
+    def post(self, request, invoice_slug):
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoice_slug)
+            form = InvoiceForm(request.POST, instance=invoice)
+
+            # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
+            # doc_types = DocumentTypes.objects.all()
+            # type_contract = form.fields["type_contract"].queryset = ContractTypes.objects.all()
+            type_contract = ContractTypes.objects.all()
+            if request.method == 'POST':
+                if form.is_valid():
+                    instance = form.save(commit=False)
+                    instance.author = request.user
+                    form.save()
+                    return redirect(reverse('invoices:items', kwargs={'invoice_slug': instance.slug}))
+                # 'doc_types': doc_types,
+            context = {'form': form, 'type_contract': type_contract, 'new': False}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)
+
+
+class InvoiceInfoView(View):
+    template_name = 'invoices/modal_invoice_info.html'
+
+    def get(self, request, id):
+        invoice = get_object_or_404(Invoice, pk=id)
+        items = InvoiceItems.objects.filter(invoice_id=invoice.id)
+        context = {'invoice': invoice, 'items': items, 'id': id}
+        return render(request, self.template_name, context)
+
+
 class InvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
 
@@ -64,5 +114,22 @@ class InvoiceItemsView(LoginRequiredMixin, View):
         # invoice_items = InvoiceItems.objects.filter(invoice_id=invoice)
         # 'form': form, "invoice": invoice, "invoice_items": invoice_items,
         context = {
-            "new": True}
+            'new': True}
+        return render(request, self.template_name, context)
+
+
+class UnitCostListView(View):
+    template_name = 'invoices/list_invoices_unit.html'
+
+    def get(self, request, unit_slug, paragraph_slug):
+        currentYear = CurrentDate().current_year()
+        unit = get_object_or_404(Unit, slug=unit_slug)
+        items = InvoiceItems.objects.filter(unit__slug=unit_slug, paragraph__slug=paragraph_slug,
+                                            invoice_id__date__year=currentYear)
+        paragraph = Paragraph.objects.get(slug=paragraph_slug)
+
+        countyCardSlug = unit.county_unit.slug
+
+        context = {'unit': unit, 'items': items, 'currentYear': currentYear, 'paragraph': paragraph,
+                   'countyCardSlug': countyCardSlug}
         return render(request, self.template_name, context)

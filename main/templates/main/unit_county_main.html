@@ -13,13 +13,20 @@
                 <h5 class="h5 m-0 font-weight-bold text-uppercase">{{county}}</h5>
             </div>
         </div>
-        {% if user.is_authenticated %}
         <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
-            <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
-                <i class="bi bi-plus-circle custom-icon"></i>
-            </a>
+            <div class="mx-2">
+                <a class="btn-menu" href="" data-toggle="info" title="Archiwum">
+                    <i class="bi bi-archive-fill custom-icon"></i>
+                </a>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="mx-2">
+                <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
+                    <i class="bi bi-plus-circle custom-icon"></i>
+                </a>
+            </div>
+            {%endif%}
         </div>
-        {%endif%}
     </div>
     {% if user.is_authenticated %}
     <div class="d-flex justify-content-around mb-3">
@@ -46,8 +53,8 @@
                     {%endif%}
                 </a>
                 {% if user.is_authenticated %}
-                <a class="color-sea" data-toggle="info" title="Edycja" href="{% url 'units:editUnit' unit.slug %}"><i
-                        class="bi bi-pencil-square"></i></a>
+                <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
+                    <i class="bi bi-pencil-square"></i></a>
                 {% endif %}
             </div>
             {%endfor%}

@@ -1,7 +1,7 @@
 from django.utils.text import slugify
-from django.db.models.signals import pre_save,post_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from invoices.models import Invoice
+from invoices.models import Invoice, Paragraph
 
 
 @receiver(post_save, sender=Invoice)
@@ -12,3 +12,8 @@ def create_slug(sender, instance, **kwargs):
         instance.save()
 
 
+@receiver(post_save, sender=Paragraph)
+def create_slug(sender, instance, **kwargs):
+    if not instance.slug:
+        instance.slug = slugify(instance.paragraph, )
+        instance.save()
