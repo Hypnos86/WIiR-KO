@@ -14,30 +14,21 @@
                 <h5 class="h5 m-0 font-weight-bold">{{unit}}</h5>
             </div>
         </div>
+        {% if user.is_authenticated %}
         <div class="col-3 col-sm-2 col-md-2 col-lg-2 d-flex justify-content-end">
-            <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:archiveYears' %}" onclick="openArchiveModal(this)"
-                   data-toggle="info" title="Archiwum">
-                    <i class="bi bi-archive-fill custom-icon"></i>
-                </a>
-            </div>
-            {% if user.is_authenticated %}
-            <div class="mx-2">
-                <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
-                    <i class="bi bi-plus-circle custom-icon"></i>
-                </a>
-            </div>
-            {% endif %}
+            <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
+                <i class="bi bi-plus-circle custom-icon"></i>
+            </a>
         </div>
-
+        {% endif %}
     </div>
-    {% if unit.object_name %}
-    <div class="d-flex justify-content-center">
-        <h5 class="h5">{{unit.object_name}}</h5>
-    </div>
-    {% endif %}
-    <div class="text-center text-uppercase my-2 ">Dokumenty wystawione w {{currentYear}} roku</div>
 </div>
+{% if unit.object_name %}
+<div class="d-flex justify-content-center">
+    <h5 class="h5">{{unit.object_name}}</h5>
+</div>
+{% endif %}
+<div class="text-center text-uppercase my-2 ">Dokumenty wystawione w {{currentYear}} roku</div>
 <div class="mt-2">
     {% for paragraph_info in paragraph_data %}
     {%if paragraph_info.items %}
@@ -68,7 +59,7 @@
                 {{ item.date }}
             </td>
             <td align="left" valign="middle" width="180" scope="col">
-                <a data-url="{% url 'invoices:infoInvoice' item.id %}" onclick="openInfoModal(this)">
+                <a data-url="{% url 'invoices:infoInvoice' item.id %}" onclick="openInvoiceInfoModal(this)">
                     {{ item.no_invoice}}
                 </a>
             </td>
@@ -126,29 +117,17 @@
     {% endfor %}
 </div>
 <!-- Modal -->
-<div class="modal fade" id="infoModal">
+<div class="modal fade" id="invoiceInfoModal">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
         </div>
     </div>
 </div>
-<div class="modal fade" id="archiveModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
-    function openInfoModal(button){
+    function openInvoiceInfoModal(button){
         var url = $(button).data("url");
-        $("#infoModal .modal-content").load(url);
-        $("#infoModal").modal("show");
-    }
-
-    function openArchiveModal(button){
-        var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
+        $("#invoiceInfoModal .modal-content").load(url);
+        $("#invoiceInfoModal").modal("show");
     }
 </script>
 {% endblock %}

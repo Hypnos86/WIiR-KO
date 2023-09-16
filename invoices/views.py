@@ -97,10 +97,14 @@ class InvoiceInfoView(View):
     template_name = 'invoices/modal_invoice_info.html'
 
     def get(self, request, id):
-        invoice = get_object_or_404(Invoice, pk=id)
-        items = InvoiceItems.objects.filter(invoice_id=invoice.id)
-        context = {'invoice': invoice, 'items': items, 'id': id}
-        return render(request, self.template_name, context)
+        try:
+            invoice = get_object_or_404(Invoice, pk=id)
+            items = InvoiceItems.objects.filter(invoice_id=invoice.id)
+            context = {'invoice': invoice, 'items': items, 'id': id}
+            return render(request, self.template_name, context)
+
+        except Exception as e:
+            logger.error("Error: %s", e)
 
 
 class InvoiceItemsView(LoginRequiredMixin, View):
@@ -126,10 +130,11 @@ class UnitCostListView(View):
         unit = get_object_or_404(Unit, slug=unit_slug)
         items = InvoiceItems.objects.filter(unit__slug=unit_slug, paragraph__slug=paragraph_slug,
                                             invoice_id__date__year=currentYear)
+        lastUpdate = items.last()
         paragraph = Paragraph.objects.get(slug=paragraph_slug)
 
         countyCardSlug = unit.county_unit.slug
 
         context = {'unit': unit, 'items': items, 'currentYear': currentYear, 'paragraph': paragraph,
-                   'countyCardSlug': countyCardSlug}
+                   'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate}
         return render(request, self.template_name, context)

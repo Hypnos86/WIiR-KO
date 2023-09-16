@@ -111,7 +111,6 @@ class UnitDetailsView(View):
             # for paragraph in paragraphs:
             #     items = invoiceItems.filter(paragraph=paragraph)[:4]
             #     paragraph_data.append({'paragraph': paragraph, 'items': items})
-
             for paragraph in paragraphs:
                 paragraph_items = invoiceItems.filter(paragraph=paragraph).order_by('-invoice_id__date')[:4]
                 items = []
@@ -180,6 +179,15 @@ class UsersSiteView(LoginRequiredMixin, View):
 class ArchiveYearListView(View):
     template_name = 'main/archive_years.html'
 
-    def get(self, request, unit_slug):
-        context = {}
-        return render(request, self.template_name, context)
+    def get(self, request, unit_slug, paragraph_slug):
+        try:
+            currentYear = currentDate.current_year()
+            unit = Unit.objects.get(slug=unit_slug)
+            items = InvoiceItems.objects.filter(paragraph__slug=paragraph_slug, unit__id=unit.id)
+            yearsSet = set([year.invoice_id.date.year for year in items])
+            years = sorted(yearsSet, reverse=True)
+            print(years)
+            context = {'unit_slug': unit_slug, 'paragraph_slug': paragraph_slug, 'years': years}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)
