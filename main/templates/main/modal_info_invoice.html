@@ -6,7 +6,7 @@
         {%csrf_token%}
         <div class="">
             <div class="d-flex justify-content-around mb-2">
-                <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center h5 m-0">
                     <span class="text-muted">Nr. dokumentu:&nbsp;</span>
                     <span class="">{{invoice}}</span>
                 </div>
@@ -37,8 +37,8 @@
                 {% for item in items %}
                 <li class="list-group-item d-flex justify-content-between">
                     <span>
-                    {{item.unit.type.type_short}} {{item.unit.city}} ({{item.unit.county_unit}})
-                    | {{item.section.section}} - §{{item.paragraph.paragraph}} | {{item.sum}} zł
+                    {{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
+                    | {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} | {{item.sum|intcomma}} zł
                     </span>
                     {% if item.information %}
                     <p>{{item.information}}</p>

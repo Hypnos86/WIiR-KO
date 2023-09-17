@@ -5,12 +5,16 @@
     <div>
         <h5 class="h5 text-center">Archiwum</h5>
     </div>
-    <form class="" method="GET" action="{% url 'main:archiveYears' unit_slug paragraph_slug %}">
-        {%csrf_token%}
-        {% for year in years%}
-        <a href="" class="btn-menu m-2">{{year}}</a>
-        {% endfor %}
-    </form>
+    {% if unitCost %}
+    <form class="" method="GET" action="{% url 'main:archiveYearsUnitCost' slugCounty  %}">
+    {%else%}
+    <form class="" method="GET" action="{% url 'main:archiveYears' unitSlug paragraph_slug %}">
+    {%endif%}
+            {%csrf_token%}
+            {% for year in years%}
+            <a href="" class="btn-menu m-2">{{year}}</a>
+            {% endfor %}
+        </form>
 </div>
 {%endblock%}
 

@@ -111,7 +111,7 @@ class InvoiceItems(models.Model):
         verbose_name = "Element faktury"
         verbose_name_plural = "06 - Elementy faktury"
 
-    related_name = "invoiceItems"
+    related_name = "items"
 
     invoice_id = models.ForeignKey(to=Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
                                    related_name=related_name)
@@ -132,4 +132,4 @@ class InvoiceItems(models.Model):
     creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
 
     def __str__(self):
-        return f"{self.section} - {self.group} - {self.paragraph}"
+        return f"{self.section}-{self.group}-{self.paragraph}"

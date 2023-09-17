@@ -15,7 +15,7 @@
         </div>
         <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
             <div class="mx-2">
-                <a class="btn-menu" href="" data-toggle="info" title="Archiwum">
+                <a class="btn-menu" data-url="{% url 'main:archiveYearsUnitCost' slugCounty %}" onclick="openArchiveModal(this)" data-toggle="info" title="Archiwum">
                     <i class="bi bi-archive-fill custom-icon"></i>
                 </a>
             </div>
@@ -61,4 +61,17 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="archiveModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function openArchiveModal(button){
+        var url = $(button).data("url");
+        $("#archiveModal .modal-content").load(url);
+        $("#archiveModal").modal("show");
+    }
+</script>
 {%endblock%}

@@ -94,7 +94,7 @@ class HelpModalView(View):
 
 
 class UnitsListaMainView(View):
-    template_name = 'main/card.html'
+    template_name = 'main/list_units.html'
     template_error = 'main/error.html'
 
     def get(self, request, slug):
@@ -104,7 +104,7 @@ class UnitsListaMainView(View):
             archiveUnits = len(units.filter(status=False))
             county = CountyCard.objects.get(slug=slug)
             context = {'units': units, 'slug': slug, 'county': county, 'activeUnits': activeUnits,
-                       'archiveUnits': archiveUnits}
+                       'archiveUnits': archiveUnits, 'slugCounty': slug}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -206,7 +206,7 @@ class UsersSiteView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
 
-class ArchiveYearListView(View):
+class ArchiveYearCostListView(View):
     template_name = 'main/modal_archive_years.html'
     template_error = 'main/error.html'
 
@@ -217,8 +217,27 @@ class ArchiveYearListView(View):
             items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug, unit__id=unit.id)
             yearsSet = set([year.invoice_id.date.year for year in items])
             years = sorted(yearsSet, reverse=True)
-            print(years)
-            context = {'unit_slug': unitSlug, 'paragraph_slug': paragraphSlug, 'years': years}
+            context = {'unitSlug': unitSlug, 'paragraph_slug': paragraphSlug, 'years': years, 'unitCost': False}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class ArchiveYearUnitCostListView(View):
+    template_name = 'main/modal_archive_years.html'
+    template_error = 'main/error.html'
+
+    def get(self, request, slugCounty):
+        try:
+            currentYear = currentDate.current_year()
+            # unit = Unit.objects.filter(county_unit__slug=slugCounty)
+
+            items = InvoiceItems.objects.filter(unit__county_unit__slug=slugCounty)
+            yearsSet = set([year.invoice_id.date.year for year in items])
+            years = sorted(yearsSet, reverse=True)
+            context = {'slugCounty': slugCounty, 'years': years, 'unitCost': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -229,10 +248,16 @@ class ArchiveYearListView(View):
 class InvoicesListView(LoginRequiredMixin, View):
     template_name = 'main/site_invoice.html'
     template_error = 'main/error.html'
+    paginate_by = 80
 
     def get(self, request):
         try:
             invoices = Invoice.objects.all()
+
+            paginator = Paginator(invoices, self.paginate_by)
+            page_number = request.GET.get('page')
+            invoices = paginator.get_page(page_number)
+
             context = {'invoices': invoices}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -248,7 +273,7 @@ class InvoiceInfoView(View):
     def get(self, request, id):
         try:
             invoice = get_object_or_404(Invoice, pk=id)
-            items = InvoiceItems.objects.filter(invoice_id=invoice.id)
+            items = invoice.items.all()
             context = {'invoice': invoice, 'items': items, 'id': id}
             return render(request, self.template_name, context)
 
@@ -268,7 +293,7 @@ class CostsDetailsListView(View):
             currentYear = CurrentDate().current_year()
             unit = get_object_or_404(Unit, slug=unitSlug)
             items = InvoiceItems.objects.filter(unit__slug=unitSlug, paragraph__slug=paragraphSlug,
-                                                invoice_id__date__year=currentYear)
+                                                invoice_id__date__year=currentYear).order_by('-invoice_id__date')
             lastUpdate = items.last()
             paragraph = Paragraph.objects.get(slug=paragraphSlug)
 

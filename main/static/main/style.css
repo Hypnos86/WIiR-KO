@@ -166,3 +166,35 @@ padding: 2px 10px;
     text-decoration: none;
 
 }
+
+.btn-search{
+    color: #0a4275;
+    border-color: #0a4275
+}
+
+.btn-search:hover{
+    background-color: #0a4275;
+    border-color:white;
+}
+.btn-search.active{
+    background-color: #0a4275;
+    border-color:white;
+}
+
+.btn-archive{
+    background-color: #754D0B !important;
+    color: white;
+    border-color: #754D0B;
+    transition: transform .2s;
+}
+
+.btn-archive:hover {
+    border-color: white;
+    color:white;
+    background-color: #C27800 !important;
+    transform:scale(1.1);
+}
+
+.btn-archive:focus {
+    box-shadow: 0 0 0 0.50 rem rgba(10, 66, 177, .25) !important;
+}

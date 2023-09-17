@@ -1,13 +1,16 @@
 from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, ArchiveView, \
-    InvoiceInfoView, AnalysisView, UsersSiteView, ArchiveYearListView, InvoicesListView, CostsDetailsListView
+    InvoiceInfoView, AnalysisView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
+    ArchiveYearUnitCostListView
 
 app_name = 'main'
 urlpatterns = [
     # Modale
     path('modal/help/', HelpModalView.as_view(), name='showHelpModal'),
     path('modal/info/<int:id>/', InvoiceInfoView.as_view(), name='infoInvoice'),
-    path('modal/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearListView.as_view(), name='archiveYears'),
+    path('modal/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearCostListView.as_view(), name='archiveYears'),
+    path('modal/archive/<slug:slugCounty>/', ArchiveYearUnitCostListView.as_view(),
+         name='archiveYearsUnitCost'),
 
     # Lista obiektów
     path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),
