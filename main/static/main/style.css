@@ -142,3 +142,27 @@ body {
 caption {
     font-size:1rem;
 }
+
+.page-item.active .page-link{
+    background-color: #0a4275!important;
+    border-color: white!important;
+}
+
+.link-control {
+padding: 2px 10px;
+    border: 1px solid #0C4982;
+    color: #051E36;
+    border-radius: 5px;
+    text-decoration: none;
+
+}
+
+.link-control:hover {
+    padding: 2px 10px;
+    border: 1px solid #0C4982;
+    background-color: #0C4982;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+
+}

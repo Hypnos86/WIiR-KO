@@ -7,8 +7,8 @@ urlpatterns = [
 
     path('help/', HelpModalView.as_view(), name='showHelpModal'),
     path('card/<slug:slug>/', UnitCountyMainView.as_view(), name='unitCountyMain'),
-    path('card/<slug:countyCardSlug>/unit/<slug:slug_unit>/', UnitDetailsView.as_view(), name='unit_details'),
-    path('card/archive/<slug:unit_slug>/<slug:paragraph_slug>/', ArchiveYearListView.as_view(), name='archiveYears'),
+    path('card/<slug:countyCardSlug>/unit/<slug:unitSlug>/', UnitDetailsView.as_view(), name='unit_details'),
+    path('card/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearListView.as_view(), name='archiveYears'),
     path('archive/', ArchiveView.as_view(), name='archiveSite'),
     path('analysis/', AnalysisView.as_view(), name='analysisSite'),
     path('users/', UsersSiteView.as_view(), name='usersSite'),

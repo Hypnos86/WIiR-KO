@@ -100,10 +100,10 @@ class UnitCountyMainView(View):
 class UnitDetailsView(View):
     template_name = 'main/unit_details.html'
 
-    def get(self, request, countyCardSlug, slug_unit):
+    def get(self, request, countyCardSlug, unitSlug):
         try:
             currentYear = currentDate.current_year()
-            unit = get_object_or_404(Unit, slug=slug_unit)
+            unit = get_object_or_404(Unit, slug=unitSlug)
             invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=currentYear)
             paragraphs = Paragraph.objects.all()
             paragraph_data = []
@@ -179,15 +179,15 @@ class UsersSiteView(LoginRequiredMixin, View):
 class ArchiveYearListView(View):
     template_name = 'main/archive_years.html'
 
-    def get(self, request, unit_slug, paragraph_slug):
+    def get(self, request, unitSlug, paragraphSlug):
         try:
             currentYear = currentDate.current_year()
-            unit = Unit.objects.get(slug=unit_slug)
-            items = InvoiceItems.objects.filter(paragraph__slug=paragraph_slug, unit__id=unit.id)
+            unit = Unit.objects.get(slug=unitSlug)
+            items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug, unit__id=unit.id)
             yearsSet = set([year.invoice_id.date.year for year in items])
             years = sorted(yearsSet, reverse=True)
             print(years)
-            context = {'unit_slug': unit_slug, 'paragraph_slug': paragraph_slug, 'years': years}
+            context = {'unit_slug': unitSlug, 'paragraph_slug': paragraphSlug, 'years': years}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)

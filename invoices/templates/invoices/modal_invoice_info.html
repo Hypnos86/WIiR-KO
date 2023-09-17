@@ -7,26 +7,30 @@
         <div class="">
             <div class="d-flex justify-content-around mb-2">
                 <div class="d-flex align-items-center">
-                    <span class="text-muted">Nr. dokumentu: </span>
+                    <span class="text-muted">Nr. dokumentu:&nbsp;</span>
                     <span class="">{{invoice}}</span>
                 </div>
                 {% if user.is_authenticated %}
-                <a class="btn-menu" data-toggle="info" title="Edytuj"><i class="bi bi-pencil-square custom-icon"></i></a>
+                <a class="btn-menu" href="{% url 'invoices:editInvoice' invoice.slug %}" data-toggle="info"
+                   title="Edytuj">
+                    <i class="bi bi-pencil-square custom-icon"></i>
+                </a>
                 {%endif%}
             </div>
-            <span class="text-muted">Rodzaj dokumentu: </span>
+            <span class="text-muted">Rodzaj dokumentu:&nbsp;</span>
             <span> {{invoice.doc_types}}</span><br>
-            <span class="text-muted">Data wpływu: </span>
+            <span class="text-muted">Data wpływu:&nbsp;</span>
             <span>{{invoice.date_receipt|date:"m.d.Y"}} r.</span><br>
-            <span class="text-muted">Termin płatności: </span>
+            <span class="text-muted">Termin płatności:&nbsp;</span>
             <span>{{invoice.date_of_payment|date:"m.d.Y"}} r.</span><br>
-            <span class="text-muted">Kwota faktury: </span>
+            <span class="text-muted">Kwota faktury:&nbsp;</span>
             <span>{{invoice.sum|intcomma}} zł</span><br>
             {% if invoice.information %}
-            <span class="text-muted">Informacje: </span>
+            <span class="text-muted">Informacje:&nbsp;</span>
             <p>{{invoice.information}}</p>
             {% endif %}
-            <span class="text-muted">Data wprowadzenia do systemu: </span><span>{{invoice.creation_date|date:"d.m.Y"}} r.</span>
+            <span class="text-muted">Data wprowadzenia do systemu:&nbsp;</span>
+            <span>{{invoice.creation_date|date:"d.m.Y"}} r.</span>
         </div>
         <div class="mt-2">
             <ul class="list-group">
@@ -36,10 +40,9 @@
                     {{item.unit.type.type_short}} {{item.unit.city}} ({{item.unit.county_unit}})
                     | {{item.section.section}} - §{{item.paragraph.paragraph}} | {{item.sum}} zł
                     </span>
-                    <p>
-                        {% if item.information %}
-                        {{item.information}}
-                        {% endif %}</p>
+                    {% if item.information %}
+                    <p>{{item.information}}</p>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>

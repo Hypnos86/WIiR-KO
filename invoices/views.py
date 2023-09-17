@@ -1,5 +1,6 @@
 import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from invoices.models import DocumentTypes, ContractTypes
@@ -66,7 +67,8 @@ class EditInvoiceView(LoginRequiredMixin, View):
             # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             # type_contract = form.fields["type_contract"].queryset = ContractTypes.objects.all()
             # 'doc_types': doc_types, 'type_contract': type_contract,
-            context = {'form': form, 'new': False}
+            # context = {'form': form, 'new': False}
+            context = {}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)
@@ -124,6 +126,7 @@ class InvoiceItemsView(LoginRequiredMixin, View):
 
 class UnitCostListView(View):
     template_name = 'invoices/list_invoices_unit.html'
+    paginate_by = 40
 
     def get(self, request, unit_slug, paragraph_slug):
         currentYear = CurrentDate().current_year()
@@ -135,6 +138,11 @@ class UnitCostListView(View):
 
         countyCardSlug = unit.county_unit.slug
 
-        context = {'unit': unit, 'items': items, 'currentYear': currentYear, 'paragraph': paragraph,
+        paginator = Paginator(items, self.paginate_by)
+        page_number = request.GET.get('page')
+        itemsList = paginator.get_page(page_number)
+
+
+        context = {'unit': unit, 'items': itemsList, 'currentYear': currentYear, 'paragraph': paragraph,
                    'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate}
         return render(request, self.template_name, context)
