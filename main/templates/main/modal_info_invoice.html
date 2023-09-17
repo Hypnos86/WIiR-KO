@@ -2,7 +2,7 @@
 {% load humanize %}
 {% block content %}
 <div class="m-2 ">
-    <form class="m-2 p-4" method="GET" action="{% url 'invoices:infoInvoice' id%}">
+    <form class="m-2 p-4" method="GET" action="{% url 'main:infoInvoice' id%}">
         {%csrf_token%}
         <div class="">
             <div class="d-flex justify-content-around mb-2">

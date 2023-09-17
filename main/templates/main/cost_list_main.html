@@ -5,7 +5,7 @@
 <div class="container pt-5">
     <div class="row mb-3">
         <div class="col-3 col-sm-2 col-md-2 col-lg-2  ">
-            <a href="{% url 'main:unit_details' countyCardSlug unit.slug %}" class="btn-menu">
+            <a href="{% url 'main:unitCountyMain' countyCardSlug %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
             </a>
         </div>
@@ -14,33 +14,30 @@
                 <h5 class="h5 m-0 font-weight-bold">{{unit}}</h5>
             </div>
         </div>
+        {% if user.is_authenticated %}
         <div class="col-3 col-sm-2 col-md-2 col-lg-2 d-flex justify-content-end">
-            <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:archiveYears' unit.slug paragraph.slug %}" onclick="openArchiveModal(this)"
-                   data-toggle="info" title="Archiwum wydatku">
-                    <i class="bi bi-archive-fill custom-icon"></i>
-                </a>
-            </div>
-            {% if user.is_authenticated %}
-            <div class="">
-                <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
-                    <i class="bi bi-plus-circle custom-icon"></i>
-                </a>
-            </div>
-            {% endif %}
+            <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
+                <i class="bi bi-plus-circle custom-icon"></i>
+            </a>
         </div>
+        {% endif %}
     </div>
-    {% if unit.object_name %}
-    <div class="d-flex justify-content-center">
-        <h5 class="h5">{{unit.object_name}}</h5>
-    </div>
-    {% endif %}
-    <div class="text-center text-uppercase my-2 ">Dokumenty wystawione w {{currentYear}} roku</div>
 </div>
-<div>
+{% if unit.object_name %}
+<div class="d-flex justify-content-center">
+    <h5 class="h5">{{unit.object_name}}</h5>
+</div>
+{% endif %}
+<div class="text-center text-uppercase my-2 ">Dokumenty wystawione w {{currentYear}} roku</div>
+<div class="mt-2">
+    {% for paragraph_info in paragraph_data %}
+    {%if paragraph_info.items %}
     <table class="table table-striped table-hover table-caption mb-5">
-        <caption class="title-caption py-3">
-            <span class="h4">§ {{ paragraph }} - {{ paragraph.name }}</span>
+        <caption class="title-caption py-2">
+            <a href="{% url 'main:unitCostList' unit.county_unit.slug unit.slug paragraph_info.paragraph.slug %}" class="btn-menu-reverse"
+               data-toggle="info" title="Lista faktur: {{currentYear}}">
+                <span> § {{ paragraph_info.paragraph }} - {{ paragraph_info.paragraph.name }}</span>
+            </a>
         </caption>
         <thead class="table-dark">
         <tr class="text-center">
@@ -56,31 +53,50 @@
         </tr>
         </thead>
         <tbody>
-        {% for item in items %}
+        {% for item in paragraph_info.items %}
         <tr>
             <td align="center" valign="middle" width="120" scope="col">
-                {{ item.invoice_id.date }}
+                {{ item.date }}
             </td>
             <td align="left" valign="middle" width="180" scope="col">
-                <a class="link-control" data-url="{% url 'invoices:infoInvoice' item.invoice_id.id %}" onclick="openInvoiceInfoModal(this)">
-                    <span>{{ item.invoice_id.no_invoice }}</span>
+                <a class="link-control" data-url="{% url 'main:infoInvoice' item.id %}" onclick="openInvoiceInfoModal(this)">
+                    {{ item.no_invoice}}
                 </a>
             </td>
             <td align="center" valign="middle" width="150" scope="col">
-                {{ item.invoice_id.doc_types }}
+                {{ item.doc_types }}
             </td>
             <td align="center" valign="middle" width="200" scope="col">
                 {{ item.period_from }} - {{ item.period_from }}
             </td>
+            {% if item.measurementSystemNumber %}
             <td align="center" valign="middle" width="180" scope="col">
                 {{ item.measurementSystemNumber }}
             </td>
+            {% endif %}
+            {%if item.counterReading %}
             <td align="center" valign="middle" width="180" scope="col">
                 {{ item.counterReading }}
             </td>
+            {% endif %}
+
+            {% if item.consumption and item.paragraph == '4260-01' %}
             <td align="center" valign="middle" width="auto" scope="col">
                 {{ item.consumption }} kWh
             </td>
+            {% elif item.consumption and item.paragraph == '4260-02' %}
+            <td align="center" valign="middle" width="auto" scope="col">
+                {{ item.consumption }} GJ
+            </td>
+            {% elif item.consumption and item.paragraph == '4260-03' %}
+            <td align="center" valign="middle" width="auto" scope="col">
+                {{ item.consumption }} kWh
+            </td>
+            {% elif item.consumption and item.paragraph == '4260-04' %}
+            <td align="center" valign="middle" width="auto" scope="col">
+                {{ item.consumption }} m3
+            </td>
+            {% endif %}
             <td align="right" valign="middle" width="auto" scope="col">
                 {{ item.sum|intcomma }} zł
             </td>
@@ -91,57 +107,13 @@
         </tr>
         {% endfor %}
         </tbody>
-        <tfoot>
-        <tr>
-            <th colspan="5">Ostatnia aktualizacja: {{lastUpdate.creation_date|date:'d.m.Y'}} r.</th>
-        </tr>
-        </tfoot>
     </table>
+    {%endif%}
+    {% endfor %}
 </div>
-<!--Paginator-->
-<nav aria-labelledby="Page navigation">
-        <ul class="pagination justify-content-center">
-            {%if items.has_previous%}
-            <li class="page-item">
-                <a class="page-link" href="?page={{items.previous_page_number}}">Poprzednia</a>
-            </li>
-            {%else%}
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Poprzednia</a>
-            </li>
-            {%endif%}
-            {%for i in items.paginator.page_range%}
-            {%if items.number == i%}
-            <li class="page-item active" aria-current="page">
-            <span class="page-link">
-                {{i}}
-                <span class="sr-only"></span>
-            </span>
-            </li>
-            {%else%}
-            <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
-            {%endif%}
-            {%endfor%}
-            {%if items.has_next%}
-            <li class="page-item">
-                <a class="page-link" href="?page={{items.next_page_number}}">Następna</a>
-            </li>
-            {%else%}
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Następna</a>
-            </li>
-            {%endif%}
-        </ul>
-    </nav>
 <!-- Modal -->
 <div class="modal fade" id="invoiceInfoModal">
     <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="archiveModal">
-    <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
     </div>
@@ -151,11 +123,6 @@
         var url = $(button).data("url");
         $("#invoiceInfoModal .modal-content").load(url);
         $("#invoiceInfoModal").modal("show");
-    }
-    function openArchiveModal(button){
-        var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
     }
 </script>
 {% endblock %}
