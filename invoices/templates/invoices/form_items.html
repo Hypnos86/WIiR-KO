@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 {% load bootstrap %}
 {% block content %}
 {% if user.is_authenticated %}
@@ -21,8 +22,97 @@
                 </h5>
             </div>
         </div>
+        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
+            <a href="{% url 'main:invoiceSite' %}" class="btn-menu" data-toggle="info" title="Zapisz">
+                <span class="bi bi-save2 custom-icon"></span>
+            </a>
+        </div>
     </div>
+    <div class="my-3">
+        <span class="text-muted">Termin płatności: </span><span>{{invoice.date_of_payment}} r.</span><br>
+        <span class="text-muted">Kwota faktury: </span><span>{{invoice.sum|intcomma}} zł</span><br>
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row mb-1 d-flex justify-content-center">
+            <div class="col-sm-12 col-md-12 col-lg-8 mb-1">
+                {{form.unit|bootstrap}}
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-2 mb-1">
+                {{form.contract_types|bootstrap}}
+            </div>
+        </div>
+        <div class="row mb-1 d-flex justify-content-center">
+            <div class="col-sm-4 col-md-4 col-lg-3 mb-1">
+                {{form.section|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.group|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-5 mb-1">
+                {{form.paragraph|bootstrap}}
+            </div>
+        </div>
+        <div class="row mb-1 d-flex justify-content-center">
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.period_from|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.period_to|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.measurementSystemNumber|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.counterReading|bootstrap}}
+            </div>
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.consumption|bootstrap}}
+            </div>
+        </div>
+        <div class="row mb-1 d-flex justify-content-center">
+            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+                {{form.sum|bootstrap}}
+            </div>
+            <div class="col-lg-6 mb-2">
+                {{form.information|bootstrap}}
+            </div>
+            <div class="col-lg-2 mb-2 d-flex align-items-end justify-content-end">
+                <button type="submit" class="btn btn-main d-inline" data-toggle="info" title="Dodaj">
+                    <i class="bi bi-plus-circle custom-icon"></i>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="m-5">
 
+    <table class="table table-striped table-hover table-caption">
+        <caption class="title-caption py-2">
+            <h5>Elementy faktury</h5>
+        </caption>
+        <thead class="table-dark">
+        <tr class="text-center">
+            <th><span>Jednostka</span></th>
+            <th><span>Konto</span></th>
+            <th><span>Okres rozliczeniowy</span></th>
+            <th><span>Nr. licznika</span></th>
+            <th><span>Zużycie</span></th>
+            <th><span>Kwota</span></th>
+            <th><span>Uwagi</span></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            {% for item in items %}
+            <td>
+                {{item}}
+            </td>
+            {% endfor %}
+        </tr>
+        </tbody>
+    </table>
 </div>
 {% endif %}
 {%endblock%}

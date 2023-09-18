@@ -2,9 +2,8 @@ import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
-from invoices.models import DocumentTypes, ContractTypes
+from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes
 from invoices.forms import InvoiceForm, InvoiceItemsForm
-from invoices.models import Invoice
 
 logger = logging.getLogger(__name__)
 
@@ -114,3 +113,29 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
             context = {'error': e}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
+    def post(self, request, invoiceSlug):
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            form = self.form_class(request.POST)
+            items = InvoiceItems.objects.filter(invoice_id=invoice)
+
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.invoice_id = invoice
+                form.save()
+
+                return redirect(reverse('invoices:editItems', kwargs={'invoiceSlug': invoice.slug}))
+            context = {'form': form, 'invoice': invoice, 'items': items, 'invoiceSlug': invoiceSlug, 'new': False}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e}
+            logger.error('Error: %s', e)
+            return render(request, self.template_error, context)
+
+# @login_required
+# def delete_items_invoice_buy(request, id, invoice_id):
+#     item = get_object_or_404(InvoiceItems, pk=id)
+#     item.delete()
+#     invoice = get_object_or_404(InvoiceBuy, pk=invoice_id)
+#     return redirect(reverse("invoices:add_items_invoice_buy", kwargs={"id": invoice.id}))

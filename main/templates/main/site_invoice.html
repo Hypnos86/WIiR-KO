@@ -14,6 +14,9 @@
             </div>
         </div>
         <div>
+            <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
+                <i class="bi bi-plus-circle custom-icon"></i>
+            </a>
         </div>
     </div>
 </div>
@@ -33,7 +36,7 @@
 <div>
     {%for invoice in invoices%}
     <span>{{invoice}}</span><br>
-    {%for item in invoice.invoiceItems.all%}
+    {%for item in invoice.items.all%}
     <span>{{item}}</span><br>
     {%endfor%}
     <br>

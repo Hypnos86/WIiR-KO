@@ -133,6 +133,7 @@ class CostListMainView(View):
                 for item in paragraph_items:
                     selected_properties = {
                         'id': item.invoice_id.id,
+                        'date_receipt': item.invoice_id.date_receipt,
                         'date': item.invoice_id.date,
                         'no_invoice': item.invoice_id.no_invoice,
                         'doc_types': item.invoice_id.doc_types,
