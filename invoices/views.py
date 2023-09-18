@@ -2,7 +2,7 @@ import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
-from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes
+from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes, Group
 from invoices.forms import InvoiceForm, InvoiceItemsForm
 
 logger = logging.getLogger(__name__)
@@ -17,9 +17,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
         try:
             form = self.form_class()
             doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
-            type_contract = form.fields["type_contract"].queryset = ContractTypes.objects.all()
-            # form.fields["doc_types"].queryset = DocumentTypes.objects.exclude(type="Nota korygująca")
-            context = {'form': form, 'doc_types': doc_types, 'type_contract': type_contract, 'new': True}
+            context = {'form': form, 'doc_types': doc_types, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -38,7 +36,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                     instance = form.save(commit=False)
                     instance.author = request.user
                     form.save()
-                    return redirect(reverse('invoices:newItems', kwargs={'invoiceSlug': instance.slug}))
+                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
             context = {'form': form, 'doc_types': doc_types, 'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -47,17 +45,17 @@ class NewInvoiceView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
 
-class NewInvoiceItemsView(LoginRequiredMixin, View):
-    template_name = 'invoices/form_items.html'
-    template_error = 'main/error.html'
-    form_class = InvoiceItemsForm
-
-    def get(self, request, invoiceSlug):
-        invoice = get_object_or_404(Invoice, slug=invoiceSlug)
-        form = self.form_class()
-
-        context = {'form': form, "invoice": invoice, 'invoiceSlug': invoiceSlug, 'new': True}
-        return render(request, self.template_name, context)
+# class NewInvoiceItemsView(LoginRequiredMixin, View):
+#     template_name = 'invoices/form_items.html'
+#     template_error = 'main/error.html'
+#     form_class = InvoiceItemsForm
+#
+#     def get(self, request, invoiceSlug):
+#         invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+#         form = self.form_class()
+#
+#         context = {'form': form, "invoice": invoice, 'invoiceSlug': invoiceSlug, 'new': True}
+#         return render(request, self.template_name, context)
 
 
 class EditInvoiceView(LoginRequiredMixin, View):
@@ -80,15 +78,14 @@ class EditInvoiceView(LoginRequiredMixin, View):
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = InvoiceForm(request.POST, instance=invoice)
 
-            type_contract = ContractTypes.objects.all()
             if request.method == 'POST':
                 if form.is_valid():
                     instance = form.save(commit=False)
                     instance.author = request.user
                     form.save()
-                    return redirect(reverse('invoices:editItems', kwargs={'invoiceSlug': instance.slug}))
+                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
                 # 'doc_types': doc_types,
-            context = {'form': form, 'type_contract': type_contract, 'new': False}
+            context = {'form': form, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -96,7 +93,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
 
-class EditInvoiceItemsView(LoginRequiredMixin, View):
+class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
     template_error = 'main/error.html'
     form_class = InvoiceItemsForm
@@ -105,7 +102,11 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
         try:
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
-            form = self.form_class()
+            form = self.form_class(
+                initial={'contract_types': ContractTypes.objects.first(),
+                         'group': Group.objects.first()
+                         }
+            )
             context = {'form': form, "invoice": invoice, "items": items, 'new': False, 'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
 
@@ -125,7 +126,7 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
                 instance.invoice_id = invoice
                 form.save()
 
-                return redirect(reverse('invoices:editItems', kwargs={'invoiceSlug': invoice.slug}))
+                return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
             context = {'form': form, 'invoice': invoice, 'items': items, 'invoiceSlug': invoiceSlug, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -133,9 +134,18 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
             logger.error('Error: %s', e)
             return render(request, self.template_error, context)
 
-# @login_required
-# def delete_items_invoice_buy(request, id, invoice_id):
-#     item = get_object_or_404(InvoiceItems, pk=id)
-#     item.delete()
-#     invoice = get_object_or_404(InvoiceBuy, pk=invoice_id)
-#     return redirect(reverse("invoices:add_items_invoice_buy", kwargs={"id": invoice.id}))
+
+class DeleteInvoiceItemView(View):
+    template_error = 'main/error.html'
+
+    def get(self, request, invoiceSlug, item_id):
+        try:
+            item = get_object_or_404(InvoiceItems, pk=item_id)
+            item.delete()
+            return redirect(reverse("invoices:addItems", kwargs={"invoiceSlug": invoiceSlug}))
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
+            return render(request, self.template_error, context)

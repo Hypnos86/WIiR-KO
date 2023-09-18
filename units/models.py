@@ -63,7 +63,6 @@ class Unit(models.Model):
     city = models.CharField(max_length=40, verbose_name='Miasto')
     unit_full_name = models.CharField(max_length=200, blank=True, verbose_name='Obiekt')
     object_name = models.CharField(max_length=200, blank=True, null=True, verbose_name='Nazwa obiektu')
-    # cost_type = models.ManyToManyField(CostType, verbose_name='Rodzaj kosztów', related_name=related_name)
     manager = models.CharField(max_length=150, verbose_name='Administrator', default='Policja')
     information = models.TextField(null=True, blank=True, verbose_name='Informacje')
     status = models.BooleanField(default=True, verbose_name='Aktualna')

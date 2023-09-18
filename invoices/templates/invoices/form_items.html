@@ -8,7 +8,7 @@
     <div class="row mb-4">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
             <a href="{% url 'invoices:editInvoice' invoiceSlug %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left"></span>
+                <span class="bi bi-arrow-90deg-left custom-icon"></span>
             </a>
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
@@ -30,7 +30,7 @@
     </div>
     <div class="my-3">
         <span class="text-muted">Termin płatności: </span><span>{{invoice.date_of_payment}} r.</span><br>
-        <span class="text-muted">Kwota faktury: </span><span>{{invoice.sum|intcomma}} zł</span><br>
+        <span class="text-muted">Kwota faktury: </span><span class="bold">{{invoice.sum|intcomma}} zł</span><br>
     </div>
     <form method="POST">
         {% csrf_token %}
@@ -93,24 +93,77 @@
         </caption>
         <thead class="table-dark">
         <tr class="text-center">
-            <th><span>Jednostka</span></th>
-            <th><span>Konto</span></th>
-            <th><span>Okres rozliczeniowy</span></th>
-            <th><span>Nr. licznika</span></th>
-            <th><span>Zużycie</span></th>
-            <th><span>Kwota</span></th>
-            <th><span>Uwagi</span></th>
-            <th></th>
+            <th align="center" valign="middle" scope="col">
+                <span>Jednostka</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Konto</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Okres rozliczeniowy</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Nr. licznika</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Stan licznika</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Zużycie</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Kwota</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
+                <span>Uwagi</span>
+            </th>
         </tr>
         </thead>
         <tbody>
+        {% for item in items %}
         <tr>
-            {% for item in items %}
-            <td>
-                {{item}}
+            <td align="left" valign="middle" width="30%" scope="col">
+                {{item.unit.type.type_short}} {{item.unit.address}}, {{item.unit.city}} {% if item.unit.object_name %}-
+                {{item.unit.object_name}} {% endif %}
             </td>
-            {% endfor %}
+            <td align="center" valign="middle" scope="col">
+                {{item.section.section}} - {{item.group.group}} - §{{item.paragraph}}
+            </td>
+            <td align="center" valign="middle" scope="col">
+                {% if item.period_from and item.period_to %}
+                {{item.period_from}} - {{item.period_to}}
+                {% endif %}
+            </td>
+            <td align="center" valign="middle" scope="col">
+                {% if item.measurementSystemNumber %}
+                {{item.measurementSystemNumber}}
+                {% endif %}
+            </td>
+            <td align="center" valign="middle" scope="col">
+                {% if item.counterReading%}
+                {{item.counterReading}}
+                {% endif %}
+            </td>
+            <td align="center" valign="middle" scope="col">
+                {% if item.consumption %}
+                {{item.consumption}}
+                {% endif %}
+            </td>
+            <td align="right" valign="middle" scope="col">
+                {{item.sum|intcomma}} zł
+            </td>
+            <td align="left" valign="middle" width="20%" scope="col">
+                {% if item.information %}
+                {{item.information}}
+                {% endif %}
+            </td>
+            <td data-toggle="info" title="Usuń">
+                <a href="{%url 'invoices:deleteInvoiceItem' invoice.slug item.id %}">
+                    <i class="bi bi-trash3 btn btn-delete"></i>
+                </a>
+            </td>
         </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
