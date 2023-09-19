@@ -1,7 +1,7 @@
 from django.utils.text import slugify
 from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
-from invoices.models import Invoice, InvoiceItems, Paragraph, Section
+from invoices.models import Invoice, InvoiceItems, Paragraph, Group
 from units.models import County
 
 
@@ -46,17 +46,26 @@ def sumInvoiceItems(sender, instance, **kwargs):
     invoice.save()
 
 
-@receiver(post_save, sender=InvoiceItems)
+# @receiver(post_save, sender=InvoiceItems)
+# def addSectionToInvoiceItem(sender, instance, **kwargs):
+#     unit = instance.unit.county_swop.swop_id
+#     county = County.objects.filter(swop_id=unit).first()
+#
+#     if county:
+#         section = county.section.first()
+#         if section:
+#             instance.section = section
+#             instance.save()
+
+@receiver(pre_save, sender=InvoiceItems)
 def addSectionToInvoiceItem(sender, instance, **kwargs):
-    global section
     counties = County.objects.all()
     unit = instance.unit.county_swop.swop_id
-    item = InvoiceItems.objects.get(pk=instance.id)
-
+    group = Group.objects.first()
+    instance.group = group
     for county in counties:
         if county.swop_id == unit:
             section = county.section.all().first()
+            instance.section = section
+            break
 
-    section = Section.objects.get(pk=section.id)
-    item.section = section.id
-    item.save()

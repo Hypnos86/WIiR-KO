@@ -5,16 +5,23 @@
     <form class="m-2 p-4" method="GET" action="{% url 'main:infoInvoice' id%}">
         {%csrf_token%}
         <div class="">
+
             <div class="d-flex justify-content-around mb-2">
-                <div class="d-flex align-items-center h5 m-0">
+                {% if user.is_authenticated %}
+                <div></div>
+                <div class=" h5 m-0">
                     <span class="text-muted">Nr. dokumentu:&nbsp;</span>
                     <span class="">{{invoice}}</span>
                 </div>
-                {% if user.is_authenticated %}
                 <a class="btn-menu" href="{% url 'invoices:editInvoice' invoice.slug %}" data-toggle="info"
                    title="Edytuj">
                     <i class="bi bi-pencil-square custom-icon"></i>
                 </a>
+                {%else%}
+                <div class=" h5 m-0">
+                    <span class="text-muted">Nr. dokumentu:&nbsp;</span>
+                    <span class="">{{invoice}}</span>
+                </div>
                 {%endif%}
             </div>
             <ul class="small-list">
@@ -22,10 +29,10 @@
                     <span class="text-muted">Rodzaj dokumentu:&nbsp;</span><span> {{invoice.doc_types}}</span>
                 </li>
                 <li>
-                    <span class="text-muted">Data wpływu:&nbsp;</span><span>{{invoice.date_receipt|date:"m.d.Y"}} r.</span>
+                    <span class="text-muted">Data wpływu:&nbsp;</span><span>{{invoice.date_receipt|date:"d.m.Y"}} r.</span>
                 </li>
                 <li>
-                    <span class="text-muted">Termin płatności:&nbsp;</span><span>{{invoice.date_of_payment|date:"m.d.Y"}} r.</span>
+                    <span class="text-muted">Termin płatności:&nbsp;</span><span>{{invoice.date_of_payment|date:"d.m.Y"}} r.</span>
                 </li>
                 <li>
                     <span class="text-muted">Kwota faktury:&nbsp;</span>
@@ -50,7 +57,7 @@
                 <li class="list-group-item d-flex justify-content-between">
                     <span>{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
                     <span class="px-2">| {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} |</span>
-                    <span class="px-2"> {{item.sum|intcomma}} zł</span></span>
+                    <span class="px-2 bold"> {{item.sum|intcomma}} zł</span></span>
                     {% if item.information %}
                     <p>{{item.information}}</p>
                     {% endif %}

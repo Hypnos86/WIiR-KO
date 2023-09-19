@@ -249,7 +249,7 @@ class ArchiveYearUnitCostListView(View):
 class InvoicesListView(LoginRequiredMixin, View):
     template_name = 'main/site_invoice.html'
     template_error = 'main/error.html'
-    paginate_by = 80
+    paginate_by = 100
 
     def get(self, request):
         try:
@@ -298,8 +298,6 @@ class CostsDetailsListView(View):
             lastUpdate = items.last()
             paragraph = Paragraph.objects.get(slug=paragraphSlug)
 
-            countyCardSlug = unit.county_unit.slug
-
             paginator = Paginator(items, self.paginate_by)
             page_number = request.GET.get('page')
             itemsList = paginator.get_page(page_number)
@@ -311,3 +309,15 @@ class CostsDetailsListView(View):
             context = {'error': e}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
+
+class ParagraphModalView(View):
+    template_name = 'main/modal_paragraph.html'
+
+    def get(self, request):
+        try:
+            paragraphs = Paragraph.objects.all()
+            context = {'paragraphs': paragraphs}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)

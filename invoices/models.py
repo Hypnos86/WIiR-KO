@@ -98,7 +98,7 @@ class Paragraph(models.Model):
     slug = models.SlugField(max_length=7, null=True, blank=True, unique=True)
 
     def __str__(self):
-        return f"{self.paragraph}"
+        return f"{self.paragraph} - {self.name}"
 
 
 class InvoiceItems(models.Model):
@@ -124,7 +124,7 @@ class InvoiceItems(models.Model):
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
                                   related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
-    information = models.CharField(max_length=400, verbose_name='Uwagi', null=True, blank=True)
+    information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
 
     def __str__(self):

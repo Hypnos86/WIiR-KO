@@ -102,11 +102,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
             form = self.form_class(
-                initial={'contract_types': ContractTypes.objects.first(),
-                         'group': Group.objects.first()
-                         }
+                initial={'contract_types': ContractTypes.objects.first()}
             )
-            # form.fields['group'].widget.attrs['disabled'] = 'true'
             context = {'form': form, "invoice": invoice, "items": items, 'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
 
@@ -132,6 +129,22 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
         except Exception as e:
             context = {'error': e}
             logger.error('Error: %s', e)
+            return render(request, self.template_error, context)
+
+
+class DeleteInvoiceView(View):
+    template_error = 'main/error.html'
+
+    def get(self, request, invoiceSlug):
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            invoice.delete()
+            return redirect("main:invoiceSite")
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
 
 

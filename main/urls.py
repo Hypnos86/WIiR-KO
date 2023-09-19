@@ -1,7 +1,7 @@
 from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, ArchiveView, \
     InvoiceInfoView, AnalysisView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
-    ArchiveYearUnitCostListView
+    ArchiveYearUnitCostListView, ParagraphModalView
 
 app_name = 'main'
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('modal/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearCostListView.as_view(), name='archiveYears'),
     path('modal/archive/<slug:slugCounty>/', ArchiveYearUnitCostListView.as_view(),
          name='archiveYearsUnitCost'),
+    path('modal/paragraph/', ParagraphModalView.as_view(), name='paragraphModal'),
 
     # Lista obiektów
     path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),

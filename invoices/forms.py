@@ -36,7 +36,8 @@ class InvoiceItemsForm(ModelForm):
                   'counterReading': 'Stan licznika', 'consumption': 'Zużycie', 'unit': 'Jednostka',
                   'section': 'Rozdział', 'group': 'Grupa', 'paragraph': 'Paragraf', 'sum': 'Kwota',
                   'infomation': 'Uwagi'}
-        exclude = ['creation_date', 'invoice_id']
+        exclude = ['creation_date', 'invoice_id', 'section', 'group']
         widgets = {'period_from': DateField(),
-                   'period_to': DateField()
+                   'period_to': DateField(),
+                   'information': Textarea(attrs={'rows': 1})
                    }

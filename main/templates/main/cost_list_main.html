@@ -49,6 +49,7 @@
             <th align="center" valign="middle" width="200" scope="col">Rodzaj umowy</th>
             <th align="center" valign="middle" width="200" scope="col">Kwota</th>
             <th align="center" valign="middle" width="auto" scope="col">Informacja</th>
+            <th align="right" valign="middle" width="auto" scope="col"></th>
         </tr>
         </thead>
         <tbody>
@@ -61,10 +62,7 @@
                 {{ item.date }}
             </td>
             <td align="left" valign="middle" width="auto" scope="col">
-                <a class="link-control" data-url="{% url 'main:infoInvoice' item.id %}"
-                   onclick="openInvoiceInfoModal(this)">
-                    {{ item.no_invoice}}
-                </a>
+                {{ item.no_invoice}}
             </td>
             <td align="center" valign="middle" width="auto" scope="col">
                 {{ item.doc_types }}
@@ -77,6 +75,12 @@
             </td>
             <td align="left" valign="middle" width="auto" scope="col">
                 {{ item.information|default_if_none:'' }}
+            </td>
+            <td align="right" valign="middle" width="auto" scope="col">
+                <a class="btn-menu" data-url="{% url 'main:infoInvoice' item.id %}"
+                   onclick="openInvoiceInfoModal(this)">
+                    <i class="bi bi-eye"></i>
+                </a>
             </td>
             <!-- Dodaj inne wybrane propertisy tutaj -->
         </tr>
