@@ -10,7 +10,7 @@ class County(models.Model):
 
     swop_id = models.CharField(max_length=4, verbose_name="ID SWOP")
     name = models.CharField(max_length=15, null=False, verbose_name="Jednostka", unique=True)
-    id_order = models.IntegerField("Kolejność", unique=True, null=True)
+    id_order = models.IntegerField(verbose_name="Kolejność", unique=True, null=True)
 
     def __str__(self):
         return f"{self.name} - {self.swop_id}"

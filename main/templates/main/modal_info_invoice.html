@@ -17,29 +17,40 @@
                 </a>
                 {%endif%}
             </div>
-            <span class="text-muted">Rodzaj dokumentu:&nbsp;</span>
-            <span> {{invoice.doc_types}}</span><br>
-            <span class="text-muted">Data wpływu:&nbsp;</span>
-            <span>{{invoice.date_receipt|date:"m.d.Y"}} r.</span><br>
-            <span class="text-muted">Termin płatności:&nbsp;</span>
-            <span>{{invoice.date_of_payment|date:"m.d.Y"}} r.</span><br>
-            <span class="text-muted">Kwota faktury:&nbsp;</span>
-            <span>{{invoice.sum|intcomma}} zł</span><br>
-            {% if invoice.information %}
-            <span class="text-muted">Informacje:&nbsp;</span>
-            <p>{{invoice.information}}</p>
-            {% endif %}
-            <span class="text-muted">Data wprowadzenia do systemu:&nbsp;</span>
-            <span>{{invoice.creation_date|date:"d.m.Y"}} r.</span>
+            <ul class="small-list">
+                <li>
+                    <span class="text-muted">Rodzaj dokumentu:&nbsp;</span><span> {{invoice.doc_types}}</span>
+                </li>
+                <li>
+                    <span class="text-muted">Data wpływu:&nbsp;</span><span>{{invoice.date_receipt|date:"m.d.Y"}} r.</span>
+                </li>
+                <li>
+                    <span class="text-muted">Termin płatności:&nbsp;</span><span>{{invoice.date_of_payment|date:"m.d.Y"}} r.</span>
+                </li>
+                <li>
+                    <span class="text-muted">Kwota faktury:&nbsp;</span>
+                    {% if invoice.sum %}
+                    <span class="bold">{{invoice.sum|intcomma}} zł</span>
+                    {% endif %}
+                </li>
+                {% if invoice.information %}
+                <li>
+                    <span class="text-muted">Informacje:&nbsp;</span>
+                    <p>{{invoice.information}}</p>
+                </li>
+                {% endif %}
+                <li>
+                    <span class="text-muted">Data wprowadzenia do systemu:&nbsp;</span><span>{{invoice.creation_date|date:"d.m.Y"}} r.</span>
+                </li>
+            </ul>
         </div>
         <div class="mt-2">
             <ul class="list-group">
                 {% for item in items %}
                 <li class="list-group-item d-flex justify-content-between">
-                    <span>
-                    {{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
-                    | {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} | {{item.sum|intcomma}} zł
-                    </span>
+                    <span>{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
+                    <span class="px-2">| {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} |</span>
+                    <span class="px-2"> {{item.sum|intcomma}} zł</span></span>
                     {% if item.information %}
                     <p>{{item.information}}</p>
                     {% endif %}

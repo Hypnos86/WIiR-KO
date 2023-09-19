@@ -1,4 +1,5 @@
 from django.forms import ModelForm, Textarea, widgets, DateInput
+from django import forms
 from invoices.models import Invoice, InvoiceItems
 
 
@@ -29,13 +30,12 @@ class InvoiceItemsForm(ModelForm):
         model = InvoiceItems
         fields = (
             'invoice_id', 'contract_types', 'period_from', 'period_to', 'measurementSystemNumber', 'counterReading',
-            'consumption',
-            'unit', 'section', 'group', 'paragraph', 'sum', 'information')
+            'consumption', 'unit', 'section', 'group', 'paragraph', 'sum', 'information')
         labels = {'invoice_id': 'Faktura', 'period_from': 'Okres od', 'period_to': 'Okres do',
-                  'contract_types': 'Rodzaj umowy',
-                  'measurementSystemNumber': 'Nr. licznika', 'counterReading': 'Stan licznika',
-                  'consumption': 'Zużycie', 'unit': 'Jednostka', 'section': 'Rozdział', 'group': 'Grupa',
-                  'paragraph': 'Paragraf', 'sum': 'Kwota', 'infomation': 'Uwagi'}
+                  'contract_types': 'Rodzaj umowy', 'measurementSystemNumber': 'Nr. licznika',
+                  'counterReading': 'Stan licznika', 'consumption': 'Zużycie', 'unit': 'Jednostka',
+                  'section': 'Rozdział', 'group': 'Grupa', 'paragraph': 'Paragraf', 'sum': 'Kwota',
+                  'infomation': 'Uwagi'}
         exclude = ['creation_date', 'invoice_id']
         widgets = {'period_from': DateField(),
                    'period_to': DateField()

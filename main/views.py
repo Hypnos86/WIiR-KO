@@ -6,7 +6,7 @@ from django.views import View
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit
-from invoices.models import Invoice, InvoiceItems, Paragraph
+from invoices.models import Invoice, InvoiceItems, Paragraph, Section
 from django.db.models import Max
 import logging
 import datetime

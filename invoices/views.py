@@ -84,8 +84,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
                     instance.author = request.user
                     form.save()
                     return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
-                # 'doc_types': doc_types,
-            context = {'form': form, 'new': False}
+            context = {'form': form, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -107,7 +106,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                          'group': Group.objects.first()
                          }
             )
-            context = {'form': form, "invoice": invoice, "items": items, 'new': False, 'invoiceSlug': invoiceSlug}
+            # form.fields['group'].widget.attrs['disabled'] = 'true'
+            context = {'form': form, "invoice": invoice, "items": items, 'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -127,7 +127,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 form.save()
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
-            context = {'form': form, 'invoice': invoice, 'items': items, 'invoiceSlug': invoiceSlug, 'new': False}
+            context = {'form': form, 'invoice': invoice, 'items': items, 'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}

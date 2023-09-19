@@ -1,9 +1,7 @@
 from django.db import models
 from enum import Enum
 from units.models import Unit, County
-from polymorphic.models import PolymorphicModel
 from main.static_data import SECTION
-import datetime
 
 sectionOptions = [(item['id'], item['section'], item['name']) for item in SECTION]
 
@@ -71,7 +69,7 @@ class Section(models.Model):
 
     section = models.CharField(verbose_name="Rozdział", max_length=5, unique=True)
     name = models.CharField(verbose_name="Nazwa", max_length=20)
-    swop_id = models.ManyToManyField(County, verbose_name="SWOP", related_name=related_name)
+    swop_id = models.ManyToManyField(County, verbose_name="SWOP", blank=True, related_name=related_name)
 
     def __str__(self):
         return f"{self.section} ({self.name})"
@@ -120,7 +118,7 @@ class InvoiceItems(models.Model):
     counterReading = models.IntegerField(verbose_name='Stan licznika', null=True, blank=True)
     consumption = models.IntegerField(verbose_name='Zużycie', null=True, blank=True)
     unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
-    section = models.ForeignKey(to=Section, on_delete=models.CASCADE, verbose_name='Rozdział',
+    section = models.ForeignKey(to=Section, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Rozdział',
                                 related_name=related_name)
     group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',

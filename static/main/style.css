@@ -7,23 +7,215 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font: inherit;
   vertical-align: baseline;
 }
+
 html {
-    font-family: Arial, Helvetica, sans-serif
+    font-family: Arial, Helvetica, sans-serif;
+
 }
 
-.btn-county{
+body {
+    background-color: #F5F5F5;
+}
+
+.btn-main{
     background-color: #0a4275 !important;
-    font-color: white;
+    color: white;
     border-color: #0a4275;
     transition: transform .2s;
 }
 
-.btn-county:hover{
+.btn-main:hover {
     border-color: white;
-    transform:scale(1.2);
+    color:white;
+    transform:scale(1.1);
 }
 
+.btn-main:focus {
+    box-shadow: 0 0 0 0.50 rem rgba(10, 66, 177, .25) !important;
+}
 
 .list-county{
     display:inline;
+}
+
+.back-button{
+    color: #0a4275;
+    border-color: #0a4275;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #0a4275;
+    border-radius: 30%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: transform .2s;
+}
+
+.back-button: hover{
+    background-color: #0a4275;
+    color:white;
+    transform:scale(1.2);
+}
+
+.background-login {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0;
+    background-color: #0a4275;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    color:white;
+}
+
+.btn-menu {
+    color: #0a4275;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #0a4275;
+    border-radius: 15px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: transform .2s;
+}
+
+.btn-menu:hover {
+    color: white;
+    background-color: #0a4275;
+    border: 1px solid #0a4275;
+}
+
+.btn-menu-reverse {
+    color: white;
+    display: inline-block;
+    background-color:#08335C;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #08335C;
+    border-radius: 15px;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    transition: transform .2s;
+}
+
+.btn-menu-reverse:hover {
+    color: #08335C;
+    background-color: white;
+}
+
+
+.custom-icon {
+    font-size: 20px; /* Możesz dostosować ten rozmiar do swoich potrzeb */
+}
+
+.mb-footer{
+    margin-bottom: 5rem;
+}
+
+.color-sea{
+    color:#37638C !important
+}
+
+.form-control:focus {
+    color: #212529;
+    background-color: white;
+    border-color: white;
+    box-shadow: 0 0 0 0.25rem rgb(7, 137, 194, 50%);
+}
+
+.table-caption{
+    caption-side: top;
+}
+.title-caption{
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    text-align: center;
+}
+
+caption {
+    font-size:1rem;
+}
+
+.page-item.active .page-link{
+    background-color: #0a4275!important;
+    border-color: white!important;
+}
+
+.link-control {
+padding: 2px 10px;
+    border: 1px solid #0C4982;
+    color: #051E36;
+    border-radius: 5px;
+    text-decoration: none;
+
+}
+
+.link-control:hover {
+    padding: 2px 10px;
+    border: 1px solid #0C4982;
+    background-color: #0C4982;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+
+}
+
+.btn-search{
+    color: #0a4275;
+    border-color: #0a4275
+}
+
+.btn-search:hover{
+    background-color: #0a4275;
+    border-color:white;
+}
+.btn-search.active{
+    background-color: #0a4275;
+    border-color:white;
+}
+
+.btn-archive{
+    background-color: #754D0B !important;
+    color: white;
+    border-color: #754D0B;
+    transition: transform .2s;
+}
+
+.btn-archive:hover {
+    border-color: white;
+    color:white;
+    background-color: #C27800 !important;
+    transform:scale(1.1);
+}
+
+.btn-archive:focus {
+    box-shadow: 0 0 0 0.50 rem rgba(10, 66, 177, .25) !important;
+}
+
+.d-flex.hidden{
+    display:none !important;
+}
+
+.btn-delete {
+    color: #fff;
+    background-color: #A84F20;
+    border-color: #A84F20;
+    }
+
+.btn-delete:hover{
+   color: #fff;
+   background-color: #C2A625;
+    border-color: #C2A625;
+
+   }
+
+.bold{
+    font:bold !important;
 }

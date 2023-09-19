@@ -29,8 +29,9 @@
         </div>
     </div>
     <div class="my-3">
-        <span class="text-muted">Termin płatności: </span><span>{{invoice.date_of_payment}} r.</span><br>
-        <span class="text-muted">Kwota faktury: </span><span class="bold">{{invoice.sum|intcomma}} zł</span><br>
+        <p class="py-1"><span class="text-muted">Termin płatności: </span><span>{{invoice.date_of_payment}} r.</span></p>
+        <p class="py-1"><span class="text-muted">Kwota faktury: </span>
+            <span class="bold">{% if invoice.sum %}{{invoice.sum|intcomma}} {%else%} 0 {% endif %} zł</span></p>
     </div>
     <form method="POST">
         {% csrf_token %}
@@ -117,6 +118,7 @@
             <th align="center" valign="middle" scope="col">
                 <span>Uwagi</span>
             </th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -167,5 +169,10 @@
         </tbody>
     </table>
 </div>
+<script>
+       $(document).ready(function(){
+            $("#id_unit").select2({placeholder:'Wybierz jednostkę'});
+       })
+</script>
 {% endif %}
 {%endblock%}
