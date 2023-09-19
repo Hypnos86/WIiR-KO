@@ -123,7 +123,7 @@
                 {{item.unit.object_name}} {% endif %}
             </td>
             <td align="center" valign="middle" scope="col">
-                {{item.section.section}} - {{item.group.group}} - §{{item.paragraph.paragraph}}
+                <span data-toggle="info" title="{{item.paragraph.name}}">{{item.section.section}} - {{item.group.group}} - §{{item.paragraph.paragraph}}</span>
             </td>
             <td align="center" valign="middle" scope="col">
                 {% if item.period_from and item.period_to %}
@@ -167,6 +167,7 @@
     $(document).ready(function(){
          $("#id_unit").select2({placeholder:'Wybierz jednostkę'});
     })
+
 </script>
 {% endif %}
 {%endblock%}

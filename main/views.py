@@ -257,10 +257,24 @@ class InvoicesListView(LoginRequiredMixin, View):
 
             paginator = Paginator(invoices, self.paginate_by)
             page_number = request.GET.get('page')
-            invoices = paginator.get_page(page_number)
+            invoices_pages = paginator.get_page(page_number)
 
-            context = {'invoices': invoices}
+            query = "Wyczyść"
+            search = "Szukaj"
+            q = request.GET.get("q")
+
+            if q:
+                invoices = invoices.filter(no_invoice__icontains=q) \
+                           | invoices.filter(sum__icontains=q) \
+                           | invoices.filter(doc_types__type__startswith=q) \
+                           | invoices.filter(information__icontains=q)
+
+                context = {'invoices': invoices, "query": query, 'q': q}
+                return render(request, self.template_name, context)
+            else:
+                context = {'invoices': invoices_pages, "search": search}
             return render(request, self.template_name, context)
+
         except Exception as e:
             context = {'error': e}
             logger.error("Error: %s", e)
