@@ -188,8 +188,8 @@ class ArchiveView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
 
-class AnalysisView(LoginRequiredMixin, View):
-    template_name = 'main/site_analysis.html'
+class StatisticsView(LoginRequiredMixin, View):
+    template_name = 'main/site_statistics.html'
     template_error = 'main/error.html'
 
     def get(self, request):
@@ -347,8 +347,13 @@ class CostsDetailsListView(View):
             page_number = request.GET.get('page')
             itemsList = paginator.get_page(page_number)
 
+            unitOfMeasure = None
+            for parEnum in ParagraphEnum:
+                if paragraphSlug == parEnum.value[0]:
+                    unitOfMeasure = parEnum.value[1]
+
             context = {'unit': unit, 'items': itemsList, 'currentYear': currentYear, 'paragraph': paragraph,
-                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate}
+                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure':unitOfMeasure}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
