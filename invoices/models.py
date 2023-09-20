@@ -94,7 +94,7 @@ class Paragraph(models.Model):
         ordering = ['paragraph']
 
     paragraph = models.CharField(verbose_name="Paragraf", max_length=7, unique=True)
-    name = models.CharField(verbose_name="Nazwa", max_length=50)
+    name = models.CharField(verbose_name="Nazwa", max_length=100)
     slug = models.SlugField(max_length=7, null=True, blank=True, unique=True)
 
     def __str__(self):
@@ -129,3 +129,4 @@ class InvoiceItems(models.Model):
 
     def __str__(self):
         return f"{self.section}-{self.group}-{self.paragraph}"
+

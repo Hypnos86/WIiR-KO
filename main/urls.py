@@ -1,7 +1,7 @@
 from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, ArchiveView, \
     InvoiceInfoView, AnalysisView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
-    ArchiveYearUnitCostListView, ParagraphModalView
+    ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView
 
 app_name = 'main'
 urlpatterns = [
@@ -20,11 +20,15 @@ urlpatterns = [
     # Szczegóły kosztów
     path('card/<slug:countyCardSlug>/<slug:unitSlug>/<slug:paragraphSlug>/', CostsDetailsListView.as_view(),
          name='unitCostList'),
-
+    # Nagłówek menu
     # Analiza
     path('analysis/', AnalysisView.as_view(), name='analysisSite'),
+
     # Faktury
     path('invoices/', InvoicesListView.as_view(), name='invoiceSite'),
+    # Lista kosztów danego paragrafu
+    path('invoices/paragraph/<slug:paragraphSlug>/', ParagraphCostListView.as_view(), name='paragraphCostList'),
+
     # Archiwum
     path('archives/', ArchiveView.as_view(), name='archiveSite'),
     # Uzytkownicy

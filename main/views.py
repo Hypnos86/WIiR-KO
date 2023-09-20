@@ -1,3 +1,5 @@
+import decimal
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
@@ -5,13 +7,20 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
-from units.models import Unit
+from units.models import Unit, County
 from invoices.models import Invoice, InvoiceItems, Paragraph, Section
-from django.db.models import Max
+from enum import Enum
 import logging
 import datetime
 
 logger = logging.getLogger(__name__)
+
+
+class ParagraphEnum(Enum):
+    MEDIA1 = ['4260-01', 'kWh']
+    MEDIA2 = ['4260-02', 'GJ']
+    MEDIA3 = ['4260-03', 'kWh']
+    MEDIA4 = ['4260-04', 'm3']
 
 
 class CurrentDate():
@@ -184,8 +193,30 @@ class AnalysisView(LoginRequiredMixin, View):
     template_error = 'main/error.html'
 
     def get(self, request):
+
         try:
-            return render(request, self.template_name)
+            title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+            currentYear = CurrentDate().current_year()
+            paragraphs = Paragraph.objects.all()
+            counties = County.objects.all()
+
+            items = []
+            # TODO rozrysowac obiekt jak ma wygladać
+            for paragraph in paragraphs:
+                sum = 0
+                units = []
+                for item in paragraph.items.all():
+                    sum += item.sum
+                    unit = item.unit.county_swop
+                    units.append({'unit': unit, 'sum': sum})
+
+                items.append({'paragraph': paragraph, 'units': units})
+
+            for item in items:
+                print(item)
+
+            context = {'counties': counties, 'currentYear': currentYear, 'paragraphs': paragraphs, 'title': title}
+            return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
             logger.error("Error: %s", e)
@@ -335,3 +366,39 @@ class ParagraphModalView(View):
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)
+
+
+class ParagraphCostListView(LoginRequiredMixin, View):
+    template_name_media = 'main/cost_list_media.html'
+    template_name_general = 'main/cost_list_general.html'
+    template_error = 'main/error.html'
+    paginate_by = 80
+
+    def get(self, request, paragraphSlug):
+        if paragraphSlug in [
+            ParagraphEnum.MEDIA1.value[0], ParagraphEnum.MEDIA2.value[0], ParagraphEnum.MEDIA3.value[0],
+            ParagraphEnum.MEDIA4.value[0]]:
+            try:
+                paragraph = Paragraph.objects.get(slug=paragraphSlug)
+                items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug)
+
+                # TODO wyciagnac z items wszystkie faktury i stworzyc obiekt z sumowaniem items
+                paginator = Paginator(items, self.paginate_by)
+                page_number = request.GET.get('page')
+                items_pages = paginator.get_page(page_number)
+
+                unitOfMeasure = None
+                for parEnum in ParagraphEnum:
+                    if paragraphSlug == parEnum.value[0]:
+                        unitOfMeasure = parEnum.value[1]
+
+                context = {'items': items_pages, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure}
+                return render(request, self.template_name_media, context)
+            except Exception as e:
+                logger.error("Error: %s", e)
+        else:
+            try:
+                context = {}
+                return render(request, self.template_name_general, context)
+            except Exception as e:
+                logger.error("Error: %s", e)

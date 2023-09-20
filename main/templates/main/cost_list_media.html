@@ -5,22 +5,18 @@
 <div class="container pt-5">
     <div class="row mb-3">
         <div class="col-3 col-sm-2 col-md-2 col-lg-2  ">
-            <a href="{% url 'main:unit_details' countyCardSlug unit.slug %}" class="btn-menu">
+            <a href="{% url 'main:invoiceSite' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
             </a>
         </div>
         <div class="col-8 col-sm-8 col-md-8 col-lg-8 d-flex align-items-center justify-content-center">
             <div>
-                <h5 class="h5 m-0 font-weight-bold">{{unit}}</h5>
+                <h5 class="h5 m-0 font-weight-bold">§ {{paragraph}}</h5>
             </div>
         </div>
         <div class="col-3 col-sm-2 col-md-2 col-lg-2 d-flex justify-content-end">
             <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:archiveYears' unit.slug paragraph.slug %}"
-                   onclick="openArchiveModal(this)"
-                   data-toggle="info" title="Archiwum wydatku">
-                    <i class="bi bi-archive-fill custom-icon"></i>
-                </a>
+
             </div>
             {% if user.is_authenticated %}
             <div class="">
@@ -31,30 +27,26 @@
             {% endif %}
         </div>
     </div>
-    {% if unit.object_name %}
-    <div class="d-flex justify-content-center">
-        <h5 class="h5">{{unit.object_name}}</h5>
-    </div>
-    {% endif %}
+
     <div class="text-center text-uppercase my-2 ">
-        <span>Dokumenty wystawione w {{currentYear}} roku</span>
+
     </div>
 </div>
 <div>
     <table class="table table-striped table-hover table-caption mb-5">
         <caption class="title-caption py-3">
-            <span class="h4">§ {{ paragraph }} - {{ paragraph.name }}</span><br>
-            <small>Ostatnia aktualizacja: {{lastUpdate.creation_date|date:'d.m.Y'}} r.</small>
+
         </caption>
         <thead class="table-dark">
         <tr class="text-center">
+            <th align="center" valign="bottom" width="auto" scope="col">Data wypływu</th>
             <th align="center" valign="middle" width="auto" scope="col">Data faktury</th>
             <th align="center" valign="middle" width="auto" scope="col">Nr. dokumentu</th>
             <th align="center" valign="middle" width="auto" scope="col">Rodzaj dokumentu</th>
-            <th align="center" valign="middle" width="auto" scope="col">Okres</th>
-            <th align="center" valign="middle" width="auto" scope="col">Nr. licznika</th>
-            <th align="center" valign="middle" width="auto" scope="col">Stan licznika</th>
-            <th align="center" valign="middle" width="auto" scope="col">Zużycie</th>
+            <th align="center" valign="middle" width="auto" scope="col">Czynsz - zużycie</th>
+            <th align="center" valign="middle" width="auto" scope="col">Kompleksowa - zużycie</th>
+            <th align="center" valign="middle" width="auto" scope="col">OSD - zużycie</th>
+            <th align="center" valign="middle" width="auto" scope="col">Sprzedaż - zużycie</th>
             <th align="center" valign="middle" width="auto" scope="col">Kwota</th>
             <th align="center" valign="middle" width="auto" scope="col">Informacja</th>
             <th></th>
@@ -64,6 +56,9 @@
         {% for item in items %}
         <tr>
             <td align="center" valign="middle" width="120" scope="col">
+                {{ item.invoice_id.date_receipt }}
+            </td>
+            <td align="center" valign="middle" width="120" scope="col">
                 {{ item.invoice_id.date }}
             </td>
             <td align="left" valign="middle" width="180" scope="col">
@@ -72,24 +67,22 @@
             <td align="center" valign="middle" width="150" scope="col">
                 {{ item.invoice_id.doc_types }}
             </td>
-            <td align="center" valign="middle" width="200" scope="col">
-                {%if item.period_from and item.period_from %}
-                {{ item.period_from }} - {{ item.period_from }}
-                {% endif %}
-            </td>
-            <td align="center" valign="middle" width="180" scope="col">
-                {% if item.measurementSystemNumber%}
-                {{ item.measurementSystemNumber }}
-                {% endif %}
-            </td>
-            <td align="center" valign="middle" width="180" scope="col">
-                {% if item.counterReading%}
-                {{ item.counterReading }}
+            <td align="center" valign="middle" width="auto" scope="col">
+                {% if item.contract_types.id == 1%}
+                {{ item.consumption }} {{unitOfMeasure}}
+                {% endif %}</td>
+            <td align="center" valign="middle" width="auto" scope="col">
+                {% if item.contract_types.id == 2%}
+                {{ item.consumption }} {{unitOfMeasure}}
+                {% endif %}</td>
+            <td align="center" valign="middle" width="auto" scope="col">
+                {% if item.contract_types.id == 3%}
+                {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" width="auto" scope="col">
-                {% if item.consumption %}
-                {{ item.consumption }} kWh
+                {% if item.contract_types.id == 4%}
+                {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
             <td align="right" valign="middle" width="auto" scope="col">
@@ -99,7 +92,7 @@
                 Uzupełnij
                 {% endif %}
             </td>
-            <td align="left" valign="middle" width="450" scope="col">
+            <td align="left" valign="middle" width="20%" scope="col">
                 {{ item.information|default_if_none:'' }}
             </td>
             <td align="right" valign="middle" width="auto" scope="col">
@@ -167,11 +160,6 @@
         var url = $(button).data("url");
         $("#invoiceInfoModal .modal-content").load(url);
         $("#invoiceInfoModal").modal("show");
-    }
-    function openArchiveModal(button){
-        var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
     }
 </script>
 {% endblock %}

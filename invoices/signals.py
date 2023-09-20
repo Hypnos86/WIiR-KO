@@ -5,19 +5,17 @@ from invoices.models import Invoice, InvoiceItems, Paragraph, Group
 from units.models import County
 
 
-@receiver(post_save, sender=Invoice)
+@receiver(pre_save, sender=Invoice)
 def createSlugInvoice(sender, instance, **kwargs):
     slug_text = f'{instance.no_invoice}-{instance.id}'
     if not instance.slug:
         instance.slug = slugify(slug_text, )
-        instance.save()
 
 
-@receiver(post_save, sender=Paragraph)
+@receiver(pre_save, sender=Paragraph)
 def createSlugParagraph(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(instance.paragraph, )
-        instance.save()
 
 
 @receiver(post_save, sender=InvoiceItems)

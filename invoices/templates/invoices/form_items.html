@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
-            <a href="{% url 'main:invoiceSite' %}" class="btn-menu" data-toggle="info" title="Zapisz">
+            <a href="{% url 'main:welcome' %}" class="btn-menu" data-toggle="info" title="Zapisz">
                 <span class="bi bi-save2 custom-icon"></span>
             </a>
         </div>
@@ -98,6 +98,9 @@
                 <span>Okres rozliczeniowy</span>
             </th>
             <th align="center" valign="middle" scope="col">
+                <span>Rodzaj umowy</span>
+            </th>
+            <th align="center" valign="middle" scope="col">
                 <span>Nr. licznika</span>
             </th>
             <th align="center" valign="middle" scope="col">
@@ -128,6 +131,11 @@
             <td align="center" valign="middle" scope="col">
                 {% if item.period_from and item.period_to %}
                 {{item.period_from}} - {{item.period_to}}
+                {% endif %}
+            </td>
+            <td align="center" valign="middle" scope="col">
+                {% if item.contract_types %}
+                {{item.contract_types}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" scope="col">

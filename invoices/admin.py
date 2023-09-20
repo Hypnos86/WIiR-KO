@@ -35,7 +35,7 @@ class DocumentTypesAdmin(admin.ModelAdmin):
 
 @admin.register(ContractTypes)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['type']
+    list_display = ['id', 'type']
 
 
 @admin.register(Invoice)
