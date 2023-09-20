@@ -113,7 +113,7 @@ class UnitsListaMainView(View):
 
 
 class CostListMainView(View):
-    template_name = 'main/cost_list_main.html'
+    template_name = 'main/cost_list_unit_main.html'
     template_error = 'main/error.html'
 
     def get(self, request, countyCardSlug, unitSlug):
@@ -299,7 +299,7 @@ class InvoiceInfoView(View):
 
 
 class CostsDetailsListView(View):
-    template_name = 'main/cost_list_details.html'
+    template_name = 'main/cost_list_unit_details.html'
     template_error = 'main/error.html'
     paginate_by = 40
 
