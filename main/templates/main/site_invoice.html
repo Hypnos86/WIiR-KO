@@ -33,9 +33,15 @@
     <div class="w-100 pb-4 d-flex justify-content-center align-items-center flex-column text_center">
         <form id="form-search" method="get">
             <div class="input-group">
-                <input name="q" id="q" type="text" class="form-control rounded" placeholder="szukaj jednostki / dokumentu" aria-label="Search" aria-describedby="search-addon" value="{% if q %} {{q}} {% endif %}">
-                <button id="searchButton" style="{%if query%}display:none;{%endif%}" type="submit" class="btn btn-outline-primary btn-search">Szukaj</button>
-                <button id="cleanButton"  style="{%if not query%}display:none;{%endif%}" type="button" class="btn btn-outline-primary btn-search" onclick="cleanSearch()">Wyczyść</button>
+                <input name="q" id="q" type="text" class="form-control rounded"
+                       placeholder="szukaj" aria-label="Search" aria-describedby="search-addon"
+                       value="{% if q %} {{q}} {% endif %}">
+                <button id="searchButton" style="{%if query%}display:none;{%endif%}" type="submit"
+                        class="btn btn-outline-primary btn-search">Szukaj
+                </button>
+                <button id="cleanButton" style="{%if not query%}display:none;{%endif%}" type="button"
+                        class="btn btn-outline-primary btn-search" onclick="cleanSearch()">Wyczyść
+                </button>
             </div>
         </form>
     </div>
@@ -48,12 +54,12 @@
         </caption>
         <thead class="table-dark">
         <tr class="text-center">
-            <th align="center" valign="middle" width="200" scope="col">Data wypływu</th>
-            <th align="center" valign="middle" width="200" scope="col">Data dokumentu</th>
+            <th align="center" valign="middle" width="10%" scope="col">Data wypływu</th>
+            <th align="center" valign="middle" width="10%" scope="col">Data dokumentu</th>
             <th align="center" valign="middle" width="auto" scope="col">Nr. dokumentu</th>
-            <th align="center" valign="middle" width="200" scope="col">Rodzaj dokumentu</th>
-            <th align="center" valign="middle" width="200" scope="col">Elementów</th>
-            <th align="center" valign="middle" width="200" scope="col">Kwota</th>
+            <th align="center" valign="middle" width="10%" scope="col">Rodzaj dokumentu</th>
+            <th align="center" valign="middle" width="5%" scope="col">Elementów</th>
+            <th align="center" valign="middle" width="10%" scope="col">Kwota</th>
             <th align="left" valign="middle" width="auto" scope="col">Informacja</th>
             <th align="center" valign="middle" width="auto" scope="col"></th>
         </tr>
@@ -61,19 +67,19 @@
         <tbody>
         {% for invoice in invoices %}
         <tr>
-            <td align="center" valign="middle" width="10%" scope="col">
+            <td align="center" valign="middle" scope="col">
                 {{ invoice.date_receipt }}
             </td>
-            <td align="center" valign="middle" width="10%" scope="col">
+            <td align="center" valign="middle" scope="col">
                 {{ invoice.date }}
             </td>
-            <td align="left" valign="middle" width="auto" scope="col">
+            <td align="left" valign="middle" scope="col">
                 {{ invoice.no_invoice }}
             </td>
-            <td align="center" valign="middle" width="10%" scope="col">
+            <td align="center" valign="middle" scope="col">
                 {{ invoice.doc_types }}
             </td>
-            <td align="center" valign="middle" width="5%" scope="col">
+            <td align="center" valign="middle" scope="col">
                 {% if invoice.items.all|length == 0%}
                 <div class="bold text-danger" data-toggle="info" title="Uzupełni elementy faktury">
                     {{ invoice.items.all|length }}
@@ -82,20 +88,20 @@
                 {{ invoice.items.all|length }}
                 {%endif%}
             </td>
-            <td align="right" valign="middle" width="10%" scope="col">
+            <td align="right" valign="middle" scope="col">
                 {{ invoice.sum|intcomma }} zł
             </td>
-            <td align="left" valign="middle" width="auto" scope="col">
+            <td align="left" valign="middle" scope="col">
                 {{ invoice.information|default_if_none:'' }}
             </td>
-            <td align="right" valign="middle" width="auto" scope="col">
+            <td align="right" valign="middle" scope="col">
                 <a class="btn-menu mx-1" data-url="{% url 'main:infoInvoice' invoice.id %}"
                    onclick="openInvoiceInfoModal(this)" data-toggle="info" title="Edytuj">
                     <i class="bi bi-eye"></i>
                     {% if user.is_authenticated %}
                 </a>
                 <a class="btn-menu mx-1" href="{% url 'invoices:deleteInvoice' invoice.slug %}" data-toggle="info"
-                   title="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć?')">
+                   title="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć dokument?')">
                     <i class="bi bi-trash3"></i>
                 </a>
                 {% endif %}

@@ -176,9 +176,28 @@ class UnitsView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
-            units = Unit.objects.all()
-            context = {'units': units}
-            return render(request, self.template_name, context)
+            units = Unit.objects.all().order_by('county_unit__id_order')
+            activeUnits = len(units.filter(status=True))
+            archiveUnits = len(units.filter(status=False))
+
+            query = "Wyczyść"
+            search = "Szukaj"
+            q = request.GET.get("q")
+
+            if q:
+                units = units.filter(unit_full_name__icontains=q) \
+                        | units.filter(city__icontains=q) \
+                        | units.filter(type__type_short__icontains=q) \
+                        | units.filter(manager__icontains=q) \
+                        | units.filter(information__icontains=q)
+
+                context = {'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
+                           'archiveUnits': archiveUnits}
+                return render(request, self.template_name, context)
+            else:
+
+                context = {'units': units, "search": search, 'activeUnits': activeUnits, 'archiveUnits': archiveUnits}
+                return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
             logger.error("Error: %s", e)
@@ -431,3 +450,22 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                 context = {'error': e}
                 logger.error("Error: %s", e)
                 return render(request, self.template_error, context)
+
+
+class UnitDetailsView(View):
+    template_name = 'main/unit_details_info.html'
+    template_error = 'main/error.html'
+
+    def get(self, request, unitSlug):
+        title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+        unit = get_object_or_404(Unit, slug=unitSlug)
+        paragraphs = Paragraph.objects.all()
+
+        items = unit.items.all()
+        tableObject = [{'year': 2020}]
+        # {year: [{paragraph, sum},{paragraph, sum}, {paragraph, sum} ] }
+        for item in items:
+            year = item.invoice_id.date.year
+
+        context = {'unit': unit, 'paragraphs': paragraphs, 'title': title}
+        return render(request, self.template_name, context)

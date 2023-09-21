@@ -58,25 +58,25 @@
                 - {{ item.unit.object_name }}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" width="150" scope="col">
+            <td align="left" valign="middle" width="150" scope="col">
                 {{ item.invoice_id.no_invoice }}
             </td>
-            <td align="center" valign="middle" width="auto" scope="col">
+            <td align="right" valign="middle" width="auto" scope="col">
                 {% if item.consumption and item.contract_types.id == 1%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" width="auto" scope="col">
+            <td align="right" valign="middle" width="auto" scope="col">
                 {% if item.consumption and item.contract_types.id == 2%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" width="auto" scope="col">
+            <td align="right" valign="middle" width="auto" scope="col">
                 {% if item.consumption and item.contract_types.id == 3%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" width="auto" scope="col">
+            <td align="right" valign="middle" width="auto" scope="col">
                 {% if  item.consumption and item.contract_types.id == 4%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}

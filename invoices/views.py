@@ -121,6 +121,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.invoice_id = invoice
+                instance.author = request.user
                 form.save()
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
