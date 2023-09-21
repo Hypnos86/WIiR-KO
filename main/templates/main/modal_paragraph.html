@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-center  p-3">
         <div class="list-group">
             {% for paragraph in paragraphs %}
-            <a href="{% url 'main:paragraphCostList' paragraph.slug %}" class="btn btn-main d-block my-2">§ {{ paragraph }}</a>
+            <a href="{% url 'main:paragraphCostList' paragraph.slug %}" class="btn-menu d-block my-2">§ {{ paragraph }}</a>
             {% endfor %}
         </div>
     </div>

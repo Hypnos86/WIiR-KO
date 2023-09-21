@@ -170,17 +170,14 @@ class CostListMainView(View):
             return render(request, self.template_error, context)
 
 
-class ArchiveView(LoginRequiredMixin, View):
-    template_name = 'main/site_archive.html'
+class UnitsView(LoginRequiredMixin, View):
+    template_name = 'main/site_units.html'
     template_error = 'main/error.html'
 
     def get(self, request):
         try:
-            now_year = currentDate.current_year()
-            archiveYears = Invoice.objects.all().values('date__year').exclude(date__year=now_year)
-            archiveYearsSet = set([year['date__year'] for year in archiveYears])
-            archiveYearsList = sorted(archiveYearsSet, reverse=True)
-            context = {'archiveYearsList': archiveYearsList}
+            units = Unit.objects.all()
+            context = {'units': units}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -297,8 +294,12 @@ class InvoicesListView(LoginRequiredMixin, View):
             if q:
                 invoices = invoices.filter(no_invoice__icontains=q) \
                            | invoices.filter(sum__icontains=q) \
+                           | invoices.filter(items__paragraph__paragraph__icontains=q) \
                            | invoices.filter(doc_types__type__startswith=q) \
                            | invoices.filter(information__icontains=q)
+
+                invoicesSet = set(invoices)
+                invoices = sorted(invoicesSet, key=lambda x: x.date, reverse=True)
 
                 context = {'invoices': invoices, "query": query, 'q': q}
                 return render(request, self.template_name, context)
@@ -353,7 +354,7 @@ class CostsDetailsListView(View):
                     unitOfMeasure = parEnum.value[1]
 
             context = {'unit': unit, 'items': itemsList, 'currentYear': currentYear, 'paragraph': paragraph,
-                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure':unitOfMeasure}
+                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -363,14 +364,18 @@ class CostsDetailsListView(View):
 
 class ParagraphModalView(View):
     template_name = 'main/modal_paragraph.html'
+    template_error = 'main/error.html'
 
     def get(self, request):
         try:
             paragraphs = Paragraph.objects.all()
             context = {'paragraphs': paragraphs}
             return render(request, self.template_name, context)
+
         except Exception as e:
+            context = {'error': e}
             logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
 
 
 class ParagraphCostListView(LoginRequiredMixin, View):
@@ -387,7 +392,6 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                 paragraph = Paragraph.objects.get(slug=paragraphSlug)
                 items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug)
 
-                # TODO wyciagnac z items wszystkie faktury i stworzyc obiekt z sumowaniem items
                 paginator = Paginator(items, self.paginate_by)
                 page_number = request.GET.get('page')
                 items_pages = paginator.get_page(page_number)
@@ -397,13 +401,33 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                     if paragraphSlug == parEnum.value[0]:
                         unitOfMeasure = parEnum.value[1]
 
-                context = {'items': items_pages, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure}
-                return render(request, self.template_name_media, context)
+                query = "Wyczyść"
+                search = "Szukaj"
+                q = request.GET.get("q")
+
+                if q:
+                    items = items.filter(invoice_id__no_invoice__icontains=q) \
+                            | items.filter(invoice_id__doc_types__type__startswith=q) \
+                            | items.filter(unit__unit_full_name__icontains=q) \
+                            | items.filter(information__icontains=q)
+
+                    context = {'items': items, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
+                               "query": query, 'q': q}
+                    return render(request, self.template_name_media, context)
+                else:
+                    context = {'items': items_pages, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
+                               "search": search, 'q': q}
+                    return render(request, self.template_name_media, context)
+
             except Exception as e:
+                context = {'error': e}
                 logger.error("Error: %s", e)
+                return render(request, self.template_error, context)
         else:
             try:
                 context = {}
                 return render(request, self.template_name_general, context)
             except Exception as e:
+                context = {'error': e}
                 logger.error("Error: %s", e)
+                return render(request, self.template_error, context)

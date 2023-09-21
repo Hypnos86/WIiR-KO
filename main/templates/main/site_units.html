@@ -10,14 +10,14 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">Archiwum</h5>
+                <h5 class="h5 m-0 font-weight-bold text-uppercase">Jednostki</h5>
             </div>
         </div>
     </div>
     <div class="row">
-        {% for year in archiveYearsList%}
+        {% for unit in units%}
         <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center ">
-            <a href="" class="btn btn-archive d-block">{{ year }}</a>
+            <a href="" class="btn btn-archive d-block">{{ unit }}</a>
         </div>
         {% endfor %}
     </div>

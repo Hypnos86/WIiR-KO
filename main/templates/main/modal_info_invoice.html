@@ -54,13 +54,13 @@
         <div class="mt-2">
             <ul class="list-group">
                 {% for item in items %}
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
-                    <span class="px-2">| {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} |</span>
-                    <span class="px-2 bold"> {{item.sum|intcomma}} zł</span></span>
-                    {% if item.information %}
-                    <p>{{item.information}}</p>
-                    {% endif %}
+                <li class="list-group-item d-flex justify-content-between" data-toggle="info"
+                    title="{{item.information}}">
+                    <span class="w-50">{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})</span>
+                    <div class="d-flex justify-content-between w-50">
+                        <span class="">| {{item.section.section}} - {{item.group}} - §{{item.paragraph.paragraph}} |</span>
+                        <span class="bold"> {{item.sum|intcomma}} zł</span>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
