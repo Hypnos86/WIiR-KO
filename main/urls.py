@@ -18,7 +18,7 @@ urlpatterns = [
     # Lista kosztów jednostki
     path('card/<slug:countyCardSlug>/<slug:unitSlug>/', CostListMainView.as_view(), name='unit_details'),
     # Szczegóły kosztów
-    path('card/<slug:countyCardSlug>/<slug:unitSlug>/<slug:paragraphSlug>/', CostsDetailsListView.as_view(),
+    path('card/<slug:countyCardSlug>/<slug:unitSlug>/<slug:paragraphSlug>/<int:year>/', CostsDetailsListView.as_view(),
          name='unitCostList'),
     # Szczegóły jednostki - informacje
     path('info/unit/<slug:unitSlug>/', UnitDetailsView.as_view(), name='unitDetailsInfo'),

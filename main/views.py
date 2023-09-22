@@ -160,7 +160,7 @@ class CostListMainView(View):
                     }
                     items.append(selected_properties)
                 paragraph_data.append({'paragraph': paragraph, 'items': items})
-            context = {'unit': unit, 'paragraph_data': paragraph_data, 'currentYear': currentYear,
+            context = {'unit': unit, 'paragraph_data': paragraph_data, 'year': currentYear,
                        'countyCardSlug': countyCardSlug}
             return render(request, self.template_name, context)
 
@@ -262,10 +262,12 @@ class ArchiveYearCostListView(View):
         try:
             currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=unitSlug)
+            countySlug = unit.county_unit.slug
             items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug, unit__id=unit.id)
             yearsSet = set([year.invoice_id.date.year for year in items])
             years = sorted(yearsSet, reverse=True)
-            context = {'unitSlug': unitSlug, 'paragraph_slug': paragraphSlug, 'years': years, 'unitCost': False}
+            context = {'countySlug': countySlug, 'unitSlug': unitSlug, 'paragraphSlug': paragraphSlug, 'years': years,
+                       'unitCost': False}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -354,12 +356,11 @@ class CostsDetailsListView(View):
     template_error = 'main/error.html'
     paginate_by = 40
 
-    def get(self, request, countyCardSlug, unitSlug, paragraphSlug):
+    def get(self, request, countyCardSlug, unitSlug, paragraphSlug, year):
         try:
-            currentYear = CurrentDate().current_year()
             unit = get_object_or_404(Unit, slug=unitSlug)
             items = InvoiceItems.objects.filter(unit__slug=unitSlug, paragraph__slug=paragraphSlug,
-                                                invoice_id__date__year=currentYear).order_by('-invoice_id__date')
+                                                invoice_id__date__year=year).order_by('-invoice_id__date')
             lastUpdate = items.last()
             paragraph = Paragraph.objects.get(slug=paragraphSlug)
 
@@ -372,7 +373,7 @@ class CostsDetailsListView(View):
                 if paragraphSlug == parEnum.value[0]:
                     unitOfMeasure = parEnum.value[1]
 
-            context = {'unit': unit, 'items': itemsList, 'currentYear': currentYear, 'paragraph': paragraph,
+            context = {'unit': unit, 'items': itemsList, 'year': year, 'paragraph': paragraph,
                        'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -457,41 +458,46 @@ class UnitDetailsView(View):
     template_error = 'main/error.html'
 
     def get(self, request, unitSlug):
-        title = 'Grupa 6 - Administracja i utrzymanie obiektów'
-        unit = get_object_or_404(Unit, slug=unitSlug)
-        paragraphs = Paragraph.objects.all()
+        try:
+            title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+            unit = get_object_or_404(Unit, slug=unitSlug)
+            paragraphs = Paragraph.objects.all()
 
-        items = unit.items.all()
-        tableObjects = []
+            items = unit.items.all()
+            tableObjects = []
 
-        for item in items:
-            year = item.invoice_id.date.year
-            year_exist = False
+            for item in items:
+                year = item.invoice_id.date.year
+                year_exist = False
 
-            for year_entry in tableObjects:
-                if year_entry['year'] == year:
-                    for data_entry in year_entry['data']:
-                        if data_entry['paragraph'] == item.paragraph.paragraph:
-                            data_entry['sum'] += item.sum
+                for year_entry in tableObjects:
+                    if year_entry['year'] == year:
+                        for data_entry in year_entry['data']:
+                            if data_entry['paragraph'] == item.paragraph.paragraph:
+                                data_entry['sum'] += item.sum
+                                year_exist = True
+                                break
+
+                        if not year_exist:
+                            year_entry['data'].append({'paragraph': item.paragraph.paragraph, 'sum': item.sum})
                             year_exist = True
-                            break
 
-                    if not year_exist:
-                        year_entry['data'].append({'paragraph': item.paragraph.paragraph, 'sum': item.sum})
-                        year_exist = True
+                if not year_exist:
+                    new_data_entry = {'paragraph': item.paragraph.paragraph, 'sum': item.sum}
+                    year_entry = {'year': year, 'data': [new_data_entry]}
+                    tableObjects.append(year_entry)
 
-            if not year_exist:
-                new_data_entry = {'paragraph': item.paragraph.paragraph, 'sum': item.sum}
-                year_entry = {'year': year, 'data': [new_data_entry]}
-                tableObjects.append(year_entry)
+            # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs.values('paragraph'))
+            for year_entry in tableObjects:
+                existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                missing_paragraphs = all_paragraphs - existing_paragraphs
+                for missing_paragraph in missing_paragraphs:
+                    year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
-        # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
-        all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs.values('paragraph'))
-        for year_entry in tableObjects:
-            existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
-            missing_paragraphs = all_paragraphs - existing_paragraphs
-            for missing_paragraph in missing_paragraphs:
-                year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
-
-        context = {'unit': unit, 'paragraphs': paragraphs, 'title': title, 'tableObjects': tableObjects}
-        return render(request, self.template_name, context)
+            context = {'unit': unit, 'paragraphs': paragraphs, 'title': title, 'tableObjects': tableObjects}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)

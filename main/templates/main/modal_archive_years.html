@@ -7,14 +7,19 @@
     </div>
     {% if unitCost %}
     <form class="" method="GET" action="{% url 'main:archiveYearsUnitCost' slugCounty  %}">
+        {%csrf_token%}
+        {% for year in years%}
+        <a href="" class="btn-menu m-2">{{year}}</a>
+        {% endfor %}
+    </form>
     {%else%}
-    <form class="" method="GET" action="{% url 'main:archiveYears' unitSlug paragraph_slug %}">
+    <form class="" method="GET" action="{% url 'main:archiveYears' unitSlug paragraphSlug %}">
+        {%csrf_token%}
+        {% for year in years%}
+        <a href="{% url 'main:unitCostList' countySlug unitSlug paragraphSlug year%}" class="btn-menu m-2">{{year}}</a>
+        {% endfor %}
+    </form>
     {%endif%}
-            {%csrf_token%}
-            {% for year in years%}
-            <a href="" class="btn-menu m-2">{{year}}</a>
-            {% endfor %}
-        </form>
 </div>
 {%endblock%}
 

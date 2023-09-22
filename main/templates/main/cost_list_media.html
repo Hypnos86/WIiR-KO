@@ -58,8 +58,8 @@
                 - {{ item.unit.object_name }}
                 {% endif %}
             </td>
-            <td align="left" valign="middle" width="150" scope="col">
-                {{ item.invoice_id.no_invoice }}
+            <td align="left" valign="middle" width="auto" scope="col">
+                {{ item.invoice_id.no_invoice }} z dnia {{ item.invoice_id.date|date:"d.m.Y" }}
             </td>
             <td align="right" valign="middle" width="auto" scope="col">
                 {% if item.consumption and item.contract_types.id == 1%}

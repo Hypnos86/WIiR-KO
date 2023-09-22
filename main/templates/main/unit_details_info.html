@@ -5,8 +5,9 @@
 <div class="container">
     <div class="container pt-5">
         <div class="row mb-3">
-            <div class="col-3 col-sm-2 col-md-2 col-lg-2  ">
-                <a href="{% url 'main:unitsSite' %}" class="btn-menu">
+            <div class="col-3 col-sm-3 col-md-2 col-lg-2  ">
+                <a href="{% url 'main:unitCountyMain' unit.county_unit.slug %}" class="btn-menu" data-toggle="info"
+                   title="Karty">
                     <span class="bi bi-arrow-90deg-left custom-icon"></span>
                 </a>
             </div>
@@ -14,6 +15,13 @@
                 <div>
                     <h5 class="h5 m-0 font-weight-bold">{{unit}}</h5>
                 </div>
+            </div>
+            <div class="col-8 col-sm-8 col-md-6 col-lg-2 d-flex align-items-center justify-content-end">
+                {% if user.is_authenticated %}
+                <a href="{% url 'main:unitsSite' %}" class="btn-menu mx-4" data-toggle="info" title="Jednostki">
+                    <span class="bi bi-arrow-90deg-up custom-icon"></span>
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -47,15 +55,16 @@
         <tr>
             <td align="center" valign="middle" width="auto" scope="col">{{ object.year }}</td>
             {% for paragraph_group in paragraphs %}
-            <td align="center" valign="middle" width="auto" scope="col"">
-                {% for paragraph_data in object.data %}
-                {% if paragraph_data.paragraph == paragraph_group.paragraph %}
-                {{ paragraph_data.sum|intcomma }} zł <br>
-                ({{paragraph_data.paragraph}})
-                {% endif %}
-                {% empty %}
-                0 zł
-                {% endfor %}
+            <td align="center" valign="middle" width="auto" scope="col"
+            ">
+            {% for paragraph_data in object.data %}
+            {% if paragraph_data.paragraph == paragraph_group.paragraph %}
+            {{ paragraph_data.sum|intcomma }} zł <br>
+            ({{paragraph_data.paragraph}})
+            {% endif %}
+            {% empty %}
+            0 zł
+            {% endfor %}
             </td>
             {% endfor %}
         </tr>
