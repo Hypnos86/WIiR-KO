@@ -462,10 +462,20 @@ class UnitDetailsView(View):
         paragraphs = Paragraph.objects.all()
 
         items = unit.items.all()
-        tableObject = [{'year': 2020}]
+        tableObject = []
         # {year: [{paragraph, sum},{paragraph, sum}, {paragraph, sum} ] }
         for item in items:
             year = item.invoice_id.date.year
+            year_exist = False
+            for object in tableObject:
+                if object['year'] == year:
+                    object['data'].append({'paragraph': item.paragraph, 'sum': item.sum})
+                    print(object)
+                    year_exist = True
 
+            if not year_exist:
+                tableObject.append({'year': year, 'data': [{'paragraph': item.paragraph, 'sum': item.sum}]})
+
+        print(tableObject)
         context = {'unit': unit, 'paragraphs': paragraphs, 'title': title}
         return render(request, self.template_name, context)
