@@ -462,34 +462,36 @@ class UnitDetailsView(View):
         paragraphs = Paragraph.objects.all()
 
         items = unit.items.all()
-        tableObject = []
-        # {year: xxx, data: [{paragraph, sum},{paragraph, sum}, {paragraph, sum} ] }
-        print(f'itemy: {items}')
+        tableObjects = []
+
         for item in items:
             year = item.invoice_id.date.year
             year_exist = False
-            for object in tableObject:
-                print(f'object 1: {object}')
-                if object['year'] == year:
-                    for paragraph in object['data']:
-                        print(f'paragraf: {paragraph}')
-                        print(f'paragraf z item: {item.paragraph.paragraph}')
-                        print(f'paragraf z table object: {paragraph["paragraph"]}')
-                        if paragraph['paragraph'] == item.paragraph.paragraph:
-                            sum_value = item.sum
-                            print(f'suma value: {sum_value}')
-                            paragraph['sum'] += sum_value
-                            print(paragraph['sum'])
-                            object['data'].append({'paragraph': paragraph, 'sum': sum_value})
-                            year_exist = True
-                            print(object)
-                # else:
-                #     tableObject.append(
-                #         {'year': year, 'data': [{'paragraph': item.paragraph.paragraph, 'sum': item.sum}]})
-            if not year_exist:
-                tableObject.append({'year': year, 'data': [{'paragraph': item.paragraph.paragraph, 'sum': item.sum}]})
-                print(f'table object tworzone po raz pierwszy: {tableObject}')
 
-        print(tableObject)
-        context = {'unit': unit, 'paragraphs': paragraphs, 'title': title}
+            for year_entry in tableObjects:
+                if year_entry['year'] == year:
+                    for data_entry in year_entry['data']:
+                        if data_entry['paragraph'] == item.paragraph.paragraph:
+                            data_entry['sum'] += item.sum
+                            year_exist = True
+                            break
+
+                    if not year_exist:
+                        year_entry['data'].append({'paragraph': item.paragraph.paragraph, 'sum': item.sum})
+                        year_exist = True
+
+            if not year_exist:
+                new_data_entry = {'paragraph': item.paragraph.paragraph, 'sum': item.sum}
+                year_entry = {'year': year, 'data': [new_data_entry]}
+                tableObjects.append(year_entry)
+
+        # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+        all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs.values('paragraph'))
+        for year_entry in tableObjects:
+            existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+            missing_paragraphs = all_paragraphs - existing_paragraphs
+            for missing_paragraph in missing_paragraphs:
+                year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
+
+        context = {'unit': unit, 'paragraphs': paragraphs, 'title': title, 'tableObjects': tableObjects}
         return render(request, self.template_name, context)
