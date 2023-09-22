@@ -463,18 +463,32 @@ class UnitDetailsView(View):
 
         items = unit.items.all()
         tableObject = []
-        # {year: [{paragraph, sum},{paragraph, sum}, {paragraph, sum} ] }
+        # {year: xxx, data: [{paragraph, sum},{paragraph, sum}, {paragraph, sum} ] }
+        print(f'itemy: {items}')
         for item in items:
             year = item.invoice_id.date.year
             year_exist = False
             for object in tableObject:
+                print(f'object 1: {object}')
                 if object['year'] == year:
-                    object['data'].append({'paragraph': item.paragraph, 'sum': item.sum})
-                    print(object)
-                    year_exist = True
-
+                    for paragraph in object['data']:
+                        print(f'paragraf: {paragraph}')
+                        print(f'paragraf z item: {item.paragraph.paragraph}')
+                        print(f'paragraf z table object: {paragraph["paragraph"]}')
+                        if paragraph['paragraph'] == item.paragraph.paragraph:
+                            sum_value = item.sum
+                            print(f'suma value: {sum_value}')
+                            paragraph['sum'] += sum_value
+                            print(paragraph['sum'])
+                            object['data'].append({'paragraph': paragraph, 'sum': sum_value})
+                            year_exist = True
+                            print(object)
+                # else:
+                #     tableObject.append(
+                #         {'year': year, 'data': [{'paragraph': item.paragraph.paragraph, 'sum': item.sum}]})
             if not year_exist:
-                tableObject.append({'year': year, 'data': [{'paragraph': item.paragraph, 'sum': item.sum}]})
+                tableObject.append({'year': year, 'data': [{'paragraph': item.paragraph.paragraph, 'sum': item.sum}]})
+                print(f'table object tworzone po raz pierwszy: {tableObject}')
 
         print(tableObject)
         context = {'unit': unit, 'paragraphs': paragraphs, 'title': title}

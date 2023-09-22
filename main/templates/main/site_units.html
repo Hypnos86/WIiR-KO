@@ -60,9 +60,11 @@
                    href="{% url 'main:unitDetailsInfo' unit.slug %}">
                     <i class="bi bi-info-square"></i>
                 </a>
+                {% if user.is_authenticated %}
                 <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
                     <i class="bi bi-pencil-square"></i>
                 </a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
