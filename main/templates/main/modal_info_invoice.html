@@ -57,9 +57,13 @@
                 <li class="list-group-item d-flex justify-content-between" data-toggle="info"
                     title="{{item.information}}">
                     {% if user.is_authenticated %}
-                    <a class="w-50"  href="{% url 'main:unit_details' item.unit.county_unit.slug item.unit.slug %}">
-                        <span >{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})</span>
-                    </a>
+                    <span>{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
+                        <a class="w-50 color-sea"
+                           href="{% url 'main:unit_details' item.unit.county_unit.slug item.unit.slug %}"
+                           data-toggle="info" title="Przenieś">
+                            <i class="bi bi-folder-symlink custom-icon"></i>
+                        </a>
+                    </span>
                     {% else %}
                     <span class="w-50">{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})</span>
                     {% endif %}
