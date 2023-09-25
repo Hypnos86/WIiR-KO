@@ -445,8 +445,31 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                 return render(request, self.template_error, context)
         else:
             try:
-                context = {}
-                return render(request, self.template_name_general, context)
+                paragraph = Paragraph.objects.get(slug=paragraphSlug)
+                items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug)
+
+                paginator = Paginator(items, self.paginate_by)
+                page_number = request.GET.get('page')
+                items_pages = paginator.get_page(page_number)
+
+                query = "Wyczyść"
+                search = "Szukaj"
+                q = request.GET.get("q")
+
+                if q:
+                    items = items.filter(invoice_id__no_invoice__icontains=q) \
+                            | items.filter(invoice_id__doc_types__type__startswith=q) \
+                            | items.filter(unit__unit_full_name__icontains=q) \
+                            | items.filter(information__icontains=q)
+
+                    context = {'items': items, 'paragraph': paragraph,
+                               "query": query, 'q': q}
+                    return render(request, self.template_name_general, context)
+                else:
+                    context = {'items': items_pages, 'paragraph': paragraph,
+                               "search": search, 'q': q}
+                    return render(request, self.template_name_general, context)
+
             except Exception as e:
                 context = {'error': e}
                 logger.error("Error: %s", e)
@@ -467,7 +490,7 @@ class UnitDetailsView(View):
             tableObjects = []
 
             for item in items:
-                year = item.invoice_id.date.year
+                year = item.invoice_id.date_of_payment.year
                 year_exist = False
 
                 for year_entry in tableObjects:

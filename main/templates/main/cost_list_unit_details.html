@@ -77,7 +77,7 @@
             </td>
             <td align="center" valign="middle" width="200" scope="col">
                 {%if item.period_from and item.period_from %}
-                {{ item.period_from }} - {{ item.period_from }}
+                {{ item.period_from|date:'d.m.Y' }} - {{ item.period_from|date:'d.m.Y' }}
                 {% endif %}
             </td>
             <td align="center" valign="middle" width="100" scope="col">

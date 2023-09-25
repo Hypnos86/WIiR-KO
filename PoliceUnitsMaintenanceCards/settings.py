@@ -122,7 +122,7 @@ LOGGING = {
             'filename': datetime.datetime.now().strftime("logError_%Y-%m-%d_%H.log"),
             'when': 'H',
             'interval': 12,
-            'backupCount': 50,
+            'backupCount': 100,
             'formatter': 'verbose',
         },
     },
