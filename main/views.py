@@ -534,16 +534,14 @@ class MediaInfoUnitView(View):
         try:
             title = 'Media'
             unit = get_object_or_404(Unit, pk=id)
-            paragraphs = Paragraph.objects.all().filter(paragraph__startswith='4260')
-
+            paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
+            print(paragraphsModel)
             items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż')
             tableObjects = []
 
             for item in items:
                 year = item.invoice_id.date_of_payment.year
                 year_exist = False
-                paragraph = ['4260-01', '4260-02', '4260-03', '4260-04', '4210-03']
-                print(paragraph)
                 for year_entry in tableObjects:
                     if year_entry['year'] == year:
                         for data_entry in year_entry['data']:
@@ -563,15 +561,31 @@ class MediaInfoUnitView(View):
                     tableObjects.append(year_entry)
 
             # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
-            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs.values('paragraph'))
+            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
             for year_entry in tableObjects:
                 existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
                 missing_paragraphs = all_paragraphs - existing_paragraphs
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-            print(tableObjects)
-            context = {'title': title, 'unit': unit, 'paragraphs': paragraphs}
+
+
+            # print(tableObjects)
+            # paragraphsFilter = []
+            # for object in tableObjects:
+            #     for paragraph in object['data']:
+            #         paragraphsFilter.append(paragraph['paragraph'])
+            # paragraphsOnly = set(paragraphsFilter)
+            #
+            # par = []
+            # for paragraph in paragraphsModel:
+            #     if paragraph.paragraph in list(paragraphsOnly):
+            #         par.append({'paragraph': paragraph.paragraph, 'name': paragraph.name})
+            #
+            # paragraphs = [{'paragraph': paragraph.paragraph, 'name': paragraph.name} for paragraph in paragraphsModel if
+            #        paragraph.paragraph in paragraphsOnly]
+
+            context = {'title': title, 'unit': unit, 'paragraphs': paragraphsModel}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
