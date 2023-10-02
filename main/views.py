@@ -524,3 +524,56 @@ class UnitDetailsView(View):
             context = {'error': e}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
+
+class MediaInfoUnitView(View):
+    template_name = 'main/modal_info_unit.html'
+    template_error = 'main/error.html'
+
+    def get(self, request, id):
+        try:
+            title = 'Media'
+            unit = get_object_or_404(Unit, pk=id)
+            paragraphs = Paragraph.objects.all().filter(paragraph__startswith='4260')
+
+            items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż')
+            tableObjects = []
+
+            for item in items:
+                year = item.invoice_id.date_of_payment.year
+                year_exist = False
+                paragraph = ['4260-01', '4260-02', '4260-03', '4260-04', '4210-03']
+                print(paragraph)
+                for year_entry in tableObjects:
+                    if year_entry['year'] == year:
+                        for data_entry in year_entry['data']:
+                            if data_entry['paragraph'] == item.paragraph.paragraph:
+                                data_entry['consumption'] += item.consumption
+                                year_exist = True
+                                break
+
+                        if not year_exist:
+                            year_entry['data'].append(
+                                {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+                            year_exist = True
+
+                if not year_exist:
+                    new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
+                    year_entry = {'year': year, 'data': [new_data_entry]}
+                    tableObjects.append(year_entry)
+
+            # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs.values('paragraph'))
+            for year_entry in tableObjects:
+                existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                missing_paragraphs = all_paragraphs - existing_paragraphs
+                for missing_paragraph in missing_paragraphs:
+                    year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+
+            print(tableObjects)
+            context = {'title': title, 'unit': unit, 'paragraphs': paragraphs}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
