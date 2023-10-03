@@ -532,9 +532,10 @@ class MediaInfoUnitView(View):
 
     def get(self, request, id):
         try:
-            title = 'Media'
+            title = 'Zużycie mediów'
             unit = get_object_or_404(Unit, pk=id)
             paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
+            print(paragraphsModel)
             items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż')
             tableObjects = []
 
@@ -567,8 +568,6 @@ class MediaInfoUnitView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-
-            print(tableObjects)
             # print(tableObjects)
             # paragraphsFilter = []
             # for object in tableObjects:
@@ -584,7 +583,7 @@ class MediaInfoUnitView(View):
             # paragraphs = [{'paragraph': paragraph.paragraph, 'name': paragraph.name} for paragraph in paragraphsModel if
             #        paragraph.paragraph in paragraphsOnly]
 
-            context = {'title': title, 'unit': unit, 'paragraphs': paragraphsModel, 'tableObjects':tableObjects}
+            context = {'title': title, 'unit': unit, 'paragraphs': paragraphsModel, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
