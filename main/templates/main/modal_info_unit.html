@@ -16,7 +16,7 @@
                 {% for paragraph in paragraphs %}
                 <th align="center" valign="middle" width="200" scope="col" data-toggle="info"
                     title="{{ paragraph.name }}">
-                    § {{ paragraph.paragraph }}
+                    {{ paragraph.name }}
                 </th>
                 {% endfor %}
             </tr>
@@ -25,15 +25,15 @@
             {% for object in tableObjects %}
             <tr>
                 <td align="center" valign="middle" width="auto" scope="col">{{ object.year }}</td>
-                {% for paragraph_group in paragraphs %}
+                {% for paragraph in paragraphs %}
                 <td align="center" valign="middle" width="auto" scope="col">
-                    {% for paragraph_data in object.data %}
-                    {% if paragraph_data.paragraph == paragraph_group.paragraph %}
-                    {{ paragraph_data.sum|intcomma }} zł <br>
-                    ({{paragraph_data.paragraph}})
+                    {% for data in object.data %}
+                    {% if data.paragraph == paragraph.paragraph %}
+                    {{ data.consumption|intcomma }} <br>
+
                     {% endif %}
                     {% empty %}
-                    0 zł
+                    0
                     {% endfor %}
                 </td>
                 {% endfor %}
