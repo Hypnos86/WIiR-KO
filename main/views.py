@@ -589,3 +589,19 @@ class MediaInfoUnitView(View):
             context = {'error': e}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
+
+class CountyCostUnitListView(View):
+    template_name = 'main/cost_list_county_unit.html'
+    template_error = 'main/error.html'
+
+    def get(self, request, countyCardSlug):
+        try:
+            county = CountyCard.objects.get(slug=countyCardSlug)
+            paragraphs = Paragraph.objects.all()
+            context = {'county': county, 'paragraphs':paragraphs}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<div class="container pt-5">
+    <div class="row mb-3">
+        <div class="col-3 col-sm-2 col-md-2 col-lg-2  ">
+            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn-menu">
+                <span class="bi bi-arrow-90deg-left custom-icon"></span>
+            </a>
+        </div>
+        <div class="col-8 col-sm-8 col-md-8 col-lg-8 d-flex align-items-center justify-content-center">
+            <div>
+                <h5 class="h5 m-0 font-weight-bold"> Wydatki: {{county}}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <table class="table table-striped table-hover table-caption mb-5">
+        <thead class="table-dark">
+        <tr class="text-center">
+            <th align="center" valign="middle" width="auto" scope="col">Jednostka</th>
+            {% for paragraph in paragraphs%}
+            <th align="center" valign="middle" width="auto" scope="col">§ {{paragraph.paragraph}}</th>
+            {%endfor%}
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+        <tr>
+            <td align="center" valign="middle" width="120" scope="col">
+
+            </td>
+            <!-- Dodaj inne wybrane propertisy tutaj -->
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

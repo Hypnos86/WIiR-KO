@@ -1,7 +1,7 @@
 from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, UnitsView, \
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
-    ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView
+    ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, CountyCostUnitListView
 
 app_name = 'main'
 urlpatterns = [
@@ -16,6 +16,8 @@ urlpatterns = [
 
     # Lista obiektów
     path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),
+    # Koszty jednostek w powiecie
+    path('card/<slug:countyCardSlug>/cost/', CountyCostUnitListView.as_view(), name='countyCostUnit'),
     # Lista kosztów jednostki
     path('card/<slug:countyCardSlug>/<slug:unitSlug>/', CostListMainView.as_view(), name='unit_details'),
     # Szczegóły kosztów
@@ -23,6 +25,7 @@ urlpatterns = [
          name='unitCostList'),
     # Szczegóły jednostki - informacje
     path('info/unit/<slug:unitSlug>/', UnitDetailsView.as_view(), name='unitDetailsInfo'),
+
 
     # Nagłówek menu
     # Statystyki
