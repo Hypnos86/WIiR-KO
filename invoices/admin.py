@@ -12,7 +12,7 @@ class GroupAdmin(admin.ModelAdmin):
 
 @admin.register(InvoiceItems)
 class GroupAdmin(admin.ModelAdmin):
-    list_display = ['invoice_id', 'unit', 'section', 'group', 'paragraph', 'sum']
+    list_display = ['id', 'invoice_id', 'unit', 'section', 'group', 'paragraph', 'sum']
     search_fields = ['invoice_id__no_invoice', 'unit__city', 'unit__county_swop__name', 'paragraph__paragraph', 'sum']
     search_help_text = 'Szukaj po nr. faktury'
     autocomplete_fields = ['invoice_id', 'unit']

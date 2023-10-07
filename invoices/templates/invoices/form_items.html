@@ -59,13 +59,13 @@
             <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
                 {{form.period_to|bootstrap}}
             </div>
-            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+            <div id="divMeasurementSystemNumber" class="col-sm-4 col-md-4 col-lg-2 mb-1" hidden>
                 {{form.measurementSystemNumber|bootstrap}}
             </div>
-            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+            <div id="divCounterReading" class="col-sm-4 col-md-4 col-lg-2 mb-1" hidden>
                 {{form.counterReading|bootstrap}}
             </div>
-            <div class="col-sm-4 col-md-4 col-lg-2 mb-1">
+            <div id="divConsumption" class="col-sm-4 col-md-4 col-lg-2 mb-1" hidden>
                 {{form.consumption|bootstrap}}
             </div>
         </div>
@@ -176,6 +176,30 @@
          $("#id_unit").select2({placeholder:'Wybierz jednostkę'});
     })
 
+
+
+    var paragraph = document.getElementById("id_paragraph");
+
+    paragraph.addEventListener('change', function() {
+        var selectedElement = paragraph.options[paragraph.selectedIndex];
+        var checkPar = selectedElement.textContent.substring(0, 4);
+
+        var measurementSystemNumber = document.getElementById("divMeasurementSystemNumber");
+        var counterReading = document.getElementById("divCounterReading");
+        var consumption = document.getElementById("divConsumption");
+
+        if (checkPar === "4260") {
+
+            measurementSystemNumber.removeAttribute('hidden');
+            counterReading.removeAttribute('hidden');
+            consumption.removeAttribute('hidden');
+        } else {
+
+            measurementSystemNumber.setAttribute('hidden', 'true');
+            counterReading.setAttribute('hidden', 'true');
+            consumption.setAttribute('hidden', 'true');
+        }
+    });
 </script>
 {% endif %}
 {%endblock%}

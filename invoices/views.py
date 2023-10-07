@@ -1,11 +1,20 @@
 import logging
+from enum import Enum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes, Group
 from invoices.forms import InvoiceForm, InvoiceItemsForm
+from units.models import Unit
 
 logger = logging.getLogger(__name__)
+
+
+class ParagraphEnum(Enum):
+    MEDIA1 = '4260-01'
+    MEDIA2 = '4260-02'
+    MEDIA3 = '4260-03'
+    MEDIA4 = '4260-04'
 
 
 class NewInvoiceView(LoginRequiredMixin, View):
@@ -101,6 +110,39 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
         try:
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
+            units = Unit.objects.all()
+            savedItems = InvoiceItems.objects.all()
+            contractTypes = ContractTypes.objects.all()
+
+            measurementSystemNumberList = []
+            # print(savedItems.values('paragraph__paragraph'))
+
+            for unit in units:
+                selectedItesms = unit.items.all()
+                data = []
+                for typeObject in contractTypes:
+
+                    media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(contract_types__id=typeObject.id).last()
+                    if media_1_last:
+                        data.append({'media_1': media_1_last.paragraph.paragraph, 'type': media_1_last.contract_types.type ,'measurement': media_1_last.measurementSystemNumber})
+
+                    media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(contract_types__id=typeObject.id).last()
+                    if media_2_last:
+                        data.append({'media_2': media_2_last.paragraph.paragraph, 'type': media_2_last.contract_types.type ,'measurement': media_2_last.measurementSystemNumber})
+
+                    media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(contract_types__id=typeObject.id).last()
+                    if media_3_last:
+                        data.append({'media_3': media_3_last.paragraph.paragraph, 'type': media_3_last.contract_types.type ,'measurement': media_3_last.measurementSystemNumber})
+
+                    media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(contract_types__id=typeObject.id).last()
+                    if media_4_last:
+                        data.append({'media_4': media_4_last.paragraph.paragraph, 'type': media_4_last.contract_types.type ,'measurement': media_4_last.measurementSystemNumber})
+
+                measurementSystemNumberList.append({'unit_id': unit.id, 'data': data})
+
+
+            print(measurementSystemNumberList)
+
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )

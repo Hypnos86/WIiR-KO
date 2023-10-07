@@ -125,8 +125,8 @@ class InvoiceItems(models.Model):
                                   related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
-    creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
-    change_date = models.DateTimeField("Zmiana", auto_now=True)
+    creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
+    change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
 
     def __str__(self):
