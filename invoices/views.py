@@ -111,11 +111,9 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
             units = Unit.objects.all()
-            savedItems = InvoiceItems.objects.all()
             contractTypes = ContractTypes.objects.all()
 
             measurementSystemNumberList = []
-            # print(savedItems.values('paragraph__paragraph'))
 
             for unit in units:
                 selectedItesms = unit.items.all()
@@ -124,21 +122,21 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
                     media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(contract_types__id=typeObject.id).last()
                     if media_1_last:
-                        data.append({'media_1': media_1_last.paragraph.paragraph, 'type': media_1_last.contract_types.type ,'measurement': media_1_last.measurementSystemNumber})
+                        data.append({"media_1": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type ,"measurement": media_1_last.measurementSystemNumber})
 
                     media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(contract_types__id=typeObject.id).last()
                     if media_2_last:
-                        data.append({'media_2': media_2_last.paragraph.paragraph, 'type': media_2_last.contract_types.type ,'measurement': media_2_last.measurementSystemNumber})
+                        data.append({"media_2": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type ,"measurement": media_2_last.measurementSystemNumber})
 
                     media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(contract_types__id=typeObject.id).last()
                     if media_3_last:
-                        data.append({'media_3': media_3_last.paragraph.paragraph, 'type': media_3_last.contract_types.type ,'measurement': media_3_last.measurementSystemNumber})
+                        data.append({"media_3": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type ,"measurement": media_3_last.measurementSystemNumber})
 
                     media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(contract_types__id=typeObject.id).last()
                     if media_4_last:
-                        data.append({'media_4': media_4_last.paragraph.paragraph, 'type': media_4_last.contract_types.type ,'measurement': media_4_last.measurementSystemNumber})
+                        data.append({"media_4": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type ,"measurement": media_4_last.measurementSystemNumber})
 
-                measurementSystemNumberList.append({'unit_id': unit.id, 'data': data})
+                measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
 
             print(measurementSystemNumberList)
@@ -146,7 +144,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
-            context = {'form': form, "invoice": invoice, "items": items, 'invoiceSlug': invoiceSlug}
+            context = {'form': form, "invoice": invoice, "items": items, 'invoiceSlug': invoiceSlug, 'measurementData': measurementSystemNumberList }
             return render(request, self.template_name, context)
 
         except Exception as e:
