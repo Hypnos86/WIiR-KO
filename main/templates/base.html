@@ -122,6 +122,7 @@
         </div>
     </div>
 </div>
+<div id="snackbar">Zapisano</div>
 <script type="text/javascript">
     function openLoginModal(button){
         var url = $(button).data("url");
@@ -138,6 +139,14 @@
     $(function () {
         $('[data-toggle="info"]').tooltip()
     })
+
+    function snackbarFunction() {
+    var tost = document.getElementById("snackbar");
+    tost.className = "show";
+        setTimeout(function () {
+            tost.className = tost.className.replace("show", "");
+        }, 10000);
+    }
 </script>
 </body>
 </html>

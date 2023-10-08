@@ -6,10 +6,15 @@ from units.models import County
 
 
 @receiver(pre_save, sender=Invoice)
-def createSlugInvoice(sender, instance, **kwargs):
-    slug_text = f'{instance.no_invoice}-{instance.id}'
+def create_slug_invoice(sender, instance, **kwargs):
     if not instance.slug:
-        instance.slug = slugify(slug_text, )
+        instance.slug = slugify(f'{instance.no_invoice}-{instance.id}')
+
+@receiver(post_save, sender=Invoice)
+def update_slug_invoice(sender, instance, **kwargs):
+    if instance.slug != slugify(f'{instance.no_invoice}-{instance.id}'):
+        instance.slug = slugify(f'{instance.no_invoice}-{instance.id}')
+        instance.save()
 
 
 @receiver(pre_save, sender=Paragraph)

@@ -123,7 +123,7 @@ class InvoiceItems(models.Model):
     group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
                                   related_name=related_name)
-    sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
+    sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=False)
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
