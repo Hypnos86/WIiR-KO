@@ -122,19 +122,19 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
                     media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(contract_types__id=typeObject.id).last()
                     if media_1_last:
-                        data.append({"media_1": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type ,"measurement": media_1_last.measurementSystemNumber})
+                        data.append({"par": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type ,"measurement": media_1_last.measurementSystemNumber})
 
                     media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(contract_types__id=typeObject.id).last()
                     if media_2_last:
-                        data.append({"media_2": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type ,"measurement": media_2_last.measurementSystemNumber})
+                        data.append({"par": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type ,"measurement": media_2_last.measurementSystemNumber})
 
                     media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(contract_types__id=typeObject.id).last()
                     if media_3_last:
-                        data.append({"media_3": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type ,"measurement": media_3_last.measurementSystemNumber})
+                        data.append({"par": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type ,"measurement": media_3_last.measurementSystemNumber})
 
                     media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(contract_types__id=typeObject.id).last()
                     if media_4_last:
-                        data.append({"media_4": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type ,"measurement": media_4_last.measurementSystemNumber})
+                        data.append({"par": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type ,"measurement": media_4_last.measurementSystemNumber})
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 

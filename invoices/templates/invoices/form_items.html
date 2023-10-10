@@ -176,10 +176,7 @@
          $("#id_unit").select2({placeholder:'Wybierz jednostkę'});
     });
 
-
-
     var paragraph = document.getElementById("id_paragraph");
-
 
     paragraph.addEventListener('change', function() {
         var selectedElement = paragraph.options[paragraph.selectedIndex];
@@ -207,20 +204,17 @@
     var dataObject = JSON.parse(x);
 
     var unit = document.getElementById("id_unit");
-    unit.addEventListener('change', function() {
+    var unitSelected = unit.addEventListener('change', function() {
         var selectedUnit = unit.value;
-        console.log("Wybrany unit: " + selectedUnit);
+        var selectedUnitext = unit.options[unit.selectedIndex].text;
+        console.log("Wybrany unit: " + selectedUnitext);
     });
-
-
 
     var type = document.getElementById("id_contract_types");
     var typeSelect = type.addEventListener('change', function() {
         var typeText = type.options[type.selectedIndex].text;
-        console.log("Wybrany unit: " + typeText);
+        console.log("Wybrany type: " + typeText);
     });
-    typeSelect;
-
 
     var paragraphSelect = paragraph.addEventListener('change', function() {
         var selectedElement = paragraph.options[paragraph.selectedIndex];
@@ -228,14 +222,37 @@
         var checkParagraph = parText.substring(0, 7);
         console.log("Wybrany paragraph: " + checkParagraph);
     });
-    paragraphSelect;
 
+    function checkData(){
+        $(dataObject).each(function(i, element) {
+            if( element.unit_id == unit.value) {
+                var elementData = element.data;
+                for (let y = 0; y < elementData.length; y++ ){
+                    if(elementData[y].type === type.options[type.selectedIndex].text && elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7)){
+                        var measureData = document.getElementById("id_measurementSystemNumber");
+                        if(measureData){
+                        measureData.value = elementData[y].measurement;
+                        };
+                    }else{
+                    var measureData = document.getElementById("id_measurementSystemNumber");
+                    measureData.value = "";
+                    };
+                };
+            };
+        });
+    };
 
-    $(dataObject).each(function(i, element) {
+    $('#id_unit').on('change', function(){
+        checkData();
+    });
 
+    $('#id_contract_types').on('change', function(){
+        checkData();
+    });
 
-    })
-
+    $('#id_paragraph').on('change', function(){
+        checkData();
+    });
 </script>
 {% endif %}
 {%endblock%}
