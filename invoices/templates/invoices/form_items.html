@@ -243,6 +243,14 @@
     };
 
     $('#id_unit').on('change', function(){
+        var unit = document.getElementById("id_unit");
+        var selectedUnit = unit.options[unit.selectedIndex].value;
+        if(selectedUnit && dataObject[selectedUnit - 1].data.length != 0 ){
+            console.info("Wartości dla: "+ unit.options[unit.selectedIndex].text);
+            console.table(dataObject[selectedUnit - 1].data);
+        } else {
+            console.log("brak danych dla: " + unit.options[unit.selectedIndex].text);
+        };
         checkData();
     });
 
