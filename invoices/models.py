@@ -103,7 +103,7 @@ class Paragraph(models.Model):
 
 class InvoiceItems(models.Model):
     class Meta:
-        ordering = ["invoice_id"]
+        ordering = ["creation_date"]
         verbose_name = "Element faktury"
         verbose_name_plural = "06 - Elementy faktury"
 

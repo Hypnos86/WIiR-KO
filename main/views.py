@@ -1,6 +1,5 @@
-import decimal
-
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
@@ -74,9 +73,11 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
+                    messages.success(request, 'Zalogowano pomyślnie.')
                     return redirect('main:welcome')  # Przekierowanie po zalogowaniu
                 else:
                     # Obsługa błędnych danych logowania
+                    messages.error(request, 'Błędna nazwa użytkownika lub hasło.')
                     return redirect('main:welcome')
                     # return render(request, self.template_welcome, {'error_message': 'Błędna nazwa użytkownika lub hasło.'})
             else:
