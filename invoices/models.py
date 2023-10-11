@@ -103,7 +103,7 @@ class Paragraph(models.Model):
 
 class InvoiceItems(models.Model):
     class Meta:
-        ordering = ["creation_date"]
+        ordering = ["-creation_date"]
         verbose_name = "Element faktury"
         verbose_name_plural = "06 - Elementy faktury"
 
@@ -112,8 +112,8 @@ class InvoiceItems(models.Model):
     invoice_id = models.ForeignKey(to=Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
                                    related_name=related_name)
     contract_types = models.ForeignKey(to=ContractTypes, on_delete=models.CASCADE, verbose_name='Typ umowy')
-    period_from = models.DateField(verbose_name='Okres od', null=True, blank=True)
-    period_to = models.DateField(verbose_name='Okres do', null=True, blank=True)
+    period_from = models.DateField(verbose_name='Okres od', null=False)
+    period_to = models.DateField(verbose_name='Okres do', null=False)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
     counterReading = models.IntegerField(verbose_name='Stan licznika', null=True, blank=True)
     consumption = models.IntegerField(verbose_name='Zużycie', null=True, blank=True)

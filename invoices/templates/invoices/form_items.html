@@ -69,6 +69,11 @@
                 {{form.consumption|bootstrap}}
             </div>
         </div>
+        <div class="row d-flex justify-content-center my-2">
+            <div class="col-sm-10 col-md-10 col-lg-10">
+                <i id="dataInfo" class="bi bi-info-square" hidden></i>
+            </div>
+        </div>
         <div class="row mb-1 d-flex justify-content-center">
             <div class="col-lg-8 mb-2">
                 {{form.information|bootstrap}}
@@ -185,8 +190,10 @@
         var measurementSystemNumber = document.getElementById("divMeasurementSystemNumber");
         var counterReading = document.getElementById("divCounterReading");
         var consumption = document.getElementById("divConsumption");
+        var information = document.getElementById("dataInfo");
 
         if (checkPar === "4260") {
+            information.removeAttribute('hidden');
             measurementSystemNumber.removeAttribute('hidden');
             counterReading.removeAttribute('hidden');
             consumption.removeAttribute('hidden');
@@ -200,11 +207,13 @@
             console.log(labelConsumption.value);
             measurementSystemNumber.setAttribute('hidden', 'true');
             counterReading.setAttribute('hidden', 'true');
+            information.setAttribute('hidden', 'true');
 
         } else {
             measurementSystemNumber.setAttribute('hidden', 'true');
             counterReading.setAttribute('hidden', 'true');
             consumption.setAttribute('hidden', 'true');
+            information.setAttribute('hidden', 'true');
         }
 
 
@@ -238,15 +247,20 @@
         $(dataObject).each(function(i, element) {
             if( element.unit_id == unit.value) {
                 var elementData = element.data;
+                var information = document.getElementById("dataInfo");
                 for (let y = 0; y < elementData.length; y++ ){
                     if(elementData[y].type === type.options[type.selectedIndex].text && elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7)){
                         var measureData = document.getElementById("id_measurementSystemNumber");
                         if(measureData){
+                        information.removeAttribute('hidden');
+                        information.textContent = " Ostatni okres rozliczeniowy: " + elementData[y].period + ", " + "stan licznika:"+ elementData[y].counterReading;
                         measureData.value = elementData[y].measurement;
+
                         };
                     }else{
                     var measureData = document.getElementById("id_measurementSystemNumber");
                     measureData.value = "";
+                    information.setAttribute('hidden', 'true');
                     };
                 };
             };
