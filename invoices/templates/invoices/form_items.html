@@ -187,16 +187,27 @@
         var consumption = document.getElementById("divConsumption");
 
         if (checkPar === "4260") {
-
             measurementSystemNumber.removeAttribute('hidden');
             counterReading.removeAttribute('hidden');
             consumption.removeAttribute('hidden');
-        } else {
 
+        } else if (checkPar === "4210") {
+            var labelConsumption = document.querySelector('label[for="id_consumption"]');
+            if (labelConsumption){
+                labelConsumption.textContent = "Ilość zakupionego surowca";
+            };
+            consumption.removeAttribute('hidden');
+            console.log(labelConsumption.value);
+            measurementSystemNumber.setAttribute('hidden', 'true');
+            counterReading.setAttribute('hidden', 'true');
+
+        } else {
             measurementSystemNumber.setAttribute('hidden', 'true');
             counterReading.setAttribute('hidden', 'true');
             consumption.setAttribute('hidden', 'true');
         }
+
+
     });
 
     var daneJS = "{{ measurementData|escapejs }}";
