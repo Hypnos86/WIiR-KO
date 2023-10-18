@@ -81,7 +81,7 @@
             </td>
             <td align="center" valign="middle" scope="col">
                 {% if invoice.items.all|length == 0%}
-                <div class="bold text-danger" data-toggle="info" title="Uzupełni elementy faktury">
+                <div class="bold text-danger" data-toggle="info" title="Uzupełnij elementy faktury">
                     {{ invoice.items.all|length }}
                 </div>
                 {% else %}
@@ -89,7 +89,12 @@
                 {%endif%}
             </td>
             <td align="right" valign="middle" scope="col">
-                {{ invoice.sum|intcomma }} zł
+                {% if invoice.sum %}
+                {{ invoice.sum|intcomma }}
+                {% else %}
+                0
+                {%endif%}
+                zł
             </td>
             <td align="left" valign="middle" scope="col">
                 {{ invoice.information|default_if_none:'' }}

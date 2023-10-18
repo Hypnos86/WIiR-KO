@@ -569,21 +569,6 @@ class MediaInfoUnitView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-            # print(tableObjects)
-            # paragraphsFilter = []
-            # for object in tableObjects:
-            #     for paragraph in object['data']:
-            #         paragraphsFilter.append(paragraph['paragraph'])
-            # paragraphsOnly = set(paragraphsFilter)
-            #
-            # par = []
-            # for paragraph in paragraphsModel:
-            #     if paragraph.paragraph in list(paragraphsOnly):
-            #         par.append({'paragraph': paragraph.paragraph, 'name': paragraph.name})
-            #
-            # paragraphs = [{'paragraph': paragraph.paragraph, 'name': paragraph.name} for paragraph in paragraphsModel if
-            #        paragraph.paragraph in paragraphsOnly]
-
             context = {'title': title, 'unit': unit, 'paragraphs': paragraphsModel, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -598,9 +583,35 @@ class CountyCostUnitListView(View):
 
     def get(self, request, countyCardSlug):
         try:
-            county = CountyCard.objects.get(slug=countyCardSlug)
+            nowDate = currentDate.current_year()
+            county_unit = CountyCard.objects.get(slug=countyCardSlug)
+            units = Unit.objects.filter(county_unit=county_unit)
+
             paragraphs = Paragraph.objects.all()
-            context = {'county': county, 'paragraphs':paragraphs}
+            objectDatas = []
+
+            for unit in units:
+                policeUnit = f'{unit.unit_full_name}'
+
+                items = unit.items.all()
+                costObjectDict = {}
+                for item in items:
+                    if item.invoice_id.date_of_payment.year == nowDate:
+                        paragraph = item.paragraph.paragraph
+                        sumUnit = item.sum
+
+                        if paragraph in costObjectDict:
+                            costObjectDict[paragraph] += sumUnit
+                        else:
+                            costObjectDict[paragraph] = sumUnit
+
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in costObjectDict.items()]
+
+                objectDatas.append({'unit': policeUnit, 'objects': costObjectList})
+
+            print(objectDatas)
+            context = {'county': county_unit, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
+                       "items": objectDatas}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}

@@ -121,7 +121,7 @@ LOGGING = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': datetime.datetime.now().strftime("logError_%Y-%m-%d_%H.log"),
             'when': 'H',
-            'interval': 12,
+            'interval': 24,
             'backupCount': 100,
             'formatter': 'verbose',
         },
