@@ -268,3 +268,14 @@ padding: 2px 10px;
     background-color: #4C89C2 !important;
     color: white;
 }
+
+.footer-sum{
+    background-color: rgb(11,66 ,117,46);
+    color: white;
+    vertical-align: middle !important;
+    font-weight: 600;
+}
+
+.table-vertical{
+    vertical-align: middle;
+}

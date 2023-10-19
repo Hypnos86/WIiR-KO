@@ -36,26 +36,38 @@
         <tr class="text-center">
             <th align="center" valign="middle" width="15%" scope="col">Jednostka</th>
             {% for paragraph in paragraphs%}
-            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">§ {{paragraph.paragraph}}</th>
+            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">§
+                {{paragraph.paragraph}}
+            </th>
             {%endfor%}
         </tr>
         </thead>
         <tbody>
         {% for item in items %}
         <tr>
-            <td align="left" valign="middle" width="200" scope="col">
+            <td class="table-vertical" align="left" valign="middle" scope="col">
                 {{item.unit}}
             </td>
             {% for object in item.objects %}
-            <td align="center" valign="middle" width="200" scope="col">
+            <td class="table-vertical" align="center" valign="middle" scope="col">
                 {{object.sum}} zł <br>
-                (do testow - {{object.paragraph}})
+<!--                (do testow - {{object.paragraph}})-->
             </td>
             {% endfor %}
             <!-- Dodaj inne wybrane propertisy tutaj -->
         </tr>
         {% endfor %}
         </tbody>
+        <tfoot>
+        <tr class="footer-sum">
+            <td align="right" valign="middle" scope="col" class="text-uppercase table-vertical">Razem</td>
+            {% for par, sum in paragraphSums.items %}
+            <td class="table-vertical" align="center" valign="middle" width="200" scope="col">
+                {{sum}} zł
+            </td>
+            {% endfor %}
+        </tr>
+        </tfoot>
     </table>
 </div>
 <div class="modal fade" id="archiveModal">

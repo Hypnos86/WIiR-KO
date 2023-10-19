@@ -616,9 +616,28 @@ class CountyCostUnitListView(View):
 
                 objectDatas.append({'unit': policeUnit, 'objects': costObjectList})
 
-            print(objectDatas)
-            context = {'county': county_unit, 'year':nowDate, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
-                       "items": objectDatas}
+            # Tworzymy słownik do przechowywania sum paragrafów
+            paragraphSums = {}
+
+            # Iterujemy przez objectDatas
+            for unit_data in objectDatas:
+                for object in unit_data['objects']:
+                    paragraph = object['paragraph']
+                    sum_value = object['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
+
+            # Teraz paragraph_sums zawiera sumy paragrafów
+            # Możesz je przekazać do szablonu lub wyświetlić
+            for paragraph, sum_value in paragraphSums.items():
+                print(f'Paragraf: {paragraph}, Suma: {sum_value}')
+
+            # print(objectDatas)
+            context = {'county': county_unit, 'year': nowDate, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
+                       "items": objectDatas,'paragraphSums':paragraphSums}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
