@@ -595,22 +595,29 @@ class CountyCostUnitListView(View):
 
                 items = unit.items.all()
                 costObjectDict = {}
+
+                # Inicjujemy kwoty dla wszystkich paragrafów jako 0
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
+
                 for item in items:
                     if item.invoice_id.date_of_payment.year == nowDate:
                         paragraph = item.paragraph.paragraph
                         sumUnit = item.sum
+                        # if paragraph in costObjectDict:
+                        #     costObjectDict[paragraph] += sumUnit
+                        # else:
+                        #     costObjectDict[paragraph] = sumUnit
+                        # Aktualizujemy kwotę dla danego paragrafu
+                        costObjectDict[paragraph] += sumUnit
 
-                        if paragraph in costObjectDict:
-                            costObjectDict[paragraph] += sumUnit
-                        else:
-                            costObjectDict[paragraph] = sumUnit
-
-                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in costObjectDict.items()]
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
 
                 objectDatas.append({'unit': policeUnit, 'objects': costObjectList})
 
             print(objectDatas)
-            context = {'county': county_unit, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
+            context = {'county': county_unit, 'year':nowDate, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
                        "items": objectDatas}
             return render(request, self.template_name, context)
         except Exception as e:
