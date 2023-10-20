@@ -17,7 +17,7 @@ urlpatterns = [
     # Lista obiektów
     path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),
     # Koszty jednostek w powiecie
-    path('card/<slug:countyCardSlug>/cost/', CountyCostUnitListView.as_view(), name='countyCostUnit'),
+    path('card/<slug:countyCardSlug>/cost/<int:year>', CountyCostUnitListView.as_view(), name='countyCostUnit'),
     # Lista kosztów jednostki
     path('card/<slug:countyCardSlug>/<slug:unitSlug>/', CostListMainView.as_view(), name='unit_details'),
     # Szczegóły kosztów

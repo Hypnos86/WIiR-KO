@@ -9,7 +9,7 @@
     <form class="" method="GET" action="{% url 'main:archiveYearsUnitCost' slugCounty  %}">
         {%csrf_token%}
         {% for year in years%}
-        <a href="" class="btn-menu m-2">{{year}}</a>
+        <a href="{% url 'main:countyCostUnit' slugCounty year %}" class="btn-menu m-2">{{year}}</a>
         {% endfor %}
     </form>
     {%else%}

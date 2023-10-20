@@ -109,12 +109,13 @@ class UnitsListaMainView(View):
 
     def get(self, request, slug):
         try:
+            year = currentDate.current_year()
             units = Unit.objects.filter(county_unit__slug=slug)
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
             county = CountyCard.objects.get(slug=slug)
             context = {'units': units, 'slug': slug, 'county': county, 'activeUnits': activeUnits,
-                       'archiveUnits': archiveUnits, 'slugCounty': slug}
+                       'archiveUnits': archiveUnits, 'slugCounty': slug, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -581,9 +582,8 @@ class CountyCostUnitListView(View):
     template_name = 'main/cost_list_county_unit.html'
     template_error = 'main/error.html'
 
-    def get(self, request, countyCardSlug):
+    def get(self, request, countyCardSlug, year):
         try:
-            nowDate = currentDate.current_year()
             county_unit = CountyCard.objects.get(slug=countyCardSlug)
             units = Unit.objects.filter(county_unit=county_unit)
 
@@ -592,7 +592,7 @@ class CountyCostUnitListView(View):
 
             for unit in units:
                 policeUnit = f'{unit.unit_full_name}'
-
+                status = unit.status
                 items = unit.items.all()
                 costObjectDict = {}
 
@@ -601,7 +601,7 @@ class CountyCostUnitListView(View):
                     costObjectDict[paragraph.paragraph] = 0
 
                 for item in items:
-                    if item.invoice_id.date_of_payment.year == nowDate:
+                    if item.invoice_id.date_of_payment.year == year:
                         paragraph = item.paragraph.paragraph
                         sumUnit = item.sum
                         # if paragraph in costObjectDict:
@@ -614,7 +614,7 @@ class CountyCostUnitListView(View):
                 costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
                                   costObjectDict.items()]
 
-                objectDatas.append({'unit': policeUnit, 'objects': costObjectList})
+                objectDatas.append({'unit': policeUnit, 'status': status, 'objects': costObjectList})
 
             # Tworzymy słownik do przechowywania sum paragrafów
             paragraphSums = {}
@@ -632,12 +632,12 @@ class CountyCostUnitListView(View):
 
             # Teraz paragraph_sums zawiera sumy paragrafów
             # Możesz je przekazać do szablonu lub wyświetlić
-            for paragraph, sum_value in paragraphSums.items():
-                print(f'Paragraf: {paragraph}, Suma: {sum_value}')
+            # for paragraph, sum_value in paragraphSums.items():
+            #     print(f'Paragraf: {paragraph}, Suma: {sum_value}')
 
             # print(objectDatas)
-            context = {'county': county_unit, 'year': nowDate, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
-                       "items": objectDatas,'paragraphSums':paragraphSums}
+            context = {'county': county_unit, 'year': year, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
+                       "items": objectDatas, 'paragraphSums': paragraphSums}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}

@@ -46,12 +46,19 @@
         {% for item in items %}
         <tr>
             <td class="table-vertical" align="left" valign="middle" scope="col">
-                {{item.unit}}
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>{{item.unit}}</span>
+                    {% if item.status %}
+                    <i class="bi bi-check-circle-fill text-success" data-toggle="info" title="Aktualny"></i>
+                    {%else%}
+                    <i class="bi bi-dash-circle text-danger" data-toggle="info" title="Zdany"></i>
+                    {%endif%}
+                </div>
             </td>
             {% for object in item.objects %}
             <td class="table-vertical" align="center" valign="middle" scope="col">
-                {{object.sum}} zł <br>
-<!--                (do testow - {{object.paragraph}})-->
+                {{object.sum|intcomma}} zł <br>
+                <!--                (do testow - {{object.paragraph}})-->
             </td>
             {% endfor %}
             <!-- Dodaj inne wybrane propertisy tutaj -->
@@ -63,7 +70,7 @@
             <td align="right" valign="middle" scope="col" class="text-uppercase table-vertical">Razem</td>
             {% for par, sum in paragraphSums.items %}
             <td class="table-vertical" align="center" valign="middle" width="200" scope="col">
-                {{sum}} zł
+                {{sum|intcomma}} zł
             </td>
             {% endfor %}
         </tr>
