@@ -22,7 +22,7 @@
                     <i class="bi bi-archive-fill custom-icon"></i>
                 </a>
             </div>
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user_belongs_to_group%}
             <div class="">
                 <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                     <i class="bi bi-plus-circle custom-icon"></i>

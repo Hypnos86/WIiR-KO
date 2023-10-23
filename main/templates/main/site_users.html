@@ -26,6 +26,9 @@
                     <span>Rola</span>
                 </th>
                 <th align="center" valign="middle" width="auto" scope="col">
+                    <span>Grupa</span>
+                </th>
+                <th align="center" valign="middle" width="auto" scope="col">
                     <span>Status użytkownika</span>
                 </th>
             </tr>
@@ -46,6 +49,9 @@
                     {% else %}
                     <span>Użytkownik zarejestrowany</span>
                     {% endif %}
+                </td>
+                <td align="center" valign="middle" width="auto" scope="col">
+                    {{user.groups.all.0}}
                 </td>
                 <td align="center" valign="middle" width="auto" scope="col">
                     {% if user.is_active%}

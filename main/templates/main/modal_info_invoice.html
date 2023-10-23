@@ -7,7 +7,7 @@
         <div class="">
 
             <div class="d-flex justify-content-around mb-2">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user_belongs_to_group %}
                 <div></div>
                 <div class=" h5 m-0">
                     <span class="text-muted">Nr. dokumentu:&nbsp;</span>

@@ -20,7 +20,7 @@
                 </a>
             </div>
 
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user_belongs_to_group%}
             <div class="mx-2">
                 <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                     <i class="bi bi-plus-circle custom-icon"></i>
@@ -60,7 +60,7 @@
                        href="{% url 'main:unitDetailsInfo' unit.slug %}">
                         <i class="bi bi-info-square"></i>
                     </a>
-                    {% if user.is_authenticated %}
+                    {% if user.is_authenticated and user_belongs_to_group%}
                     <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
                         <i class="bi bi-pencil-square"></i>
                     </a>
