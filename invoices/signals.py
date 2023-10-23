@@ -10,6 +10,7 @@ def create_slug_invoice(sender, instance, **kwargs):
     if not instance.slug:
         instance.slug = slugify(f'{instance.no_invoice}-{instance.id}')
 
+
 @receiver(post_save, sender=Invoice)
 def update_slug_invoice(sender, instance, **kwargs):
     if instance.slug != slugify(f'{instance.no_invoice}-{instance.id}'):
@@ -24,19 +25,6 @@ def createSlugParagraph(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=InvoiceItems)
-def sumInvoiceItems(sender, instance, **kwargs):
-    cost = []
-    items = InvoiceItems.objects.filter(invoice_id=instance.invoice_id)
-
-    for item in items:
-        cost.append(item.sum)
-
-    invoice = Invoice.objects.get(pk=instance.invoice_id.id)
-    invoice.sum = sum(cost)
-    invoice.save()
-
-
-@receiver(post_delete, sender=InvoiceItems)
 def sumInvoiceItems(sender, instance, **kwargs):
     cost = []
     items = InvoiceItems.objects.filter(invoice_id=instance.invoice_id)
@@ -71,4 +59,3 @@ def addSectionToInvoiceItem(sender, instance, **kwargs):
             section = county.section.all().first()
             instance.section = section
             break
-
