@@ -24,9 +24,11 @@ class NewInvoiceView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class()
             doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
-            context = {'form': form, 'doc_types': doc_types, 'new': True}
+            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'doc_types': doc_types,
+                       'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -35,6 +37,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
 
     def post(self, request):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class(request.POST or None)
             # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             doc_types = DocumentTypes.objects.all()
@@ -46,7 +49,8 @@ class NewInvoiceView(LoginRequiredMixin, View):
                     instance.author = request.user
                     form.save()
                     return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
-            context = {'form': form, 'doc_types': doc_types, 'type_contract': type_contract, 'new': True}
+            context = {'form': form, 'doc_types': doc_types, 'user_belongs_to_group': user_belongs_to_group,
+                       'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -73,9 +77,10 @@ class EditInvoiceView(LoginRequiredMixin, View):
 
     def get(self, request, invoiceSlug):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = InvoiceForm(instance=invoice)
-            context = {'form': form, 'invoice': invoice, 'new': False}
+            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -84,6 +89,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
 
     def post(self, request, invoiceSlug):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = InvoiceForm(request.POST, instance=invoice)
 
@@ -93,7 +99,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
                     instance.author = request.user
                     form.save()
                     return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
-            context = {'form': form, 'invoice': invoice, 'new': False}
+            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -108,6 +114,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
     def get(self, request, invoiceSlug):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
             units = Unit.objects.all()
@@ -120,21 +127,37 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 data = []
                 for typeObject in contractTypes:
 
-                    media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(contract_types__id=typeObject.id).first()
+                    media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(
+                        contract_types__id=typeObject.id).first()
                     if media_1_last:
-                        data.append({"par": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type, "period": f"{media_1_last.period_from.strftime('%d.%m.%Y')}-{media_1_last.period_to.strftime('%d.%m.%Y')}", "counterReading": media_1_last.counterReading,"measurement": media_1_last.measurementSystemNumber})
+                        data.append({"par": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type,
+                                     "period": f"{media_1_last.period_from.strftime('%d.%m.%Y')}-{media_1_last.period_to.strftime('%d.%m.%Y')}",
+                                     "counterReading": media_1_last.counterReading,
+                                     "measurement": media_1_last.measurementSystemNumber})
 
-                    media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(contract_types__id=typeObject.id).first()
+                    media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(
+                        contract_types__id=typeObject.id).first()
                     if media_2_last:
-                        data.append({"par": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type, "period": f"{media_2_last.period_from.strftime('%d.%m.%Y')}-{media_2_last.period_to.strftime('%d.%m.%Y')}","counterReading": media_2_last.counterReading,"measurement": media_2_last.measurementSystemNumber})
+                        data.append({"par": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type,
+                                     "period": f"{media_2_last.period_from.strftime('%d.%m.%Y')}-{media_2_last.period_to.strftime('%d.%m.%Y')}",
+                                     "counterReading": media_2_last.counterReading,
+                                     "measurement": media_2_last.measurementSystemNumber})
 
-                    media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(contract_types__id=typeObject.id).first()
+                    media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(
+                        contract_types__id=typeObject.id).first()
                     if media_3_last:
-                        data.append({"par": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type, "period": f"{media_3_last.period_from.strftime('%d.%m.%Y')}-{media_3_last.period_to.strftime('%d.%m.%Y')}", "counterReading": media_3_last.counterReading, "measurement": media_3_last.measurementSystemNumber})
+                        data.append({"par": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type,
+                                     "period": f"{media_3_last.period_from.strftime('%d.%m.%Y')}-{media_3_last.period_to.strftime('%d.%m.%Y')}",
+                                     "counterReading": media_3_last.counterReading,
+                                     "measurement": media_3_last.measurementSystemNumber})
 
-                    media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(contract_types__id=typeObject.id).first()
+                    media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(
+                        contract_types__id=typeObject.id).first()
                     if media_4_last:
-                        data.append({"par": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type, "period": f"{media_4_last.period_from.strftime('%d.%m.%Y')}-{media_4_last.period_to.strftime('%d.%m.%Y')}", "counterReading": media_4_last.counterReading, "measurement": media_4_last.measurementSystemNumber})
+                        data.append({"par": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type,
+                                     "period": f"{media_4_last.period_from.strftime('%d.%m.%Y')}-{media_4_last.period_to.strftime('%d.%m.%Y')}",
+                                     "counterReading": media_4_last.counterReading,
+                                     "measurement": media_4_last.measurementSystemNumber})
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
@@ -143,7 +166,9 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
-            context = {'form': form, "invoice": invoice, "items": items, 'invoiceSlug': invoiceSlug, 'measurementData': measurementSystemNumberList }
+            context = {'form': form, "invoice": invoice, 'user_belongs_to_group': user_belongs_to_group, "items": items,
+                       'invoiceSlug': invoiceSlug,
+                       'measurementData': measurementSystemNumberList}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -153,6 +178,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
     def post(self, request, invoiceSlug):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = self.form_class(request.POST)
             items = InvoiceItems.objects.filter(invoice_id=invoice)
@@ -164,7 +190,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 form.save()
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
-            context = {'form': form, 'invoice': invoice, 'items': items, 'invoiceSlug': invoiceSlug}
+            context = {'form': form, 'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group, 'items': items,
+                       'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}

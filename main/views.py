@@ -226,12 +226,12 @@ class StatisticsView(LoginRequiredMixin, View):
 
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             currentYear = CurrentDate().current_year()
             paragraphs = Paragraph.objects.all()
             counties = County.objects.all()
 
             items = []
-            # TODO rozrysowac obiekt jak ma wygladać
             for paragraph in paragraphs:
                 sum = 0
                 units = []
@@ -245,7 +245,8 @@ class StatisticsView(LoginRequiredMixin, View):
             for item in items:
                 print(item)
 
-            context = {'counties': counties, 'currentYear': currentYear, 'paragraphs': paragraphs, 'title': title}
+            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group, 'currentYear': currentYear,
+                       'paragraphs': paragraphs, 'title': title}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -390,7 +391,8 @@ class CostsDetailsListView(View):
                     unitOfMeasure = parEnum.value[1]
 
             context = {'unit': unit, 'items': itemsList, 'year': year, 'paragraph': paragraph,
-                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure,'user_belongs_to_group':user_belongs_to_group}
+                       'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure,
+                       'user_belongs_to_group': user_belongs_to_group}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -421,6 +423,7 @@ class ParagraphCostListView(LoginRequiredMixin, View):
     paginate_by = 80
 
     def get(self, request, paragraphSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         if paragraphSlug in [
             ParagraphEnum.MEDIA1.value[0], ParagraphEnum.MEDIA2.value[0], ParagraphEnum.MEDIA3.value[0],
             ParagraphEnum.MEDIA4.value[0]]:
@@ -447,11 +450,13 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                             | items.filter(unit__unit_full_name__icontains=q) \
                             | items.filter(information__icontains=q)
 
-                    context = {'items': items, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
+                    context = {'items': items, 'user_belongs_to_group': user_belongs_to_group, 'paragraph': paragraph,
+                               'unitOfMeasure': unitOfMeasure,
                                "query": query, 'q': q}
                     return render(request, self.template_name_media, context)
                 else:
-                    context = {'items': items_pages, 'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
+                    context = {'items': items_pages, 'user_belongs_to_group': user_belongs_to_group,
+                               'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
                                "search": search, 'q': q}
                     return render(request, self.template_name_media, context)
 
@@ -478,11 +483,12 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                             | items.filter(unit__unit_full_name__icontains=q) \
                             | items.filter(information__icontains=q)
 
-                    context = {'items': items, 'paragraph': paragraph,
+                    context = {'items': items, 'user_belongs_to_group': user_belongs_to_group, 'paragraph': paragraph,
                                "query": query, 'q': q}
                     return render(request, self.template_name_general, context)
                 else:
-                    context = {'items': items_pages, 'paragraph': paragraph,
+                    context = {'items': items_pages, 'user_belongs_to_group': user_belongs_to_group,
+                               'paragraph': paragraph,
                                "search": search, 'q': q}
                     return render(request, self.template_name_general, context)
 
@@ -498,6 +504,7 @@ class UnitDetailsView(View):
 
     def get(self, request, unitSlug):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             unit = get_object_or_404(Unit, slug=unitSlug)
             paragraphs = Paragraph.objects.all()
@@ -534,7 +541,8 @@ class UnitDetailsView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
-            context = {'unit': unit, 'paragraphs': paragraphs, 'title': title, 'tableObjects': tableObjects}
+            context = {'unit': unit, 'user_belongs_to_group': user_belongs_to_group, 'paragraphs': paragraphs,
+                       'title': title, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -598,9 +606,9 @@ class CountyCostUnitListView(View):
 
     def get(self, request, countyCardSlug, year):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             county_unit = CountyCard.objects.get(slug=countyCardSlug)
             units = Unit.objects.filter(county_unit=county_unit)
-
             paragraphs = Paragraph.objects.all()
             objectDatas = []
 
@@ -650,7 +658,8 @@ class CountyCostUnitListView(View):
             #     print(f'Paragraf: {paragraph}, Suma: {sum_value}')
 
             # print(objectDatas)
-            context = {'county': county_unit, 'year': year, 'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
+            context = {'county': county_unit, 'user_belongs_to_group': user_belongs_to_group, 'year': year,
+                       'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
                        "items": objectDatas, 'paragraphSums': paragraphSums}
             return render(request, self.template_name, context)
         except Exception as e:
