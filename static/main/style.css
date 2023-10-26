@@ -3,7 +3,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 100%;
+  font-size: 80%;
   font: inherit;
   vertical-align: baseline;
 }
@@ -15,6 +15,30 @@ html {
 
 body {
     background-color: #F5F5F5;
+}
+
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #329C37;
+  color: #FFF;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 2;
+  left: 15%;
+  bottom: 100px;
+  transform: translateX(-50%);
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  bottom:100px;
 }
 
 .btn-main{
@@ -230,4 +254,28 @@ padding: 2px 10px;
 
 .select2-container--default .select2-selection--single .select2-selection__rendered{
     line-height:38px !important;
+}
+
+.info-color {
+    color: white;
+    background-color: #751B16;
+    padding: 4px;
+    margin: 0 3px;
+    border-radius: 3px;
+}
+
+.color-table {
+    background-color: #4C89C2 !important;
+    color: white;
+}
+
+.footer-sum{
+    background-color: rgb(11,66 ,117,46);
+    color: white;
+    vertical-align: middle !important;
+    font-weight: 600;
+}
+
+.table-vertical{
+    vertical-align: middle;
 }

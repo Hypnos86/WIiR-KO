@@ -3,7 +3,7 @@ from enum import Enum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
-from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes, Group
+from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes
 from invoices.forms import InvoiceForm, InvoiceItemsForm
 from units.models import Unit
 
@@ -161,13 +161,25 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
-            print(measurementSystemNumberList)
+            # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
+            counties = []
+            for item in items:
+                sum_value = item.sum
+                exist = False
+                for county in counties:
+                    if item.section.section == county['county']:
+                        county['sum'] += sum_value
+                        exist = True
 
+                if not exist:
+                    counties.append({'county': item.section.section, 'sum': sum_value})
+
+            print(counties)
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
             context = {'form': form, "invoice": invoice, 'user_belongs_to_group': user_belongs_to_group, "items": items,
-                       'invoiceSlug': invoiceSlug,
+                       'invoiceSlug': invoiceSlug, 'countiesSum': counties,
                        'measurementData': measurementSystemNumberList}
             return render(request, self.template_name, context)
 
