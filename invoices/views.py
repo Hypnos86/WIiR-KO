@@ -132,32 +132,32 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                     if media_1_last:
                         data.append({"par": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type,
                                      "period": f"{media_1_last.period_from.strftime('%d.%m.%Y')}-{media_1_last.period_to.strftime('%d.%m.%Y')}",
-                                     "counterReading": media_1_last.counterReading,
-                                     "measurement": media_1_last.measurementSystemNumber})
+                                     "counterReading": str(media_1_last.counterReading),
+                                     "measurement": str(media_1_last.measurementSystemNumber)})
 
                     media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(
                         contract_types__id=typeObject.id).first()
                     if media_2_last:
                         data.append({"par": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type,
                                      "period": f"{media_2_last.period_from.strftime('%d.%m.%Y')}-{media_2_last.period_to.strftime('%d.%m.%Y')}",
-                                     "counterReading": media_2_last.counterReading,
-                                     "measurement": media_2_last.measurementSystemNumber})
+                                     "counterReading": str(media_2_last.counterReading),
+                                     "measurement": str(media_2_last.measurementSystemNumber)})
 
                     media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(
                         contract_types__id=typeObject.id).first()
                     if media_3_last:
                         data.append({"par": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type,
                                      "period": f"{media_3_last.period_from.strftime('%d.%m.%Y')}-{media_3_last.period_to.strftime('%d.%m.%Y')}",
-                                     "counterReading": media_3_last.counterReading,
-                                     "measurement": media_3_last.measurementSystemNumber})
+                                     "counterReading": str(media_3_last.counterReading),
+                                     "measurement": str(media_3_last.measurementSystemNumber)})
 
                     media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(
                         contract_types__id=typeObject.id).first()
                     if media_4_last:
                         data.append({"par": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type,
                                      "period": f"{media_4_last.period_from.strftime('%d.%m.%Y')}-{media_4_last.period_to.strftime('%d.%m.%Y')}",
-                                     "counterReading": media_4_last.counterReading,
-                                     "measurement": media_4_last.measurementSystemNumber})
+                                     "counterReading": str(media_4_last.counterReading),
+                                     "measurement": str(media_4_last.measurementSystemNumber)})
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
