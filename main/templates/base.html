@@ -63,9 +63,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
                 </li>
+                {% if user.is_authenticated and user_belongs_to_group %}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
                 </li>
+                {% endif %}
                 <li>
                     <a href="{%url 'logout'%}" type="button" class="nav-link">Wylogowanie</a>
                 </li>

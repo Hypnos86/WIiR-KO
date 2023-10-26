@@ -45,7 +45,9 @@ class WelcomeView(View):
             admin, created = Group.objects.get_or_create(name="AdminZRiWT")
             viewers, created = Group.objects.get_or_create(name="Viewers")
             user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+
             counties = CountyCard.objects.all()
+
             # print(request.user.groups.all())
             # if not request.user.is_authenticated :
             if not request.user.is_authenticated or not (
@@ -260,8 +262,9 @@ class UsersSiteView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             users = User.objects.all()
-            context = {'users': users}
+            context = {'users': users, 'user_belongs_to_group': user_belongs_to_group}
             return render(request, self.template, context)
         except Exception as e:
             context = {'error': e}
