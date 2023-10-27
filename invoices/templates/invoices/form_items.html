@@ -41,7 +41,10 @@
 <div class="row m-0">
     <div class="col-md-2 text-center">
         <div class="border border-secondary p-3 rounded bg-light">
-            <h6 class="h5"> Suma Rozdziałów </h6>
+            <div>
+                <h6 class="h5"> Suma Rozdziałów </h6>
+                <a class="bi bi-download btn btn-main" href="{% url 'invoices:createFile' invoice.id%}"></a>
+            </div>
             {% for county in countiesSum %}
             {% if county.county%}
             <div class="my-2">{{county.county}} - {{county.sum|intcomma}} zł.</div>

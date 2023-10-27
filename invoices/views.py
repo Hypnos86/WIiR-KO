@@ -1,6 +1,9 @@
+import csv
+import encodings
 import logging
 from enum import Enum
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
 from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes
@@ -175,6 +178,22 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                     counties.append({'county': item.section.section, 'sum': sum_value})
 
             print(counties)
+            # ---------------------------------------------
+            objectsForFile = []
+            for item in invoice.items.all():
+                sum_value = item.sum
+                exist = False
+                print(sum_value)
+                for row in objectsForFile:
+                    if item.unit.county_swop.name == row['county']:
+                        row['sum'] = + sum_value
+                        exist = True
+                        print(item)
+                if not exist:
+                    objectsForFile.append(
+                        {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': item.sum})
+            print(objectsForFile)
+            # ---------------------------------------------
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
@@ -235,6 +254,66 @@ class DeleteInvoiceItemView(View):
             item = get_object_or_404(InvoiceItems, pk=item_id)
             item.delete()
             return redirect(reverse("invoices:addItems", kwargs={"invoiceSlug": invoiceSlug}))
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
+            return render(request, self.template_error, context)
+
+
+class CreateCSV(View):
+    template_error = 'main/error.html'
+
+    def get(self, request, invoice_id):
+        try:
+            invoices = get_object_or_404(Invoice, pk=invoice_id)
+            # ---------------------------------------------
+            objectsForFile = []
+            for item in invoices.items.all():
+                sum_value = item.sum
+                exist = False
+                print(sum_value)
+                for row in objectsForFile:
+                    if item.unit.county_swop.name == row['county']:
+                        row['sum'] += sum_value
+                        exist = True
+                        print(item)
+                if not exist:
+                    objectsForFile.append(
+                        {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': item.sum})
+            print(objectsForFile)
+            # # ---------------------------------------------
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="faktura.csv"'
+
+            # Tworzenie obiektu writer i zapis do pliku csv
+            writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
+            writer.writerow(['Rozdział', 'Powiat', 'Kwota'])
+            for row in objectsForFile:
+                writer.writerow([row['section'], row['county'], row['sum']])
+            # TODO dokończyć plik, z codowaniem utf-8
+            # for item in invoices.items.all():
+            #     sum_value = item.sum
+            #     exist = False
+            #     for row in objectsForFile:
+            #         if item.unit.county_swop.name == row['county']:
+            #             row['sum'] += sum_value
+            #             exist = True
+            #             if not exist: objectsForFile.append(
+            #                 {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': sum_value})
+            #             # Utwórz plik CSV w kodowaniu UTF-8
+            #             response = HttpResponse(content_type='text/csv')
+            #             response['Content-Disposition'] = f'attachment; filename="faktura.csv"'
+            #             with open("faktura.csv", "w", encoding="utf8", newline="") as csvfile:
+            #                 writer = csv.writer(csvfile, delimiter=';')
+            #                 writer.writerow(['Rozdział', 'Powiat', 'Kwota'])
+            #                 for row in objectsForFile: writer.writerow([row['section'], row['county'], row['sum']])
+            #                 # Odczyt zawartości pliku i przekonwertowanie na odpowiedź HTTP
+            #             with open("faktura.csv", "rb") as file:
+            #                 response.write(file.read())
+            return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
             context = {'error': e}
