@@ -46,10 +46,13 @@ class WelcomeView(View):
             viewers, created = Group.objects.get_or_create(name="Viewers")
             user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
 
+            # Pobieranie i sprawdzanie czy istnieją karty
             counties = CountyCard.objects.all()
+            if not counties.exists():
+                CountyCard.create_county_cards()
 
-            # print(request.user.groups.all())
-            # if not request.user.is_authenticated :
+
+
             if not request.user.is_authenticated or not (
                     admin in request.user.groups.all() or viewers in request.user.groups.all()):
                 counties = counties.exclude(name="KWP Poznań")

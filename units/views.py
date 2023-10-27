@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views import View
 from units.forms import UnitForm
-from units.models import Unit
+from units.models import Unit, County
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +15,11 @@ class AddUnitView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
+            county = County.objects.all()
+            if not county.exists():
+                County.create_county()
+
+
             user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class()
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'new': True}
