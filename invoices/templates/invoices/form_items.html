@@ -148,7 +148,7 @@
         {% for item in items %}
         <tr>
             <td align="left" valign="middle" width="30%" scope="col">
-                {{item.unit.type.type_short}} {{item.unit.address}}, {{item.unit.city}} {% if item.unit.object_name %}-
+                {{item.unit.type.type_short}} {{item.unit.city}} -  {{item.unit.address}} {% if item.unit.object_name %}-
                 {{item.unit.object_name}} {% endif %}
             </td>
             <td align="center" valign="middle" scope="col">
