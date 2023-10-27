@@ -40,17 +40,21 @@
 </div>
 <div class="row m-0">
     <div class="col-md-2 text-center">
-        <div class="border border-secondary p-3 rounded bg-light">
+        {% if countiesSum %}
+        <div class="border border-secondary p-2 rounded bg-light">
             <div>
-                <h6 class="h5"> Suma Rozdziałów </h6>
-                <a class="bi bi-download btn btn-main" href="{% url 'invoices:createFile' invoice.id%}"></a>
+                <h6 class="h6"> Suma Rozdziałów </h6>
+
             </div>
             {% for county in countiesSum %}
             {% if county.county%}
             <div class="my-2">{{county.county}} - {{county.sum|intcomma}} zł.</div>
             {% endif %}
             {% endfor %}
+        <a class="bi bi-download btn btn-main" href="{% url 'invoices:createFile' invoice.id%}"></a>
+
         </div>
+        {% endif %}
     </div>
     <div class="col-md-8">
         <form method="POST">

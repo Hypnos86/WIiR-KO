@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from invoices.views import NewInvoiceView, EditInvoiceView, AddInvoiceItemsView, DeleteInvoiceView, \
     DeleteInvoiceItemView, CreateCSV
 
