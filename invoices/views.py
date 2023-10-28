@@ -1,5 +1,4 @@
 import csv
-import encodings
 import logging
 from enum import Enum
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -282,17 +281,19 @@ class CreateCSV(View):
                 if not exist:
                     objectsForFile.append(
                         {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': item.sum})
+
             print(objectsForFile)
             # ---------------------------------------------
 
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = f'attachment; filename="Koszty faktury {invoice}.csv"'
+            # Ustawienie kodowania utf-8
+            response.write(u'\ufeff'.encode('utf8'))
 
             # Tworzenie obiektu writer i zapis do pliku csv
             writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
-            response.write(u'\ufeff'.encode('utf8'))
             # Dodaj linię z tekstem "Załącznik do faktury {invoices}"
-            response.write([f'Załącznik do faktury {invoice}\n'])
+            response.write(f'Załącznik do faktury {invoice}\n')
             writer.writerow(['Rozdział', 'Powiat', 'Kwota'])
             for row in objectsForFile:
                 writer.writerow([row['section'], row['county'], row['sum']])
