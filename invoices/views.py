@@ -25,21 +25,21 @@ class NewInvoiceView(LoginRequiredMixin, View):
     form_class = InvoiceForm
 
     def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class()
             doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'doc_types': doc_types,
                        'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
     def post(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class(request.POST or None)
             # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             doc_types = DocumentTypes.objects.all()
@@ -55,7 +55,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                        'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -78,20 +78,20 @@ class EditInvoiceView(LoginRequiredMixin, View):
     template_error = 'main/error.html'
 
     def get(self, request, invoiceSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = InvoiceForm(instance=invoice)
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
     def post(self, request, invoiceSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = InvoiceForm(request.POST, instance=invoice)
 
@@ -104,7 +104,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e,'user_belongs_to_group': user_belongs_to_group,}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -115,8 +115,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
     form_class = InvoiceItemsForm
 
     def get(self, request, invoiceSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
             units = Unit.objects.all()
@@ -202,13 +202,13 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
     def post(self, request, invoiceSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = self.form_class(request.POST)
             items = InvoiceItems.objects.filter(invoice_id=invoice)
@@ -224,7 +224,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,}
             logger.error('Error: %s', e)
             return render(request, self.template_error, context)
 
