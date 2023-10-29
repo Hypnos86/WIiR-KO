@@ -18,6 +18,20 @@ class DocumentTypes(models.Model):
 
     type = models.CharField("Typ dokumentu", max_length=20)
 
+    @classmethod
+    def create_type(cls):
+        data = [
+            {"type": "Faktura"},
+            {"type": "Korekta"},
+            {"type": "Pismo"}
+        ]
+
+        for item in data:
+            type = cls(type=item["type"])
+            type.save()
+
+        return cls.objects.all()
+
     def __str__(self):
         return f"{self.type}"
 
@@ -28,6 +42,21 @@ class ContractTypes(models.Model):
         verbose_name_plural = "05 - Rodzaje umów"
 
     type = models.CharField("Typ dokumentu", max_length=20)
+
+    @classmethod
+    def create_contract_types(cls):
+        data = [
+            {"type": "Nie dotyczy"},
+            {"type": "Kompleksowa"},
+            {"type": "OSD"},
+            {"type": "Sprzedaż"}
+        ]
+
+        for item in data:
+            type = cls(type=item["type"])
+            type.save()
+
+        return cls.objects.all()
 
     def __str__(self):
         return f"{self.type}"
@@ -83,9 +112,20 @@ class Group(models.Model):
     group = models.CharField("Grupa", max_length=2, unique=True)
     name = models.CharField("Nazwa", max_length=50)
 
+    @classmethod
+    def create_group(cls):
+        data = [
+            {"group": "6", "name": "Grupa 6 - Administracja i utrzymanie obiektów"}
+        ]
+
+        for item in data:
+            groups = cls(group=item["group"], name=item["name"])
+            groups.save()
+
+        return cls.objects.all()
+
     def __str__(self):
         return f"gr.{self.group}"
-
 
 class Paragraph(models.Model):
     class Meta:
@@ -99,7 +139,6 @@ class Paragraph(models.Model):
 
     def __str__(self):
         return f"{self.paragraph} - {self.name}"
-
 
 class InvoiceItems(models.Model):
     class Meta:
@@ -115,10 +154,12 @@ class InvoiceItems(models.Model):
     period_from = models.DateField(verbose_name='Okres od', null=False)
     period_to = models.DateField(verbose_name='Okres do', null=False)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
-    counterReading = models.DecimalField(verbose_name='Stan licznika', max_digits=10, decimal_places=2, null=True, blank=True)
+    counterReading = models.DecimalField(verbose_name='Stan licznika', max_digits=10, decimal_places=2, null=True,
+                                         blank=True)
     consumption = models.IntegerField(verbose_name='Zużycie', null=True, blank=True)
     unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
-    section = models.ForeignKey(to=Section, null=True, blank=True, on_delete=models.CASCADE, verbose_name='Rozdział',
+    section = models.ForeignKey(to=Section, null=True, blank=True, on_delete=models.CASCADE,
+                                verbose_name='Rozdział',
                                 related_name=related_name)
     group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
@@ -127,7 +168,8 @@ class InvoiceItems(models.Model):
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
-    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
+    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name,
+                               verbose_name='Autor')
 
     def __str__(self):
         return f"{self.section}-{self.group}-{self.paragraph}"

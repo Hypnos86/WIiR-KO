@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.views import View
-from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes
+from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes, Group
 from invoices.forms import InvoiceForm, InvoiceItemsForm
 from units.models import Unit
 
@@ -27,6 +27,24 @@ class NewInvoiceView(LoginRequiredMixin, View):
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            # Tworzenie typów dokumentów
+            types = DocumentTypes.objects.all()
+            if not types.exists():
+                DocumentTypes.create_type()
+            # -------------------------
+
+            # Tworzenie typów umów
+            contract_types = ContractTypes.objects.all()
+            if not contract_types.exists():
+                ContractTypes.create_contract_types()
+            # --------------------
+
+            # Tworzenie grup
+            groups = Group.objects.all()
+            if not groups.exists():
+                Group.create_group()
+            # --------------
+
             form = self.form_class()
             doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'doc_types': doc_types,
