@@ -104,7 +104,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e,'user_belongs_to_group': user_belongs_to_group,}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -202,7 +202,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -224,7 +224,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error('Error: %s', e)
             return render(request, self.template_error, context)
 
@@ -265,6 +265,7 @@ class CreateCSV(View):
     template_error = 'main/error.html'
 
     def get(self, request, invoice_id):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             invoice = get_object_or_404(Invoice, pk=invoice_id)
             # ---------------------------------------------
@@ -296,11 +297,13 @@ class CreateCSV(View):
             response.write(f'Załącznik do faktury {invoice}\n')
             writer.writerow(['Rozdział', 'Powiat', 'Kwota'])
             for row in objectsForFile:
-                writer.writerow([row['section'], row['county'], row['sum']])
+                strSum = str(row['sum'])
+                rowSum = strSum.replace('.', ',')
+                writer.writerow([row['section'], row['county'], rowSum])
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
