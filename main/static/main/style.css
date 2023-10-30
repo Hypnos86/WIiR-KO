@@ -236,9 +236,8 @@ padding: 2px 10px;
 .btn-delete:hover{
    color: #fff;
    background-color: #C2A625;
-    border-color: #C2A625;
-
-   }
+   border-color: #C2A625;
+ }
 
 .bold{
     font-weight: bold !important
@@ -278,4 +277,16 @@ padding: 2px 10px;
 
 .table-vertical{
     vertical-align: middle;
+}
+
+.btn-edit{
+    color: white;
+    background-color: rgb(5,117,112,46);
+    border-color: rgb(5,117,112,46);
+}
+
+.btn-edit:hover{
+    color: #fff;
+    background-color: #C2A625;
+    border-color: #C2A625;
 }

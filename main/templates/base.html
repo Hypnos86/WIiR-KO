@@ -60,6 +60,11 @@
                     <a class="nav-link" href="{% url 'main:invoiceSite'%}">Faktury</a>
                 </li>
                 {%endif%}
+                {% if user.is_authenticated and user_belongs_to_group %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
+                </li>
+                {%endif%}
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
                 </li>

@@ -672,3 +672,18 @@ class CountyCostUnitListView(View):
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
+
+class TrezorViews(LoginRequiredMixin, View):
+    template_name = 'main/site_trezor.html'
+    template_error = 'main/error.html'
+
+    def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            context = {'user_belongs_to_group': user_belongs_to_group}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)

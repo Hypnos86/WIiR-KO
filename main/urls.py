@@ -1,7 +1,8 @@
 from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, UnitsView, \
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
-    ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, CountyCostUnitListView
+    ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
+    CountyCostUnitListView, TrezorViews
 
 app_name = 'main'
 urlpatterns = [
@@ -26,13 +27,14 @@ urlpatterns = [
     # Szczegóły jednostki - informacje
     path('info/unit/<slug:unitSlug>/', UnitDetailsView.as_view(), name='unitDetailsInfo'),
 
-
     # Nagłówek menu
     # Statystyki
     path('statistics/', StatisticsView.as_view(), name='statisticsSite'),
 
     # Faktury
     path('invoices/', InvoicesListView.as_view(), name='invoiceSite'),
+    #  Trezor
+    path('trezor/', TrezorViews.as_view(), name='trezorSite'),
     # Lista kosztów danego paragrafu
     path('invoices/paragraph/<slug:paragraphSlug>/', ParagraphCostListView.as_view(), name='paragraphCostList'),
 
