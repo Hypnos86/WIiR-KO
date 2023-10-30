@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content% }
+{% block content %}
 <div class="container pt-5">
     <div class="row mb-4">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
@@ -11,9 +11,6 @@
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
                 <h5 class="h5 m-0 font-weight-bold text-uppercase">Statystyki</h5>
-            </div>
-            <div class="text-center text-uppercase my-2 ">Wydatki poniesione w <span
-                    class="info-color">{{currentYear}}</span> roku
             </div>
         </div>
         <div class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end">
@@ -30,6 +27,9 @@
                 </a>
             </div>
         </div>
+    </div>
+    <div class="text-center text-uppercase my-2 ">
+        <h6>Wydatki poniesione w <span class="info-color">{{currentYear}}</span> roku</h6>
     </div>
 </div>
 <div class="mx-3">
@@ -74,4 +74,4 @@
         </tbody>
     </table>
 </div>
-{%endblock%}
+{% endblock %}

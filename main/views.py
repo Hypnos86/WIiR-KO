@@ -1,8 +1,11 @@
+import decimal
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
@@ -674,16 +677,98 @@ class CountyCostUnitListView(View):
             return render(request, self.template_error, context)
 
 
+# class TrezorViews(LoginRequiredMixin, View):
+#     template_name = 'main/site_trezor.html'
+#     template_error = 'main/error.html'
+#
+#     def get(self, request):
+#         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+#         try:
+#             context = {'user_belongs_to_group': user_belongs_to_group}
+#             return render(request, self.template_name, context)
+#         except Exception as e:
+#             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+#             logger.error("Error: %s", e)
+#             return render(request, self.template_error, context)
+
+
 class TrezorViews(LoginRequiredMixin, View):
-    template_name = 'main/site_trezor.html'
+    template_name = "main/site_trezor.html"
     template_error = 'main/error.html'
 
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+
         try:
-            context = {'user_belongs_to_group': user_belongs_to_group}
-            return render(request, self.template_name, context)
+            invoices = Invoice.objects.all().order_by("date_of_payment")
+
+            query = "Wyczyść"
+            search = "Szukaj"
+            year_instance = CurrentDate()
+            year = year_instance.current_year()
+
+            date_from = request.GET.get("from")
+            date_to = request.GET.get("to")
+
+            date_from_obj = None
+            date_to_obj = None
+
+            if date_from:
+                try:
+                    date_from_obj = datetime.datetime.strptime(date_from, "%Y-%m-%d")
+                except ValueError:
+                    date_from_obj = None
+
+            if date_to:
+                try:
+                    date_to_obj = datetime.datetime.strptime(date_to, "%Y-%m-%d")
+                except ValueError:
+                    date_to_obj = None
+
+            if date_from_obj and date_to_obj:
+                invoice_list = invoices.filter(date_of_payment__range=[date_from_obj, date_to_obj])
+
+                day_sum = {}
+                verification_all = 0
+
+                days = set([day["date_of_payment"] for day in invoice_list.values("date_of_payment", "sum")])
+
+                for day in days:
+                    sum = 0
+                    for invoice in invoice_list:
+                        if day == invoice.date_of_payment:
+                            sum += invoice.sum if invoice.sum is not None else 0  # Sprawdź, czy invoice.sum nie jest None
+                    day_sum[day] = sum
+                    verification_all += sum  # Aktualizuj sumę ogólną
+
+                invoices_sum = len(invoice_list)
+
+                verification_all_dict = invoice_list.aggregate(Sum("sum"))
+                verification_all = round(verification_all_dict["sum__sum"] or 0, 2)
+
+                print(invoice_list)
+
+                context = {
+                    'invoices': invoice_list,
+                    'invoices_sum': invoices_sum,
+                    'query': query,
+                    'year': year,
+                    'date_from': date_from,
+                    'date_to': date_to,
+                    'day_sum': day_sum,
+                    'date_from_obj': date_from_obj,
+                    'date_to_obj': date_to_obj,
+                    'verification_all': verification_all,
+                    'user_belongs_to_group': user_belongs_to_group
+                }
+                return render(request, self.template_name, context)
+            else:
+                invoices_sum = 0
+                context = {'user_belongs_to_group': user_belongs_to_group, 'invoices_sum': invoices_sum,
+                           'search': search, 'year': year}
+                return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            # Zapisanie informacji o błędzie do loga
+            context = {'error': str(e), 'user_belongs_to_group': user_belongs_to_group}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
