@@ -52,7 +52,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
+                    <a class="nav-link" href="{% url 'main:statisticsSite' year %}">Statystyki</a>
                 </li>
                 {% if user.is_authenticated and user_belongs_to_group %}
                 <li class="nav-item">

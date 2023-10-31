@@ -45,6 +45,8 @@ class WelcomeView(View):
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            yearObject = CurrentDate()
+            year = yearObject.current_year()
             # Tworzenie i przypisywanie zmiennej grup
             admin, created = Group.objects.get_or_create(name="AdminZRiWT")
             viewers, created = Group.objects.get_or_create(name="Viewers")
@@ -58,7 +60,7 @@ class WelcomeView(View):
                     admin in request.user.groups.all() or viewers in request.user.groups.all()):
                 counties = counties.exclude(name="KWP Poznań")
 
-            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
@@ -230,7 +232,6 @@ class StatisticsView(LoginRequiredMixin, View):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
-            currentYear = CurrentDate().current_year()
             paragraphs = Paragraph.objects.all()
             counties = County.objects.all()
             yearObject = CurrentDate()
@@ -263,11 +264,27 @@ class StatisticsView(LoginRequiredMixin, View):
                                      paragraphsDict.items()]
 
                 objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
-            print(objectDatas)
-            context = {'objectDatas': objectDatas, 'user_belongs_to_group': user_belongs_to_group, 'title': title,
-                       'paragraphs': paragraphs, 'year': year}
-            # -----------------------------------
+            for item in objectDatas:
+                print(item)
 
+            # -----------------------------------
+            paragraphSums = {}
+
+            for data in objectDatas:
+                for object in data['data']:
+                    paragraph = object['paragraph']
+                    sum_value = object['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
+
+            print(paragraphSums)
+
+            context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
+                       'user_belongs_to_group': user_belongs_to_group, 'title': title,
+                       'paragraphs': paragraphs, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
@@ -668,7 +685,7 @@ class CountyCostUnitListView(View):
             # Tworzymy słownik do przechowywania sum paragrafów
             paragraphSums = {}
 
-            # Iterujemy przez objectDatas
+            # Iterujemy przez objectDatas i zliczamy sumy do stopki
             for unit_data in objectDatas:
                 for object in unit_data['objects']:
                     paragraph = object['paragraph']
@@ -679,12 +696,6 @@ class CountyCostUnitListView(View):
                     else:
                         paragraphSums[paragraph] = sum_value
 
-            # Teraz paragraph_sums zawiera sumy paragrafów
-            # Możesz je przekazać do szablonu lub wyświetlić
-            # for paragraph, sum_value in paragraphSums.items():
-            #     print(f'Paragraf: {paragraph}, Suma: {sum_value}')
-
-            # print(objectDatas)
             context = {'county': county_unit, 'user_belongs_to_group': user_belongs_to_group, 'year': year,
                        'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
                        "items": objectDatas, 'paragraphSums': paragraphSums}
@@ -693,21 +704,6 @@ class CountyCostUnitListView(View):
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
-
-
-# class TrezorViews(LoginRequiredMixin, View):
-#     template_name = 'main/site_trezor.html'
-#     template_error = 'main/error.html'
-#
-#     def get(self, request):
-#         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
-#         try:
-#             context = {'user_belongs_to_group': user_belongs_to_group}
-#             return render(request, self.template_name, context)
-#         except Exception as e:
-#             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
-#             logger.error("Error: %s", e)
-#             return render(request, self.template_error, context)
 
 
 class TrezorViews(LoginRequiredMixin, View):
