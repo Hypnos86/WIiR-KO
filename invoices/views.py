@@ -279,7 +279,7 @@ class DeleteInvoiceItemView(View):
             return render(request, self.template_error, context)
 
 
-class CreateCSV(View):
+class CreateCSVForItems(View):
     template_error = 'main/error.html'
 
     def get(self, request, invoice_id):

@@ -1,6 +1,6 @@
 from django.urls import path
 from invoices.views import NewInvoiceView, EditInvoiceView, AddInvoiceItemsView, DeleteInvoiceView, \
-    DeleteInvoiceItemView, CreateCSV
+    DeleteInvoiceItemView, CreateCSVForItems
 
 app_name = 'invoices'
 urlpatterns = [
@@ -11,6 +11,6 @@ urlpatterns = [
     path('add/items/<slug:invoiceSlug>/', AddInvoiceItemsView.as_view(), name='addItems'),
     path("deleteInvoice/<slug:invoiceSlug>/", DeleteInvoiceView.as_view(), name="deleteInvoice"),
     path("deleteItem/<slug:invoiceSlug>/<int:item_id>", DeleteInvoiceItemView.as_view(), name="deleteInvoiceItem"),
-    path("createCSV/<int:invoice_id>", CreateCSV.as_view(), name="createFile"),
+    path("createCSV/<int:invoice_id>", CreateCSVForItems.as_view(), name="createFile"),
 
 ]

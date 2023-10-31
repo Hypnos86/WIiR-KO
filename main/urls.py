@@ -2,7 +2,8 @@ from django.urls import path, include
 from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, UnitsView, \
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
-    CountyCostUnitListView, TrezorViews
+    CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
+    CreateCSVForCountyYearSum
 
 app_name = 'main'
 urlpatterns = [
@@ -12,6 +13,7 @@ urlpatterns = [
     path('modal/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearCostListView.as_view(), name='archiveYears'),
     path('modal/archive/<slug:slugCounty>/', ArchiveYearUnitCostListView.as_view(),
          name='archiveYearsUnitCost'),
+    path('modal/archive/', ArchiveYearStatisticView.as_view(), name='archiveYearsStatistic'),
     path('modal/paragraph/', ParagraphModalView.as_view(), name='paragraphModal'),
     path('modal/mediaInfoUnit/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
 
@@ -29,6 +31,7 @@ urlpatterns = [
 
     # Nagłówek menu
     # Statystyki
+    path('statistics/<int:year>/', StatisticsYearView.as_view(), name='statisticYear'),
     path('statistics/', StatisticsView.as_view(), name='statisticsSite'),
 
     # Faktury
@@ -42,6 +45,9 @@ urlpatterns = [
     path('units/', UnitsView.as_view(), name='unitsSite'),
     # Uzytkownicy
     path('users/', UsersSiteView.as_view(), name='usersSite'),
+    # Tworzenie plików CSV
+    path('csvForCountySum/', CreateCSVForCountySum.as_view(), name='csvForCountySumCurrentYear'),
+    path('csvForCountySum/<int:year>', CreateCSVForCountyYearSum.as_view(), name='csvForCountySumAllYear'),
     # Logowanie
     path('login/', LoginView.as_view(), name="loginApp"),
     # Lista kart obiektów - strona główna

@@ -1,11 +1,11 @@
-import decimal
-
+import csv
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
@@ -51,10 +51,18 @@ class WelcomeView(View):
             admin, created = Group.objects.get_or_create(name="AdminZRiWT")
             viewers, created = Group.objects.get_or_create(name="Viewers")
 
-            # Pobieranie i sprawdzanie czy istnieją karty
+            # Pobieranie i sprawdzanie, czy istnieją obiekty w bazie
             counties = CountyCard.objects.all()
             if not counties.exists():
                 CountyCard.create_county_cards()
+
+            sections = Section.objects.all()
+            if not sections.exists():
+                Section.create_section()
+
+            paragraphs = Paragraph.objects.all()
+            if not paragraphs.exists():
+                Paragraph.create_paragraph()
 
             if not request.user.is_authenticated or not (
                     admin in request.user.groups.all() or viewers in request.user.groups.all()):
@@ -237,17 +245,17 @@ class StatisticsView(LoginRequiredMixin, View):
             yearObject = CurrentDate()
             year = yearObject.current_year()
 
-            # --Pisany kod------------------------------
-
+            # ----------------------------------------
             objectDatas = []
             for county in counties:
                 sectionObject = county.section.first()
                 section = sectionObject.section
-                # print(section)
                 units = county.unit.all()
-                # print(county)
+
+                # Initialize paragraphData outside the loop
+                paragraphData = []
+
                 for unit in units:
-                    # print(unit)
                     paragraphsDict = {}
 
                     # Inicjujemy kwoty dla wszystkich paragrafów jako 0
@@ -260,31 +268,89 @@ class StatisticsView(LoginRequiredMixin, View):
                             paragraph = item.paragraph.paragraph
                             sumUnit = item.sum
                             paragraphsDict[paragraph] += sumUnit
-                    paragraphData = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
-                                     paragraphsDict.items()]
+                    paragraphData.extend(
+                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
 
                 objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
-            for item in objectDatas:
-                print(item)
 
-            # -----------------------------------
+            # Tworzenie podsumowania i sum paragrafów
             paragraphSums = {}
 
             for data in objectDatas:
-                for object in data['data']:
-                    paragraph = object['paragraph']
-                    sum_value = object['sum']
+                for item in data['data']:
+                    paragraph = item['paragraph']
+                    sum_value = item['sum']
                     # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
                     if paragraph in paragraphSums:
                         paragraphSums[paragraph] += sum_value
                     else:
                         paragraphSums[paragraph] = sum_value
 
-            print(paragraphSums)
+            context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
+                       'user_belongs_to_group': user_belongs_to_group, 'title': title,
+                       'paragraphs': paragraphs, 'year': year, 'statisticsSite': True}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class StatisticsYearView(LoginRequiredMixin, View):
+    template_name = 'main/site_statistics.html'
+    template_error = 'main/error.html'
+
+    def get(self, request, year):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+            paragraphs = Paragraph.objects.all()
+            counties = County.objects.all()
+
+            # ----------------------------------------
+            objectDatas = []
+            for county in counties:
+                sectionObject = county.section.first()
+                section = sectionObject.section
+                units = county.unit.all()
+
+                # Initialize paragraphData outside the loop
+                paragraphData = []
+
+                for unit in units:
+                    paragraphsDict = {}
+
+                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
+                    for paragraph in paragraphs:
+                        paragraphsDict[paragraph.paragraph] = 0
+                    items = unit.items.all()
+
+                    for item in items:
+                        if item.invoice_id.date_of_payment.year == year:
+                            paragraph = item.paragraph.paragraph
+                            sumUnit = item.sum
+                            paragraphsDict[paragraph] += sumUnit
+                    paragraphData.extend(
+                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+
+                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+
+            # Tworzenie podsumowania i sum paragrafów
+            paragraphSums = {}
+
+            for data in objectDatas:
+                for item in data['data']:
+                    paragraph = item['paragraph']
+                    sum_value = item['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
                        'user_belongs_to_group': user_belongs_to_group, 'title': title,
-                       'paragraphs': paragraphs, 'year': year}
+                       'paragraphs': paragraphs, 'year': year, 'statisticYear': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
@@ -315,14 +381,14 @@ class ArchiveYearCostListView(View):
     def get(self, request, unitSlug, paragraphSlug):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=unitSlug)
             countySlug = unit.county_unit.slug
             items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug, unit__id=unit.id)
             yearsSet = set([year.invoice_id.date.year for year in items])
             years = sorted(yearsSet, reverse=True)
+
             context = {'countySlug': countySlug, 'unitSlug': unitSlug, 'paragraphSlug': paragraphSlug, 'years': years,
-                       'unitCost': False}
+                       'unitCost': False, 'archiveYears': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
@@ -343,7 +409,25 @@ class ArchiveYearUnitCostListView(View):
             items = InvoiceItems.objects.filter(unit__county_unit__slug=slugCounty)
             yearsSet = set([year.invoice_id.date.year for year in items])
             years = sorted(yearsSet, reverse=True)
-            context = {'slugCounty': slugCounty, 'years': years, 'unitCost': True}
+            context = {'slugCounty': slugCounty, 'years': years, 'archiveYearsUnitCost': True}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class ArchiveYearStatisticView(View):
+    template_name = 'main/modal_archive_years.html'
+    template_error = 'main/error.html'
+
+    def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            items = InvoiceItems.objects.filter()
+            yearsSet = set([year.invoice_id.date.year for year in items])
+            years = sorted(yearsSet, reverse=True)
+            context = {'years': years, 'archiveYearsStatistic': True}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
@@ -785,4 +869,162 @@ class TrezorViews(LoginRequiredMixin, View):
             # Zapisanie informacji o błędzie do loga
             context = {'error': str(e), 'user_belongs_to_group': user_belongs_to_group}
             logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class CreateCSVForCountySum(View):
+    template_error = 'main/error.html'
+
+    def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            paragraphs = Paragraph.objects.all()
+            counties = County.objects.all()
+            dateObject = CurrentDate()
+            nowDate = dateObject.current_date()
+            year = dateObject.current_year()
+
+            objectDatas = []
+
+            for county in counties:
+                sectionObject = county.section.first()
+                section = sectionObject.section
+                units = county.unit.all()
+
+                paragraphData = []
+
+                for unit in units:
+                    paragraphsDict = {}
+
+                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
+                    for paragraph in paragraphs:
+                        paragraphsDict[paragraph.paragraph] = 0
+                    items = unit.items.filter(invoice_id__date_of_payment__year=year)
+
+                    for item in items:
+                        if item.invoice_id.date_of_payment.year == year:
+                            paragraph = item.paragraph.paragraph
+                            sumUnit = item.sum
+                            paragraphsDict[paragraph] += sumUnit
+                    paragraphData.extend(
+                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+
+                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+            # -----------------------------------
+            paragraphSums = {}
+
+            for data in objectDatas:
+                for object in data['data']:
+                    paragraph = object['paragraph']
+                    sum_value = object['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
+            # ---------------------------------------------
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="Zestawienie kosztów gr.6 za {year}.csv"'
+            # Ustawienie kodowania utf-8
+            response.write(u'\ufeff'.encode('utf8'))
+
+            # Tworzenie obiektu writer i zapis do pliku csv
+            writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
+            # Dodaj linię z tekstem "Załącznik do faktury {invoices}"
+            response.write(f'Zestawienie kosztów gr.6 za {year}. Stan na {nowDate.strftime("%d.%m.%Y")}\n')
+            writer.writerow(['Jednostka', 'Rozdział'] + [paragraph.paragraph for paragraph in paragraphs])
+
+            for row in objectDatas:
+                paragtaphSum = [str(item['sum']).replace('.', ',') for item in row['data']]
+                writer.writerow([row['county'], row['section']] + paragtaphSum)
+
+            writer.writerow(
+                ['', 'Razem'] + [str(paragraphSums.get(paragraph, 0)).replace('.', ',') for paragraph in paragraphSums])
+
+            return response
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
+            return render(request, self.template_error, context)
+
+
+class CreateCSVForCountyYearSum(View):
+    template_error = 'main/error.html'
+
+    def get(self, request, year):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            paragraphs = Paragraph.objects.all()
+            counties = County.objects.all()
+            dateObject = CurrentDate()
+            nowDate = dateObject.current_date()
+
+            objectDatas = []
+
+            for county in counties:
+                sectionObject = county.section.first()
+                section = sectionObject.section
+                units = county.unit.all()
+
+                paragraphData = []
+
+                for unit in units:
+                    paragraphsDict = {}
+
+                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
+                    for paragraph in paragraphs:
+                        paragraphsDict[paragraph.paragraph] = 0
+                    items = unit.items.filter(invoice_id__date_of_payment__year=year)
+
+                    for item in items:
+                        if item.invoice_id.date_of_payment.year == year:
+                            paragraph = item.paragraph.paragraph
+                            sumUnit = item.sum
+                            paragraphsDict[paragraph] += sumUnit
+                    paragraphData.extend(
+                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+
+                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+                # -----------------------------------
+            paragraphSums = {}
+
+            for data in objectDatas:
+                for object in data['data']:
+                    paragraph = object['paragraph']
+                    sum_value = object['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
+            # ---------------------------------------------
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = f'attachment; filename="Zestawienie kosztów gr.6 za {year}.csv"'
+            # Ustawienie kodowania utf-8
+            response.write(u'\ufeff'.encode('utf8'))
+
+            # Tworzenie obiektu writer i zapis do pliku csv
+            writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
+            # Dodaj linię z tekstem "Załącznik do faktury {invoices}"
+            response.write(f'Zestawienie kosztów gr.6 za {year}. Stan na {nowDate.strftime("%d.%m.%Y")}\n')
+            writer.writerow(['Jednostka', 'Rozdział'] + [paragraph.paragraph for paragraph in paragraphs])
+
+            for row in objectDatas:
+                paragtaphSum = [str(item['sum']).replace('.', ',') for item in row['data']]
+                writer.writerow([row['county'], row['section']] + paragtaphSum)
+
+            writer.writerow(
+                ['', 'Razem'] + [str(paragraphSums.get(paragraph, 0)).replace('.', ',') for paragraph in
+                                 paragraphSums])
+
+            return response
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)

@@ -100,6 +100,22 @@ class Section(models.Model):
     name = models.CharField(verbose_name="Nazwa", max_length=20)
     swop_id = models.ManyToManyField(County, verbose_name="SWOP", blank=True, related_name=related_name)
 
+    @classmethod
+    def create_section(cls):
+        data = [
+            {"section": "75401", "name": "CBŚP"},
+            {"section": "75402", "name": "BSW"},
+            {"section": "75404", "name": "KWP"},
+            {"section": "75405", "name": "Powiaty"},
+            {"section": "75407", "name": "CBZC"}
+        ]
+
+        for item in data:
+            section = cls(section=item["section"], name=item["name"])
+            section.save()
+
+        return cls.objects.all()
+
     def __str__(self):
         return f"{self.section} ({self.name})"
 
@@ -137,6 +153,32 @@ class Paragraph(models.Model):
     paragraph = models.CharField(verbose_name="Paragraf", max_length=7, unique=True)
     name = models.CharField(verbose_name="Nazwa", max_length=100)
     slug = models.SlugField(max_length=7, null=True, blank=True, unique=True)
+
+    @classmethod
+    def create_paragraph(cls):
+        data = [
+            {"paragraph": "4170-01", "name": "Wynagrodzenia płacowe na podstawie umowy zlecenia lub umowy o dzieło"},
+            {"paragraph": "4210-03", "name": "Opał (węgiel, koks, olej opałowy, drewno, paliwa zastępcze)"},
+            {"paragraph": "4260-01", "name": "Energia elektryczna"},
+            {"paragraph": "4260-02", "name": "Energia cieplna"},
+            {"paragraph": "4260-03", "name": "Gaz"},
+            {"paragraph": "4260-04", "name": "Woda"},
+            {"paragraph": "4300-10", "name": "Usługi komunalne i mieszkaniowe"},
+            {"paragraph": "4300-19", "name": "Pozostałe usługi"},
+            {"paragraph": "4400-00",
+             "name": "Opłaty za administrowanie i czynsze za budynki, lokale i pomieszczenia garażowe"},
+            {"paragraph": "4480-00", "name": "Podatek od nieruchomości"},
+            {"paragraph": "4510-02", "name": "Trwały zarząd"},
+            {"paragraph": "4510-03", "name": "Wody opadowe"},
+            {"paragraph": "4520-03", "name": "Opłaty za korzystanie ze środowiska"},
+            {"paragraph": "4520-04", "name": "Inne (podatek od śmieci)"},
+        ]
+
+        for item in data:
+            paragraph = cls(paragraph=item["paragraph"], name=item["name"])
+            paragraph.save()
+
+        return cls.objects.all()
 
     def __str__(self):
         return f"{self.paragraph} - {self.name}"

@@ -71,6 +71,29 @@ class TypeUnit(models.Model):
     type_full = models.CharField(max_length=100, null=False, verbose_name="Pełna nazwa")
     id_order = models.IntegerField("Kolejność", unique=True, null=True)
 
+    @classmethod
+    def create_type_unit(cls):
+        # Tworzenie listy danych, które mają być użyte do stworzenia obiektów
+        data = [
+            {"type_short": "KWP", "type_full": "Komenda Wojewódzka Policji", "id_order": 1},
+            {"type_short": "KMP", "type_full": "Komenda Miejska Policji", "id_order": 2},
+            {"type_short": "KPP", "type_full": "Komenda Powiatowa Policji", "id_order": 3},
+            {"type_short": "KP", "type_full": "Komisariat Policji", "id_order": 4},
+            {"type_short": "PP", "type_full": "Posterunek Policji", "id_order": 5},
+            {"type_short": "RD", "type_full": "Rewir Dzielnicowych", "id_order": 6},
+            {"type_short": "PPD", "type_full": "Punkt Przyjęć Dzielnicowych", "id_order": 7},
+            {"type_short": "PPI", "type_full": "Punkt Przyjęć Interesantów", "id_order": 8},
+            {"type_short": "Ant.", "type_full": "Antena", "id_order": 9},
+            {"type_short": "Inne", "type_full": "Inne", "id_order": 10},
+        ]
+
+        # Tworzenie i zapisywanie obiektów w pętli
+        for item in data:
+            typeUnit = cls(type_short=item["type_short"], type_full=item["type_full"], id_order=item["id_order"])
+            typeUnit.save()
+
+        return cls.objects.all()
+
     def __str__(self):
         return f"{self.type_full}"
 
