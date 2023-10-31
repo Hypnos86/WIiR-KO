@@ -49,26 +49,18 @@
         </tr>
         </thead>
         <tbody>
-        {% for county in counties %}
+        {% for item in objectDatas %}
         <tr>
             <td align="left" valign="middle" width="120" scope="col">
-                {{ county.name }}
+                {{ item.county }}
             </td>
             <td align="center" valign="bottom" width="auto" scope="col">
-                {{ county.section.all.first.section }}
+                {{ item.section }}
             </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            {% for paragraph in item.data %}
+            <td align="center" valign="bottom" width="auto" scope="col">{{paragraph.sum}} zł. <br> (test-{{paragraph.paragraph}})</td>
+            {% endfor %}
+
         </tr>
         {% endfor %}
         </tbody>

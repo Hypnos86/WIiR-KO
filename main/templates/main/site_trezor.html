@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% block content %}
+{% if user.is_authenticated and user_belongs_to_group%}
 <div class="container pt-5">
     <div class="row mb-3">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
@@ -111,4 +112,5 @@
          $("form").submit();
      }
 </script>
+{% endif %}
 {% endblock %}

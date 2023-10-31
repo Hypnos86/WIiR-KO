@@ -233,23 +233,41 @@ class StatisticsView(LoginRequiredMixin, View):
             currentYear = CurrentDate().current_year()
             paragraphs = Paragraph.objects.all()
             counties = County.objects.all()
+            yearObject = CurrentDate()
+            year = yearObject.current_year()
 
-            items = []
-            for paragraph in paragraphs:
-                sum = 0
-                units = []
-                for item in paragraph.items.all():
-                    sum += item.sum
-                    unit = item.unit.county_swop
-                    units.append({'unit': unit, 'sum': sum})
+            # --Pisany kod------------------------------
 
-                items.append({'paragraph': paragraph, 'units': units})
+            objectDatas = []
+            for county in counties:
+                sectionObject = county.section.first()
+                section = sectionObject.section
+                # print(section)
+                units = county.unit.all()
+                # print(county)
+                for unit in units:
+                    # print(unit)
+                    paragraphsDict = {}
 
-            for item in items:
-                print(item)
+                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
+                    for paragraph in paragraphs:
+                        paragraphsDict[paragraph.paragraph] = 0
+                    items = unit.items.all()
 
-            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group, 'currentYear': currentYear,
-                       'paragraphs': paragraphs, 'title': title}
+                    for item in items:
+                        if item.invoice_id.date_of_payment.year == year:
+                            paragraph = item.paragraph.paragraph
+                            sumUnit = item.sum
+                            paragraphsDict[paragraph] += sumUnit
+                    paragraphData = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                     paragraphsDict.items()]
+
+                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+            print(objectDatas)
+            context = {'objectDatas': objectDatas, 'user_belongs_to_group': user_belongs_to_group, 'title': title,
+                       'paragraphs': paragraphs, 'year': year}
+            # -----------------------------------
+
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
