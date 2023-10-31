@@ -332,3 +332,8 @@ textarea::-webkit-scrollbar-thumb {
     width: 0;
     background: transparent;
 }
+/*-------------------------------------------------*/
+.font-size{
+    font-size: 15px;
+
+}
