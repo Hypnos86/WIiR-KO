@@ -27,23 +27,6 @@ class NewInvoiceView(LoginRequiredMixin, View):
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            # Tworzenie typów dokumentów
-            types = DocumentTypes.objects.all()
-            if not types.exists():
-                DocumentTypes.create_type()
-            # -------------------------
-
-            # Tworzenie typów umów
-            contract_types = ContractTypes.objects.all()
-            if not contract_types.exists():
-                ContractTypes.create_contract_types()
-            # --------------------
-
-            # Tworzenie grup
-            groups = Group.objects.all()
-            if not groups.exists():
-                Group.create_group()
-            # --------------
 
             form = self.form_class()
             doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
@@ -76,20 +59,6 @@ class NewInvoiceView(LoginRequiredMixin, View):
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
-
-
-# class NewInvoiceItemsView(LoginRequiredMixin, View):
-#     template_name = 'invoices/form_items.html'
-#     template_error = 'main/error.html'
-#     form_class = InvoiceItemsForm
-#
-#     def get(self, request, invoiceSlug):
-#         invoice = get_object_or_404(Invoice, slug=invoiceSlug)
-#         form = self.form_class()
-#
-#         context = {'form': form, "invoice": invoice, 'invoiceSlug': invoiceSlug, 'new': True}
-#         return render(request, self.template_name, context)
-
 
 class EditInvoiceView(LoginRequiredMixin, View):
     template_name = 'invoices/form_invoice.html'
@@ -194,22 +163,18 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 if not exist:
                     counties.append({'county': item.section.section, 'sum': sum_value})
 
-            print(counties)
             # ---------------------------------------------
             objectsForFile = []
             for item in invoice.items.all():
                 sum_value = item.sum
                 exist = False
-                print(sum_value)
                 for row in objectsForFile:
                     if item.unit.county_swop.name == row['county']:
                         row['sum'] = + sum_value
                         exist = True
-                        print(item)
                 if not exist:
                     objectsForFile.append(
                         {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': item.sum})
-            print(objectsForFile)
             # ---------------------------------------------
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}

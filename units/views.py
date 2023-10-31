@@ -14,16 +14,8 @@ class AddUnitView(LoginRequiredMixin, View):
     form_class = UnitForm
 
     def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            county = County.objects.all()
-            if not county.exists():
-                County.create_county()
-
-            type_unit = TypeUnit.objects.all()
-            if not type_unit.exists():
-                TypeUnit.create_type_unit()
-
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class()
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'new': True}
             return render(request, self.template_name, context)
@@ -31,8 +23,8 @@ class AddUnitView(LoginRequiredMixin, View):
             logger.error("Error: %s", e)
 
     def post(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             form = self.form_class(request.POST or None)
             if form.is_valid():
                 instance = form.save(commit=False)
@@ -50,8 +42,8 @@ class EditUnitView(LoginRequiredMixin, View):
     form_class = UnitForm
 
     def get(self, request, slug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
             form = self.form_class(instance=unit)
@@ -62,8 +54,8 @@ class EditUnitView(LoginRequiredMixin, View):
             logger.error("Error: %s", e)
 
     def post(self, request, slug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
             form = self.form_class(request.POST or None, instance=unit)

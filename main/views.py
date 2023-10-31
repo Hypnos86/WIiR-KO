@@ -10,8 +10,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
-from units.models import Unit, County
-from invoices.models import Invoice, InvoiceItems, Paragraph, Section
+from units.models import Unit, County, TypeUnit
+from invoices.models import Invoice, InvoiceItems, Paragraph, Section, DocumentTypes, ContractTypes
 from enum import Enum
 import logging
 import datetime
@@ -47,6 +47,7 @@ class WelcomeView(View):
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
+
             # Tworzenie i przypisywanie zmiennej grup
             admin, created = Group.objects.get_or_create(name="AdminZRiWT")
             viewers, created = Group.objects.get_or_create(name="Viewers")
@@ -63,6 +64,29 @@ class WelcomeView(View):
             paragraphs = Paragraph.objects.all()
             if not paragraphs.exists():
                 Paragraph.create_paragraph()
+
+            # Tworzenie typów dokumentów
+            types = DocumentTypes.objects.all()
+            if not types.exists():
+                DocumentTypes.create_type()
+
+            # Tworzenie typów umów
+            contract_types = ContractTypes.objects.all()
+            if not contract_types.exists():
+                ContractTypes.create_contract_types()
+
+            # Tworzenie grup
+            groups = Group.objects.all()
+            if not groups.exists():
+                Group.create_group()
+
+            county = County.objects.all()
+            if not county.exists():
+                County.create_county()
+
+            type_unit = TypeUnit.objects.all()
+            if not type_unit.exists():
+                TypeUnit.create_type_unit()
 
             if not request.user.is_authenticated or not (
                     admin in request.user.groups.all() or viewers in request.user.groups.all()):
