@@ -253,8 +253,6 @@
             consumption.setAttribute('hidden', 'true');
             information.setAttribute('hidden', 'true');
         }
-
-
     });
 
     var daneJS = "{{ measurementData|escapejs }}";
@@ -289,10 +287,32 @@
                 var information = document.getElementById("dataInfo");
 
                 for (let y = 0; y < elementData.length; y++ ){
+                    console.log("elementData.length: "+elementData.length);
+                    console.log("wchodze do  for (let y = 0; y < elementData.length; y++ )");
+
+                    console.log("elementData");
+                    console.log(elementData);
 
                     if(elementData[y].type === type.options[type.selectedIndex].text && elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7)){
 
+                        console.log("wchodze do  if(elementData[y].type === type.options[type.selectedIndex].text && elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7)) -> True");
+                        console.log("elementData[y].type");
+                        console.log(elementData[y].type);
+                        console.log("type.options[type.selectedIndex].text");
+                        console.log(type.options[type.selectedIndex].text);
+                        console.log(elementData[y].type === type.options[type.selectedIndex].text);
+
+                        console.log("elementData[y].par");
+                        console.log(elementData[y].par);
+                        console.log("paragraph.options[paragraph.selectedIndex].text.slice(0,7)");
+                        console.log(paragraph.options[paragraph.selectedIndex].text.slice(0,7));
+                        console.log(elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7));
+
+
+
                         var measureData = document.getElementById("id_measurementSystemNumber");
+                        console.log("measureData");
+                        console.log(measureData);
 
                         if(measureData){
 
@@ -304,12 +324,16 @@
 
                     }else{
 
+                    console.log("wchodze do else");
+
                     var measureData = document.getElementById("id_measurementSystemNumber");
                     measureData.value = "";
                     information.setAttribute('hidden', 'true');
 
                     };
                 };
+            }else{
+                console.log("wchodze do if( element.unit_id == unit.value) -> False");
             };
         });
     };
@@ -320,12 +344,12 @@
 
         if(selectedUnit && dataObject[selectedUnit - 1].data.length != 0 ){
 
-            console.info("Wartości dla: "+ unit.options[unit.selectedIndex].text);
+            console.info("Wartości dla: "+ unit.options[unit.selectedIndex].text + " id: " +(unit.options[unit.selectedIndex].value));
             console.table(dataObject[selectedUnit - 1].data);
 
         } else {
 
-            console.log("brak danych dla: " + unit.options[unit.selectedIndex].text);
+            console.log("brak danych dla: " + unit.options[unit.selectedIndex].text + " id: " +(unit.options[unit.selectedIndex].value));
         };
         checkData();
     });

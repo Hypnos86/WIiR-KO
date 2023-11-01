@@ -23,6 +23,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
     template_name = 'invoices/form_invoice.html'
     template_error = 'main/error.html'
     form_class = InvoiceForm
+    method = 'NewInvoiceView'
 
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -34,7 +35,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                        'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -56,13 +57,15 @@ class NewInvoiceView(LoginRequiredMixin, View):
                        'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
+
 
 class EditInvoiceView(LoginRequiredMixin, View):
     template_name = 'invoices/form_invoice.html'
     template_error = 'main/error.html'
+    method = 'EditInvoiceView'
 
     def get(self, request, invoiceSlug):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -72,7 +75,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -91,7 +94,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -100,6 +103,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
     template_error = 'main/error.html'
     form_class = InvoiceItemsForm
+    method = 'AddInvoiceItemsView'
 
     def get(self, request, invoiceSlug):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -185,7 +189,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -207,45 +211,48 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, }
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error('Error: %s', e)
             return render(request, self.template_error, context)
 
 
 class DeleteInvoiceView(View):
     template_error = 'main/error.html'
+    method = 'DeleteInvoiceView'
 
     def get(self, request, invoiceSlug):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             invoice.delete()
             return redirect("main:invoiceSite")
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e}
-            logger.error("Error: %s", e)
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
 
 
 class DeleteInvoiceItemView(View):
     template_error = 'main/error.html'
+    method = 'DeleteInvoiceItemView'
 
     def get(self, request, invoiceSlug, item_id):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             item = get_object_or_404(InvoiceItems, pk=item_id)
             item.delete()
             return redirect(reverse("invoices:addItems", kwargs={"invoiceSlug": invoiceSlug}))
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e}
-            logger.error("Error: %s", e)
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
 
 
 class CreateCSVForItems(View):
     template_error = 'main/error.html'
+    method = 'CreateCSVForItems'
 
     def get(self, request, invoice_id):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -286,7 +293,7 @@ class CreateCSVForItems(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
