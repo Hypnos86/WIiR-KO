@@ -75,16 +75,19 @@ class TypeUnit(models.Model):
     def create_type_unit(cls):
         # Tworzenie listy danych, które mają być użyte do stworzenia obiektów
         data = [
-            {"type_short": "KWP", "type_full": "Komenda Wojewódzka Policji", "id_order": 1},
-            {"type_short": "KMP", "type_full": "Komenda Miejska Policji", "id_order": 2},
-            {"type_short": "KPP", "type_full": "Komenda Powiatowa Policji", "id_order": 3},
-            {"type_short": "KP", "type_full": "Komisariat Policji", "id_order": 4},
-            {"type_short": "PP", "type_full": "Posterunek Policji", "id_order": 5},
-            {"type_short": "RD", "type_full": "Rewir Dzielnicowych", "id_order": 6},
-            {"type_short": "PPD", "type_full": "Punkt Przyjęć Dzielnicowych", "id_order": 7},
-            {"type_short": "PPI", "type_full": "Punkt Przyjęć Interesantów", "id_order": 8},
-            {"type_short": "Ant.", "type_full": "Antena", "id_order": 9},
-            {"type_short": "Inne", "type_full": "Inne", "id_order": 10},
+            {"type_short": "CBŚP", "type_full": "Centralne Biuro Śledcze Policji", "id_order": 1},
+            {"type_short": "BSWP", "type_full": "Biuro Spraw Wewnętrznych Policji", "id_order": 2},
+            {"type_short": "KWP", "type_full": "Komenda Wojewódzka Policji", "id_order": 3},
+            {"type_short": "KMP", "type_full": "Komenda Miejska Policji", "id_order": 4},
+            {"type_short": "KPP", "type_full": "Komenda Powiatowa Policji", "id_order": 5},
+            {"type_short": "KP", "type_full": "Komisariat Policji", "id_order": 6},
+            {"type_short": "PP", "type_full": "Posterunek Policji", "id_order": 7},
+            {"type_short": "RD", "type_full": "Rewir Dzielnicowych", "id_order": 8},
+            {"type_short": "PPD", "type_full": "Punkt Przyjęć Dzielnicowych", "id_order": 9},
+            {"type_short": "PPI", "type_full": "Punkt Przyjęć Interesantów", "id_order": 10},
+            {"type_short": "Ant.", "type_full": "Antena", "id_order": 11},
+            {"type_short": "Inne", "type_full": "Inne", "id_order": 12},
+            {"type_short": "CBZC", "type_full": "Centralne Biuro Zwalczania Cyberprzestępczości", "id_order": 13},
         ]
 
         # Tworzenie i zapisywanie obiektów w pętli

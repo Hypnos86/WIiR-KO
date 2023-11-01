@@ -198,7 +198,8 @@
                 </a>
             </td>
             <td align="center" valign="middle" data-toggle="info" title="Usuń">
-                <a class="p-0 m-0" href="{%url 'invoices:deleteInvoiceItem' invoice.slug item.id %}" onclick="return confirm('Czy na pewno chcesz usunąć?')">
+                <a class="p-0 m-0" href="{%url 'invoices:deleteInvoiceItem' invoice.slug item.id %}"
+                   onclick="return confirm('Czy na pewno chcesz usunąć?')">
                     <i class="bi bi-trash3 btn btn-delete"></i>
                 </a>
             </td>
@@ -214,6 +215,7 @@
 
     var paragraph = document.getElementById("id_paragraph");
 
+
     paragraph.addEventListener('change', function() {
         var selectedElement = paragraph.options[paragraph.selectedIndex];
         var checkPar = selectedElement.textContent.substring(0, 4);
@@ -223,19 +225,22 @@
         var consumption = document.getElementById("divConsumption");
         var information = document.getElementById("dataInfo");
 
-
-
         if (checkPar === "4260") {
+
             information.removeAttribute('hidden');
             measurementSystemNumber.removeAttribute('hidden');
             counterReading.removeAttribute('hidden');
             consumption.removeAttribute('hidden');
 
         } else if (checkPar === "4210") {
+
             var labelConsumption = document.querySelector('label[for="id_consumption"]');
+
             if (labelConsumption){
+
                 labelConsumption.textContent = "Ilość surowca";
             };
+
             consumption.removeAttribute('hidden');
             console.log(labelConsumption.value);
             measurementSystemNumber.setAttribute('hidden', 'true');
@@ -279,21 +284,30 @@
     function checkData(){
         $(dataObject).each(function(i, element) {
             if( element.unit_id == unit.value) {
+
                 var elementData = element.data;
                 var information = document.getElementById("dataInfo");
+
                 for (let y = 0; y < elementData.length; y++ ){
+
                     if(elementData[y].type === type.options[type.selectedIndex].text && elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7)){
+
                         var measureData = document.getElementById("id_measurementSystemNumber");
+
                         if(measureData){
+
                         information.removeAttribute('hidden');
                         information.textContent = " Ostatni okres rozliczeniowy: " + elementData[y].period + ", " + "stan licznika:"+ elementData[y].counterReading;
                         measureData.value = elementData[y].measurement;
 
                         };
+
                     }else{
+
                     var measureData = document.getElementById("id_measurementSystemNumber");
                     measureData.value = "";
                     information.setAttribute('hidden', 'true');
+
                     };
                 };
             };
@@ -303,20 +317,26 @@
     $('#id_unit').on('change', function(){
         var unit = document.getElementById("id_unit");
         var selectedUnit = unit.options[unit.selectedIndex].value;
+
         if(selectedUnit && dataObject[selectedUnit - 1].data.length != 0 ){
+
             console.info("Wartości dla: "+ unit.options[unit.selectedIndex].text);
             console.table(dataObject[selectedUnit - 1].data);
+
         } else {
+
             console.log("brak danych dla: " + unit.options[unit.selectedIndex].text);
         };
         checkData();
     });
 
     $('#id_contract_types').on('change', function(){
+
         checkData();
     });
 
     $('#id_paragraph').on('change', function(){
+
         checkData();
     });
 </script>
