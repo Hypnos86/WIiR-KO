@@ -35,13 +35,14 @@
     <!--jquery-->
     <script src="{%static 'main/bootstrap/jquery/jquery-3.6.0.min.js'%}"></script>
     <script src="{%static 'main/bootstrap/jquery/select2.min.js'%}"></script>
+    <script src="{%static 'main/app.js'%}"></script>
 
     <title>Karty Utrzymania Obiektów Wielkopolskiej Policji</title>
 
 </head>
 <body>
 {% if user.is_authenticated %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-3">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-index-nav">
     <div class="container">
         <a class="navbar-brand bi bi-house-fill" href="/"> {% if user.first_name and user.last_name %} {{user.first_name}}
             {{user.last_name.0}}. {%else%} {{user.username}} {% endif %}</a>
@@ -130,30 +131,5 @@
     </div>
 </div>
 <div id="snackbar">Zapisano</div>
-<script type="text/javascript">
-    function openLoginModal(button){
-        var url = $(button).data("url");
-        $("#login .modal-content").load(url);
-        $("#login").modal("show");
-    }
-
-    function openHelpModal(button){
-        var url = $(button).data("url");
-        $("#helpModal .modal-content").load(url);
-        $("#helpModal").modal("show");
-    }
-
-    $(function () {
-        $('[data-toggle="info"]').tooltip()
-    })
-
-    function snackbarFunction() {
-    var tost = document.getElementById("snackbar");
-    tost.className = "show";
-        setTimeout(function () {
-            tost.className = tost.className.replace("show", "");
-        }, 10000);
-    }
-</script>
 </body>
 </html>

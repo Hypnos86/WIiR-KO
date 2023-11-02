@@ -337,3 +337,7 @@ textarea::-webkit-scrollbar-thumb {
     font-size: 15px;
 
 }
+
+.z-index-nav{
+    z-index:5;
+}
