@@ -41,59 +41,62 @@
 
 </head>
 <body>
-{% if user.is_authenticated %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-index-nav">
-    <div class="container">
-        <a class="navbar-brand bi bi-house-fill" href="/"> {% if user.first_name and user.last_name %} {{user.first_name}}
-            {{user.last_name.0}}. {%else%} {{user.username}} {% endif %}</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
-                </li>
-                {% if user.is_authenticated and user_belongs_to_group %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:invoiceSite'%}">Faktury</a>
-                </li>
-                {%endif%}
-                {% if user.is_authenticated and user_belongs_to_group %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
-                </li>
-                {%endif%}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
-                </li>
-                {% if user.is_authenticated and user_belongs_to_group %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
-                </li>
-                {% endif %}
-                <li>
-                    <a href="{%url 'logout'%}" type="button" class="nav-link">Wylogowanie</a>
-                </li>
-            </ul>
+<section>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-index-nav">
+        <div class="container">
+            <a class="navbar-brand bi bi-house-fill" href="/"> {% if user.first_name and user.last_name %}
+                {{user.first_name}}
+                {{user.last_name.0}}. {%else%} {{user.username}} {% endif %}</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
+                    </li>
+                    {% if user.is_authenticated and user_belongs_to_group %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:invoiceSite'%}">Faktury</a>
+                    </li>
+                    {%endif%}
+                    {% if user.is_authenticated and user_belongs_to_group %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
+                    </li>
+                    {%endif%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
+                    </li>
+                    {% if user.is_authenticated and user_belongs_to_group %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{%url 'logout'%}" type="button" class="nav-link">Wylogowanie</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% else %}
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">
+            <button type="button" class="btn btn-outline-dark btn-sm"
+                    data-url="{% url 'main:loginApp' %}" onclick="openLoginModal(this)">Zaloguj
+            </button>
         </div>
     </div>
-</nav>
-{% else %}
-<div class="d-flex flex-row-reverse">
-    <div class="p-2">
-        <button type="button" class="btn btn-outline-dark btn-sm"
-                data-url="{% url 'main:loginApp' %}" onclick="openLoginModal(this)">Zaloguj
-        </button>
-    </div>
-</div>
-{% endif %}
-<div class="footer body mb-footer mt-5">
+    {% endif %}
+</section>
+<main class="footer body mb-footer mt-5">
     {% block content %}
 
     {% endblock %}
-</div>
+</main>
 <section class="fixed-bottom ">
     <!-- Footer -->
     <footer class="text-center text-white" style="background-color: #0a4275;">
