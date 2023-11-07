@@ -21,3 +21,4 @@ function openLoginModal(button){
             tost.className = tost.className.replace("show", "");
         }, 10000);
     }
+

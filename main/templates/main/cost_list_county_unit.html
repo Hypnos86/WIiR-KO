@@ -22,7 +22,8 @@
                 </a>
             </div>
             <div class="mx-2">
-                <a class="btn-menu" href="" data-toggle="info" title="Media">
+                <a class="btn-menu" data-url="{% url 'main:mediaInfoCountyModal' slugCounty year%}"
+                   onclick="openInfoCountyModal(this)" data-toggle="info" title="Media">
                     <span class="bi bi-calculator-fill custom-icon"></span>
                 </a>
             </div>
@@ -77,7 +78,8 @@
         </tfoot>
     </table>
 </div>
-<div class="modal fade" id="archiveModal">
+<!--Modal-->
+<div class="modal fade" id="infoModal">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
@@ -86,8 +88,14 @@
 <script type="text/javascript">
     function openArchiveModal(button){
         var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
+        $("#infoModal .modal-content").load(url);
+        $("#infoModal").modal("show");
+    }
+
+    function openInfoCountyModal(button){
+        var url = $(button).data("url");
+        $("#infoModal .modal-content").load(url);
+        $("#infoModal").modal("show");
     }
 </script>
 {% endblock %}

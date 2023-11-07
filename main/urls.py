@@ -3,7 +3,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListM
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
-    CreateCSVForCountyYearSum
+    CreateCSVForCountyYearSum, MediaInfoCountyView
 
 app_name = 'main'
 urlpatterns = [
@@ -16,6 +16,8 @@ urlpatterns = [
     path('modal/archive/', ArchiveYearStatisticView.as_view(), name='archiveYearsStatistic'),
     path('modal/paragraph/', ParagraphModalView.as_view(), name='paragraphModal'),
     path('modal/mediaInfoUnit/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
+    path('modal/mediaInfoCounty/<slug:countyCardSlug>/<int:year>/', MediaInfoCountyView.as_view(),
+         name='mediaInfoCountyModal'),
 
     # Lista obiektów
     path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),

@@ -651,6 +651,7 @@ class ParagraphCostListView(LoginRequiredMixin, View):
 class UnitDetailsView(View):
     template_name = 'main/unit_details_info.html'
     template_error = 'main/error.html'
+    method = "UnitDetailsView"
 
     def get(self, request, unitSlug):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -695,7 +696,7 @@ class UnitDetailsView(View):
                        'title': title, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -703,6 +704,7 @@ class UnitDetailsView(View):
 class MediaInfoUnitView(View):
     template_name = 'main/modal_info_unit.html'
     template_error = 'main/error.html'
+    method = "MediaInfoUnitView"
 
     def get(self, request, id):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
@@ -710,7 +712,6 @@ class MediaInfoUnitView(View):
             title = 'Zużycie mediów'
             unit = get_object_or_404(Unit, pk=id)
             paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
-            print(paragraphsModel)
             items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż')
             tableObjects = []
 
@@ -747,7 +748,112 @@ class MediaInfoUnitView(View):
                        'paragraphs': paragraphsModel, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class MediaInfoCountyView(View):
+    template_name = 'main/modal_info_county.html'
+    template_error = 'main/error.html'
+    method = "MediaInfoCountyView"
+
+    def get(self, request, countyCardSlug, year):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            title = 'Zużycie mediów'
+            county = get_object_or_404(CountyCard, slug=countyCardSlug)
+            units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+            paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
+            # filterItems = items.filter(invoice_id__date_of_payment__year=year)
+            tableObjects = []
+
+            for unit in units:
+                unit_id = unit.id
+                unit_name = unit.unit_full_name
+                status = unit.status
+                exist_unit = False
+                items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
+                    invoice_id__date_of_payment__year=year)
+                for item in items:
+                    for object in tableObjects:
+                        if object['id'] == unit_id:
+                            for data_entry in object['data']:
+                                if data_entry['paragraph'] == item.paragraph.paragraph:
+                                    data_entry['consumption'] += item.consumption
+                                    exist_unit = True
+                                    break
+                            if not exist_unit:
+                                object['data'].append(
+                                    {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+                                exist_unit = True
+
+                    if not exist_unit:
+                        new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
+                        year_entry = {'id': unit_id, 'unit': unit_name, 'status': status, 'data': [new_data_entry]}
+                        tableObjects.append(year_entry)
+
+            print(tableObjects)
+            # KOD DO SPRAWDZENNIA --------------------------------------------------------------------------------------
+            # def get(self, request, countyCardSlug, year):
+            #     user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+            #     try:
+            #         title = 'Zużycie mediów'
+            #         county = get_object_or_404(CountyCard, slug=countyCardSlug)
+            #         units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+            #         paragraphsModel = Paragraph.objects.filter(paragraph__contains='4260')
+            #         tableObjects = []
+            #
+            #         for unit in units:
+            #             unit_id = unit.id
+            #             unit_name = unit.unit_full_name
+            #             status = unit.status
+            #             items = unit.items.exclude(contract_types__type__icontains='Sprzedaż').filter(
+            #                 invoice_id__date_of_payment__year=year)
+            #
+            #             exist_unit = False  # Zresetowanie dla każdej jednostki
+            #
+            #             for item in items:
+            #                 unit_data = None
+            #
+            #                 for obj in tableObjects:
+            #                     if obj['id'] == unit_id:
+            #                         unit_data = obj
+            #                         break
+            #
+            #                 if unit_data is not None:
+            #                     for data_entry in unit_data['data']:
+            #                         if data_entry['paragraph'] == item.paragraph.paragraph:
+            #                             data_entry['consumption'] += item.consumption
+            #                             exist_unit = True
+            #                             break
+            #
+            #                     if not exist_unit:
+            #                         unit_data['data'].append(
+            #                             {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+            #                         exist_unit = True
+            #
+            #                 if unit_data is None:
+            #                     new_data_entry = {'paragraph': item.paragraph.paragraph,
+            #                                       'consumption': item.consumption}
+            #                     year_entry = {'id': unit_id, 'unit': unit_name, 'status': status,
+            #                                   'data': [new_data_entry]}
+            #                     tableObjects.append(year_entry)
+            # ----------------------------------------------------------------------------------------------------------
+
+            # # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+            # all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
+            # for year_entry in tableObjects:
+            #     existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+            #     missing_paragraphs = all_paragraphs - existing_paragraphs
+            #     for missing_paragraph in missing_paragraphs:
+            #         year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+            #
+            # context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,'county':county, 'unit': unit,
+            #            'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year':year}
+            return render(request, self.template_name)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -778,11 +884,6 @@ class CountyCostUnitListView(View):
                     if item.invoice_id.date_of_payment.year == year:
                         paragraph = item.paragraph.paragraph
                         sumUnit = item.sum
-                        # if paragraph in costObjectDict:
-                        #     costObjectDict[paragraph] += sumUnit
-                        # else:
-                        #     costObjectDict[paragraph] = sumUnit
-                        # Aktualizujemy kwotę dla danego paragrafu
                         costObjectDict[paragraph] += sumUnit
 
                 costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
