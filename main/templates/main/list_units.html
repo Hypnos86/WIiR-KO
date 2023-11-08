@@ -43,7 +43,7 @@
         <div class="list-group w-75">
             {%for unit in units%}
             <div class="list-group-item list-group-item-action d-flex justify-content-between">
-                <a class="w-75 text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
+                <a class="text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
                    href="{%url 'main:unit_details' unit.county_unit.slug unit.slug%}">
                     <div class="d-flex justify-content-between w-100">
                     <span class="w-100">{{unit.type}} {% if unit.object_name %} - {{unit.object_name}} {% endif %} - {{unit.address}}, {{unit.zip_code}}
