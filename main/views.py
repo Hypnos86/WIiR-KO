@@ -269,35 +269,28 @@ class StatisticsView(LoginRequiredMixin, View):
             yearObject = CurrentDate()
             year = yearObject.current_year()
 
-            # ----------------------------------------
             objectDatas = []
+
             for county in counties:
                 sectionObject = county.section.first()
                 section = sectionObject.section
                 units = county.unit.all()
+                costObjectDict = {}
 
-                # Initialize paragraphData outside the loop
-                paragraphData = []
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
 
                 for unit in units:
-                    paragraphsDict = {}
-
-                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
-                    for paragraph in paragraphs:
-                        paragraphsDict[paragraph.paragraph] = 0
-                    items = unit.items.all()
+                    # Filtruj elementy na podstawie roku płatności
+                    items = unit.items.filter(invoice_id__date_of_payment__year=year)
 
                     for item in items:
-                        if item.invoice_id.date_of_payment.year == year:
-                            paragraph = item.paragraph.paragraph
-                            sumUnit = item.sum
-                            paragraphsDict[paragraph] += sumUnit
-                    paragraphData.extend(
-                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+                        costObjectDict[item.paragraph.paragraph] += item.sum
 
-                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
+                objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
 
-            # Tworzenie podsumowania i sum paragrafów
             paragraphSums = {}
 
             for data in objectDatas:
@@ -333,31 +326,26 @@ class StatisticsYearView(LoginRequiredMixin, View):
 
             # ----------------------------------------
             objectDatas = []
+
             for county in counties:
                 sectionObject = county.section.first()
                 section = sectionObject.section
                 units = county.unit.all()
+                costObjectDict = {}
 
-                # Initialize paragraphData outside the loop
-                paragraphData = []
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
 
                 for unit in units:
-                    paragraphsDict = {}
-
-                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
-                    for paragraph in paragraphs:
-                        paragraphsDict[paragraph.paragraph] = 0
-                    items = unit.items.all()
+                    # Filtruj elementy na podstawie roku płatności
+                    items = unit.items.filter(invoice_id__date_of_payment__year=year)
 
                     for item in items:
-                        if item.invoice_id.date_of_payment.year == year:
-                            paragraph = item.paragraph.paragraph
-                            sumUnit = item.sum
-                            paragraphsDict[paragraph] += sumUnit
-                    paragraphData.extend(
-                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+                        costObjectDict[item.paragraph.paragraph] += item.sum
 
-                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
+                objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
 
             # Tworzenie podsumowania i sum paragrafów
             paragraphSums = {}
@@ -849,8 +837,8 @@ class MediaInfoCountyView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,'county':county, 'unit': unit,
-                       'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year':year}
+            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county, 'unit': unit,
+                       'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
@@ -1015,26 +1003,21 @@ class CreateCSVForCountySum(View):
                 sectionObject = county.section.first()
                 section = sectionObject.section
                 units = county.unit.all()
+                costObjectDict = {}
 
-                paragraphData = []
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
 
                 for unit in units:
-                    paragraphsDict = {}
-
-                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
-                    for paragraph in paragraphs:
-                        paragraphsDict[paragraph.paragraph] = 0
+                    # Filtruj elementy na podstawie roku płatności
                     items = unit.items.filter(invoice_id__date_of_payment__year=year)
 
                     for item in items:
-                        if item.invoice_id.date_of_payment.year == year:
-                            paragraph = item.paragraph.paragraph
-                            sumUnit = item.sum
-                            paragraphsDict[paragraph] += sumUnit
-                    paragraphData.extend(
-                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+                        costObjectDict[item.paragraph.paragraph] += item.sum
 
-                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
+                objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
             # -----------------------------------
             paragraphSums = {}
 
@@ -1093,33 +1076,28 @@ class CreateCSVForCountyYearSum(View):
                 sectionObject = county.section.first()
                 section = sectionObject.section
                 units = county.unit.all()
+                costObjectDict = {}
 
-                paragraphData = []
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
 
                 for unit in units:
-                    paragraphsDict = {}
-
-                    # Inicjujemy kwoty dla wszystkich paragrafów jako 0
-                    for paragraph in paragraphs:
-                        paragraphsDict[paragraph.paragraph] = 0
+                    # Filtruj elementy na podstawie roku płatności
                     items = unit.items.filter(invoice_id__date_of_payment__year=year)
 
                     for item in items:
-                        if item.invoice_id.date_of_payment.year == year:
-                            paragraph = item.paragraph.paragraph
-                            sumUnit = item.sum
-                            paragraphsDict[paragraph] += sumUnit
-                    paragraphData.extend(
-                        [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in paragraphsDict.items()])
+                        costObjectDict[item.paragraph.paragraph] += item.sum
 
-                objectDatas.append({'county': county.name, 'section': section, 'data': paragraphData})
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
+                objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
                 # -----------------------------------
             paragraphSums = {}
 
             for data in objectDatas:
-                for object in data['data']:
-                    paragraph = object['paragraph']
-                    sum_value = object['sum']
+                for item in data['data']:
+                    paragraph = item['paragraph']
+                    sum_value = item['sum']
                     # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
                     if paragraph in paragraphSums:
                         paragraphSums[paragraph] += sum_value
