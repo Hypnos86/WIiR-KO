@@ -79,8 +79,14 @@
     </table>
 </div>
 <!--Modal-->
-<div class="modal fade" id="infoModal">
+<div class="modal fade" id="archiveModal">
     <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="infoModal">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
         </div>
     </div>
@@ -88,8 +94,8 @@
 <script type="text/javascript">
     function openArchiveModal(button){
         var url = $(button).data("url");
-        $("#infoModal .modal-content").load(url);
-        $("#infoModal").modal("show");
+        $("#archiveModal .modal-content").load(url);
+        $("#archiveModal").modal("show");
     }
 
     function openInfoCountyModal(button){

@@ -22,7 +22,16 @@
             <tbody>
             {% for object in tableObjects %}
             <tr>
-                <td align="center" valign="middle" width="auto" scope="col">{{ object.unit }}</td>
+                <td align="center" valign="middle" width="auto" scope="col">
+                    <div class="d-flex justify-content-between align-items-center">
+                    <span>{{object.unit}}</span>
+                    {% if object.status %}
+                    <i class="bi bi-check-circle-fill text-success" data-toggle="info" title="Aktualny"></i>
+                    {%else%}
+                    <i class="bi bi-dash-circle text-danger" data-toggle="info" title="Zdany"></i>
+                    {%endif%}
+                </div>
+                </td>
                 {% for paragraph in paragraphs %}
                 <td align="center" valign="middle" width="auto" scope="col">
                     {% for data in object.data %}
@@ -48,4 +57,9 @@
         </table>
     </div>
 </div>
+<script>
+       $(function () {
+        $('[data-toggle="info"]').tooltip()
+    })
+</script>
 {%endblock%}

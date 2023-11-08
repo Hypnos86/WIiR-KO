@@ -754,7 +754,7 @@ class MediaInfoUnitView(View):
 
 
 class MediaInfoCountyView(View):
-    template_name = 'main/modal_info_county.html'
+    template_name = 'main/modal_info_county_media.html'
     template_error = 'main/error.html'
     method = "MediaInfoCountyView"
 
@@ -770,7 +770,7 @@ class MediaInfoCountyView(View):
 
             for unit in units:
                 unit_id = unit.id
-                unit_name = unit.unit_full_name
+                unit_name = f"{unit.type.type_short} {unit.city}"
                 status = unit.status
                 exist_unit = False
                 items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
@@ -841,17 +841,17 @@ class MediaInfoCountyView(View):
             #                     tableObjects.append(year_entry)
             # ----------------------------------------------------------------------------------------------------------
 
-            # # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
-            # all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
-            # for year_entry in tableObjects:
-            #     existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
-            #     missing_paragraphs = all_paragraphs - existing_paragraphs
-            #     for missing_paragraph in missing_paragraphs:
-            #         year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
-            #
-            # context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,'county':county, 'unit': unit,
-            #            'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year':year}
-            return render(request, self.template_name)
+            # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
+            for year_entry in tableObjects:
+                existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                missing_paragraphs = all_paragraphs - existing_paragraphs
+                for missing_paragraph in missing_paragraphs:
+                    year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+
+            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,'county':county, 'unit': unit,
+                       'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year':year}
+            return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
