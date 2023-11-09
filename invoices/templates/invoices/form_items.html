@@ -134,9 +134,6 @@
                 <span>Nr. licznika</span>
             </th>
             <th align="center" valign="middle" scope="col">
-                <span>Stan licznika</span>
-            </th>
-            <th align="center" valign="middle" scope="col">
                 <span>Zużycie</span>
             </th>
             <th align="center" valign="middle" scope="col">
@@ -169,14 +166,9 @@
                 {{item.contract_types}}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" scope="col">
+            <td align="center" valign="middle" scope="col" data-toggle="info" title="Stan licznika: {{item.counterReading}}">
                 {% if item.measurementSystemNumber %}
                 {{item.measurementSystemNumber}}
-                {% endif %}
-            </td>
-            <td align="center" valign="middle" scope="col">
-                {% if item.counterReading%}
-                {{item.counterReading}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" scope="col">
