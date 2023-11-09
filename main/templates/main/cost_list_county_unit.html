@@ -32,6 +32,7 @@
 </div>
 <div class="text-center text-uppercase my-2 ">Zestawienie dla <span class="info-color">{{year}}</span> roku</div>
 <div class="mx-3 my-5">
+    {%if items %}
     <table class="table table-striped table-hover table-caption mb-5">
         <thead class="table-dark">
         <tr class="text-center">
@@ -77,6 +78,7 @@
         </tr>
         </tfoot>
     </table>
+    {% endif %}
 </div>
 <!--Modal-->
 <div class="modal fade" id="archiveModal">

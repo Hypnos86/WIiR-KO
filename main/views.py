@@ -766,93 +766,96 @@ class MediaInfoCountyView(View):
         try:
             title = 'Zużycie mediów'
             county = get_object_or_404(CountyCard, slug=countyCardSlug)
-            units = Unit.objects.filter(county_unit__slug=countyCardSlug)
             paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
             # filterItems = items.filter(invoice_id__date_of_payment__year=year)
             tableObjects = []
-
-            for unit in units:
-                unit_id = unit.id
-                unit_name = f"{unit.type.type_short} {unit.city}"
-                status = unit.status
-                exist_unit = False
-                items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
-                    invoice_id__date_of_payment__year=year)
-                for item in items:
-                    for object in tableObjects:
-                        if object['id'] == unit_id:
-                            for data_entry in object['data']:
-                                if data_entry['paragraph'] == item.paragraph.paragraph:
-                                    data_entry['consumption'] += item.consumption
+            try:
+                units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+                for unit in units:
+                    unit_id = unit.id
+                    unit_name = f"{unit.type.type_short} {unit.city}"
+                    status = unit.status
+                    exist_unit = False
+                    items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
+                        invoice_id__date_of_payment__year=year)
+                    for item in items:
+                        for object in tableObjects:
+                            if object['id'] == unit_id:
+                                for data_entry in object['data']:
+                                    if data_entry['paragraph'] == item.paragraph.paragraph:
+                                        data_entry['consumption'] += item.consumption
+                                        exist_unit = True
+                                        break
+                                if not exist_unit:
+                                    object['data'].append(
+                                        {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
                                     exist_unit = True
-                                    break
-                            if not exist_unit:
-                                object['data'].append(
-                                    {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
-                                exist_unit = True
 
-                    if not exist_unit:
-                        new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
-                        year_entry = {'id': unit_id, 'unit': unit_name, 'status': status, 'data': [new_data_entry]}
-                        tableObjects.append(year_entry)
+                        if not exist_unit:
+                            new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
+                            year_entry = {'id': unit_id, 'unit': unit_name, 'status': status, 'data': [new_data_entry]}
+                            tableObjects.append(year_entry)
 
-            # KOD DO SPRAWDZENNIA --------------------------------------------------------------------------------------
-            # def get(self, request, countyCardSlug, year):
-            #     user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
-            #     try:
-            #         title = 'Zużycie mediów'
-            #         county = get_object_or_404(CountyCard, slug=countyCardSlug)
-            #         units = Unit.objects.filter(county_unit__slug=countyCardSlug)
-            #         paragraphsModel = Paragraph.objects.filter(paragraph__contains='4260')
-            #         tableObjects = []
-            #
-            #         for unit in units:
-            #             unit_id = unit.id
-            #             unit_name = unit.unit_full_name
-            #             status = unit.status
-            #             items = unit.items.exclude(contract_types__type__icontains='Sprzedaż').filter(
-            #                 invoice_id__date_of_payment__year=year)
-            #
-            #             exist_unit = False  # Zresetowanie dla każdej jednostki
-            #
-            #             for item in items:
-            #                 unit_data = None
-            #
-            #                 for obj in tableObjects:
-            #                     if obj['id'] == unit_id:
-            #                         unit_data = obj
-            #                         break
-            #
-            #                 if unit_data is not None:
-            #                     for data_entry in unit_data['data']:
-            #                         if data_entry['paragraph'] == item.paragraph.paragraph:
-            #                             data_entry['consumption'] += item.consumption
-            #                             exist_unit = True
-            #                             break
-            #
-            #                     if not exist_unit:
-            #                         unit_data['data'].append(
-            #                             {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
-            #                         exist_unit = True
-            #
-            #                 if unit_data is None:
-            #                     new_data_entry = {'paragraph': item.paragraph.paragraph,
-            #                                       'consumption': item.consumption}
-            #                     year_entry = {'id': unit_id, 'unit': unit_name, 'status': status,
-            #                                   'data': [new_data_entry]}
-            #                     tableObjects.append(year_entry)
-            # ----------------------------------------------------------------------------------------------------------
+                # KOD DO SPRAWDZENNIA --------------------------------------------------------------------------------------
+                # def get(self, request, countyCardSlug, year):
+                #     user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+                #     try:
+                #         title = 'Zużycie mediów'
+                #         county = get_object_or_404(CountyCard, slug=countyCardSlug)
+                #         units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+                #         paragraphsModel = Paragraph.objects.filter(paragraph__contains='4260')
+                #         tableObjects = []
+                #
+                #         for unit in units:
+                #             unit_id = unit.id
+                #             unit_name = unit.unit_full_name
+                #             status = unit.status
+                #             items = unit.items.exclude(contract_types__type__icontains='Sprzedaż').filter(
+                #                 invoice_id__date_of_payment__year=year)
+                #
+                #             exist_unit = False  # Zresetowanie dla każdej jednostki
+                #
+                #             for item in items:
+                #                 unit_data = None
+                #
+                #                 for obj in tableObjects:
+                #                     if obj['id'] == unit_id:
+                #                         unit_data = obj
+                #                         break
+                #
+                #                 if unit_data is not None:
+                #                     for data_entry in unit_data['data']:
+                #                         if data_entry['paragraph'] == item.paragraph.paragraph:
+                #                             data_entry['consumption'] += item.consumption
+                #                             exist_unit = True
+                #                             break
+                #
+                #                     if not exist_unit:
+                #                         unit_data['data'].append(
+                #                             {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+                #                         exist_unit = True
+                #
+                #                 if unit_data is None:
+                #                     new_data_entry = {'paragraph': item.paragraph.paragraph,
+                #                                       'consumption': item.consumption}
+                #                     year_entry = {'id': unit_id, 'unit': unit_name, 'status': status,
+                #                                   'data': [new_data_entry]}
+                #                     tableObjects.append(year_entry)
+                # ----------------------------------------------------------------------------------------------------------
 
-            # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
-            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
-            for year_entry in tableObjects:
-                existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
-                missing_paragraphs = all_paragraphs - existing_paragraphs
-                for missing_paragraph in missing_paragraphs:
-                    year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+                # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+                all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
+                for year_entry in tableObjects:
+                    existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                    missing_paragraphs = all_paragraphs - existing_paragraphs
+                    for missing_paragraph in missing_paragraphs:
+                        year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county, 'unit': unit,
-                       'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
+                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                           'unit': unit,
+                           'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
+            except Exception:
+                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
@@ -868,8 +871,8 @@ class CountyCostUnitListView(View):
     def get(self, request, countyCardSlug, year):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            county_unit = CountyCard.objects.get(slug=countyCardSlug)
-            units = Unit.objects.filter(county_unit=county_unit)
+            county = CountyCard.objects.get(slug=countyCardSlug)
+            units = Unit.objects.filter(county_unit=county)
             paragraphs = Paragraph.objects.all()
             objectDatas = []
 
@@ -908,7 +911,7 @@ class CountyCostUnitListView(View):
                     else:
                         paragraphSums[paragraph] = sum_value
 
-            context = {'county': county_unit, 'user_belongs_to_group': user_belongs_to_group, 'year': year,
+            context = {'county': county, 'user_belongs_to_group': user_belongs_to_group, 'year': year,
                        'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
                        "items": objectDatas, 'paragraphSums': paragraphSums}
             return render(request, self.template_name, context)
