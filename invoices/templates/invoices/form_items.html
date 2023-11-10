@@ -166,7 +166,8 @@
                 {{item.contract_types}}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" scope="col" data-toggle="info" title="Stan licznika: {{item.counterReading}}">
+            <td align="center" valign="middle" scope="col" data-toggle="info"
+                title="Stan licznika: {{item.counterReading}}">
                 {% if item.measurementSystemNumber %}
                 {{item.measurementSystemNumber}}
                 {% endif %}
@@ -185,7 +186,7 @@
                 {% endif %}
             </td>
             <td align="center" valign="middle" data-toggle="info" title="Edytuj">
-                <a class="p-0 m-0" href="#">
+                <a class="p-0 m-0" href="{% url 'invoices:editItems' invoice.slug item.id %}">
                     <i class="bi bi-pencil btn btn-edit"></i>
                 </a>
             </td>
@@ -203,6 +204,8 @@
 <script>
     $(document).ready(function(){
          $("#id_unit").select2({placeholder:'Wybierz jednostkę'});
+         checkData();
+
     });
 
     var daneJS = "{{ measurementData|escapejs }}";

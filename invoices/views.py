@@ -216,6 +216,91 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
 
+class EditInvoiceItemsView(LoginRequiredMixin, View):
+    template_name = 'invoices/form_items.html'
+    template_error = 'main/error.html'
+    form_class = InvoiceItemsForm
+    method = 'EditInvoiceItemsView'
+
+    def get(self, request, invoiceSlug, itemId):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            items = invoice.items.all()
+            units = Unit.objects.all()
+            item = get_object_or_404(InvoiceItems, id=itemId)
+            form = self.form_class(instance=item)
+            contract_types = ContractTypes.objects.all()
+
+            measurementSystemNumberList = []
+
+            for unit in units:
+                selected_items = unit.items.all()
+                data = []
+                for type_object in contract_types:
+                    for paragraph_enum in ParagraphEnum:
+                        media_last = selected_items.filter(paragraph__paragraph=paragraph_enum.value).filter(
+                            contract_types__id=type_object.id).first()
+                        if media_last:
+                            data.append({
+                                "par": media_last.paragraph.paragraph,
+                                "type": media_last.contract_types.type,
+                                "period": f"{media_last.period_from.strftime('%d.%m.%Y')}-{media_last.period_to.strftime('%d.%m.%Y')}",
+                                "counterReading": str(media_last.counterReading),
+                                "measurement": str(media_last.measurementSystemNumber)
+                            })
+
+                measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
+
+            counties = []
+            for item in items:
+                sum_value = item.sum
+                exist = False
+                for county in counties:
+                    if item.section.section == county['county']:
+                        county['sum'] += sum_value
+                        exist = True
+
+                if not exist:
+                    counties.append({'county': item.section.section, 'sum': sum_value})
+
+            context = {'form': form, "invoice": invoice, 'user_belongs_to_group': user_belongs_to_group, "items": items,
+                       'invoiceSlug': invoiceSlug, 'counties_sum': counties,
+                       'measurementData': measurementSystemNumberList}
+            return render(request, self.template_name, context)
+
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+    def post(self, request, invoiceSlug, itemId):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            # item_id = request.POST.get('item_id')  # Assuming 'item_id' is a hidden input in your form
+            item = get_object_or_404(InvoiceItems, id=itemId)
+
+            form = self.form_class(request.POST, instance=item)
+
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.invoice_id = invoice
+                instance.author = request.user
+                form.save()
+
+                return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
+
+            context = {'form': form, 'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group,
+                       'item_id': itemId}
+            return render(request, self.template_name, context)
+
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error('Error: %s', e)
+            return render(request, self.template_error, context)
+
+
 class DeleteInvoiceView(View):
     template_error = 'main/error.html'
     method = 'DeleteInvoiceView'
