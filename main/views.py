@@ -185,9 +185,8 @@ class CostListMainView(View):
     def get(self, request, countyCardSlug, unitSlug, year):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            currentYear = currentDate.current_year()
             unit = get_object_or_404(Unit, slug=unitSlug)
-            invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=currentYear)
+            invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=year)
             paragraphs = Paragraph.objects.all()
             paragraph_data = []
 
@@ -216,7 +215,7 @@ class CostListMainView(View):
                     items.append(selected_properties)
                 paragraph_data.append({'paragraph': paragraph, 'items': items})
             context = {'unit': unit, 'paragraph_data': paragraph_data, 'user_belongs_to_group': user_belongs_to_group,
-                       'year': currentYear, 'countyCardSlug': countyCardSlug, 'year': currentYear}
+                       'year': year, 'countyCardSlug': countyCardSlug}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -233,6 +232,7 @@ class UnitsView(LoginRequiredMixin, View):
     def get(self, request):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            currentYear = currentDate.current_year()
             units = Unit.objects.all().order_by('county_unit__id_order')
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
@@ -247,12 +247,13 @@ class UnitsView(LoginRequiredMixin, View):
                         | units.filter(manager__icontains=q) \
                         | units.filter(information__icontains=q)
 
-                context = {'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
+                context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
             else:
 
-                context = {'units': units, "search": search, 'activeUnits': activeUnits, 'archiveUnits': archiveUnits,
+                context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
+                           'archiveUnits': archiveUnits,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
         except Exception as e:
@@ -439,6 +440,30 @@ class ArchiveYearUnitCostListView(View):
             return render(request, self.template_error, context)
 
 
+class ArchiveYearUnitMainView(View):
+    template_name = 'main/modal_archive_years.html'
+    template_error = 'main/error.html'
+    method = 'ArchiveYearUnitMainView'
+
+    def get(self, request, slugUnit):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            currentYear = currentDate.current_year()
+            unit = Unit.objects.get(slug=slugUnit)
+            countySlug = unit.county_unit.slug
+            items = InvoiceItems.objects.filter(unit__slug=slugUnit)
+
+            yearsSet = set([year.invoice_id.date.year for year in items])
+            years = sorted(yearsSet, reverse=True)
+            context = {'countySlug': countySlug, 'unitSlug': slugUnit, 'years': years, 'year': currentYear,
+                       'archiveYearsUnitMain': True}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
 class ArchiveYearStatisticView(View):
     template_name = 'main/modal_archive_years.html'
     template_error = 'main/error.html'
@@ -506,9 +531,12 @@ class InvoiceInfoView(View):
     def get(self, request, id):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            yearObject = CurrentDate()
+            year = yearObject.current_year()
             invoice = get_object_or_404(Invoice, pk=id)
             items = invoice.items.all()
-            context = {'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group, 'items': items, 'id': id}
+            context = {'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group, 'items': items, 'id': id,
+                       'year': year}
             return render(request, self.template_name, context)
 
         except Exception as e:

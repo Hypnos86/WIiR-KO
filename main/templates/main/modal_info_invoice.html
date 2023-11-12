@@ -59,7 +59,7 @@
                     {% if user.is_authenticated %}
                     <span>{{item.unit.type.type_short}} {{item.unit.city}}, {{item.unit.address}} ({{item.unit.county_unit}})
                         <a class="w-50 color-sea"
-                           href="{% url 'main:unit_details' item.unit.county_unit.slug item.unit.slug %}"
+                           href="{% url 'main:unit_details' item.unit.county_unit.slug item.unit.slug year %}"
                            data-toggle="info" title="Przenieś">
                             <i class="bi bi-folder-symlink custom-icon"></i>
                         </a>

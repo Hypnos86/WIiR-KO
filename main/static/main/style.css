@@ -101,7 +101,7 @@ body {
     text-decoration: none;
     vertical-align: middle;
     border: 1px solid #0a4275;
-    border-radius: 15px;
+    border-radius: 10px;
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     transition: transform .2s;

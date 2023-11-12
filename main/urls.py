@@ -3,7 +3,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMa
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
-    CreateCSVForCountyYearSum, MediaInfoCountyView
+    CreateCSVForCountyYearSum, MediaInfoCountyView, ArchiveYearUnitMainView
 
 app_name = 'main'
 urlpatterns = [
@@ -13,10 +13,11 @@ urlpatterns = [
     path('modal/archive/<slug:unitSlug>/<slug:paragraphSlug>/', ArchiveYearCostListView.as_view(), name='archiveYears'),
     path('modal/archive/<slug:slugCounty>/', ArchiveYearUnitCostListView.as_view(),
          name='archiveYearsUnitCost'),
+    path('modal/archiveUnitMain/<slug:slugUnit>', ArchiveYearUnitMainView.as_view(), name='archiveYearsUnitMain'),
     path('modal/archive/', ArchiveYearStatisticView.as_view(), name='archiveYearsStatistic'),
     path('modal/paragraph/', ParagraphModalView.as_view(), name='paragraphModal'),
-    path('modal/mediaInfoUnit/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
-    path('modal/mediaInfoCounty/<slug:countyCardSlug>/<int:year>/', MediaInfoCountyView.as_view(),
+    path('modal/mediaInfoUnit/id/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
+    path('modal/mediaInfoCounty/<slug:countyCardSlug>/year/<int:year>/', MediaInfoCountyView.as_view(),
          name='mediaInfoCountyModal'),
 
     # Lista obiektów
@@ -24,9 +25,11 @@ urlpatterns = [
     # Koszty jednostek w powiecie
     path('card/<slug:countyCardSlug>/cost/<int:year>', CountyCostUnitListView.as_view(), name='countyCostUnit'),
     # Lista kosztów jednostki
-    path('card/<slug:countyCardSlug>/<slug:unitSlug>/<int:year>/', CostListMainView.as_view(), name='unit_details'),
+    path('card/<slug:countyCardSlug>/<slug:unitSlug>/year/<int:year>/', CostListMainView.as_view(),
+         name='unit_details'),
     # Szczegóły kosztów
-    path('card/<slug:countyCardSlug>/<slug:unitSlug>/<slug:paragraphSlug>/<int:year>/', CostsDetailsListView.as_view(),
+    path('card/<slug:countyCardSlug>/<slug:unitSlug>/paragraph/<slug:paragraphSlug>/year/<int:year>/',
+         CostsDetailsListView.as_view(),
          name='unitCostList'),
     # Szczegóły jednostki - informacje
     path('info/unit/<slug:unitSlug>/', UnitDetailsView.as_view(), name='unitDetailsInfo'),
