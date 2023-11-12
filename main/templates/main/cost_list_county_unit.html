@@ -3,7 +3,7 @@
 {% load humanize %}
 {% block content %}
 <div class="container pt-5">
-    <div class="row mb-3">
+    <div class="row mb-1">
         <div class="col-sm-3 col-md-2 col-lg-2">
             <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
@@ -31,7 +31,7 @@
     </div>
 </div>
 <div class="text-center text-uppercase my-2 ">Zestawienie dla <span class="info-color">{{year}}</span> roku</div>
-<div class="mx-3 my-5">
+<div class="m-3">
     {%if items %}
     <table class="table table-striped table-hover table-caption mb-5">
         <thead class="table-dark">
@@ -60,10 +60,8 @@
             {% for object in item.objects %}
             <td class="table-vertical" align="center" valign="middle" scope="col">
                 {{object.sum|intcomma}} zł <br>
-                <!--                (do testow - {{object.paragraph}})-->
             </td>
             {% endfor %}
-            <!-- Dodaj inne wybrane propertisy tutaj -->
         </tr>
         {% endfor %}
         </tbody>

@@ -153,21 +153,22 @@ class HelpModalView(View):
             return render(request, self.template_error, context)
 
 
-class UnitsListaMainView(View):
+class UnitsListMainView(View):
     template_name = 'main/list_units.html'
     template_error = 'main/error.html'
-    method = 'UnitsListaMainView'
+    method = 'UnitsListMainView'
 
-    def get(self, request, slug):
+    def get(self, request, countySlug):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            year = currentDate.current_year()
-            units = Unit.objects.filter(county_unit__slug=slug)
+            yearObject = CurrentDate()
+            year = yearObject.current_year()
+            units = Unit.objects.filter(county_unit__slug=countySlug)
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
-            county = CountyCard.objects.get(slug=slug)
-            context = {'units': units, 'slug': slug, 'county': county, 'activeUnits': activeUnits,
-                       'archiveUnits': archiveUnits, 'slugCounty': slug, 'year': year,
+            county = CountyCard.objects.get(slug=countySlug)
+            context = {'units': units, 'slug': countySlug, 'county': county, 'activeUnits': activeUnits,
+                       'archiveUnits': archiveUnits, 'slugCounty': countySlug, 'year': year,
                        'user_belongs_to_group': user_belongs_to_group}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -181,7 +182,7 @@ class CostListMainView(View):
     template_error = 'main/error.html'
     method = 'CostListMainView'
 
-    def get(self, request, countyCardSlug, unitSlug):
+    def get(self, request, countyCardSlug, unitSlug, year):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             currentYear = currentDate.current_year()
@@ -215,7 +216,7 @@ class CostListMainView(View):
                     items.append(selected_properties)
                 paragraph_data.append({'paragraph': paragraph, 'items': items})
             context = {'unit': unit, 'paragraph_data': paragraph_data, 'user_belongs_to_group': user_belongs_to_group,
-                       'year': currentYear, 'countyCardSlug': countyCardSlug}
+                       'year': currentYear, 'countyCardSlug': countyCardSlug, 'year': currentYear}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -855,7 +856,8 @@ class MediaInfoCountyView(View):
                            'unit': unit,
                            'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
             except Exception:
-                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,'year': year}
+                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                           'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}

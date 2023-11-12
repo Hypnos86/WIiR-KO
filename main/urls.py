@@ -1,5 +1,5 @@
 from django.urls import path, include
-from main.views import WelcomeView, HelpModalView, UnitsListaMainView, CostListMainView, LoginView, UnitsView, \
+from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMainView, LoginView, UnitsView, \
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
@@ -20,11 +20,11 @@ urlpatterns = [
          name='mediaInfoCountyModal'),
 
     # Lista obiektów
-    path('card/<slug:slug>/', UnitsListaMainView.as_view(), name='unitCountyMain'),
+    path('card/<slug:countySlug>/', UnitsListMainView.as_view(), name='unitCountyMain'),
     # Koszty jednostek w powiecie
     path('card/<slug:countyCardSlug>/cost/<int:year>', CountyCostUnitListView.as_view(), name='countyCostUnit'),
     # Lista kosztów jednostki
-    path('card/<slug:countyCardSlug>/<slug:unitSlug>/', CostListMainView.as_view(), name='unit_details'),
+    path('card/<slug:countyCardSlug>/<slug:unitSlug>/<int:year>/', CostListMainView.as_view(), name='unit_details'),
     # Szczegóły kosztów
     path('card/<slug:countyCardSlug>/<slug:unitSlug>/<slug:paragraphSlug>/<int:year>/', CostsDetailsListView.as_view(),
          name='unitCostList'),

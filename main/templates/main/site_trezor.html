@@ -3,7 +3,7 @@
 {% block content %}
 {% if user.is_authenticated and user_belongs_to_group%}
 <div class="container pt-5">
-    <div class="row mb-3">
+    <div class="row mb-1">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
             <a href="{% url 'main:welcome' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>

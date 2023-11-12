@@ -2,7 +2,7 @@
 {%load static%}
 {%block content%}
 <div class="container pt-5">
-    <div class="row mb-3">
+    <div class="row mb-1">
         <div class="col-1 col-sm-1 col-md-1 col-lg-2">
             <a href="{% url 'main:welcome' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
@@ -44,7 +44,7 @@
             {%for unit in units%}
             <div class="list-group-item list-group-item-action d-flex justify-content-between">
                 <a class="text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
-                   href="{%url 'main:unit_details' unit.county_unit.slug unit.slug%}">
+                   href="{% url 'main:unit_details' unit.county_unit.slug unit.slug year %}">
                     <div class="d-flex justify-content-between w-100">
                     <span class="w-100">{{unit.type}} {% if unit.object_name %} - {{unit.object_name}} {% endif %} - {{unit.address}}, {{unit.zip_code}}
                 {{unit.city}}</span>
