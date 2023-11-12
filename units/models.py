@@ -27,7 +27,7 @@ class County(models.Model):
             {"swop_id": "3208", "name": "Kępno", "id_order": 9},
             {"swop_id": "3209", "name": "Koło", "id_order": 10},
             {"swop_id": "3210", "name": "Konin", "id_order": 11},
-            {"swop_id": "3211", "name": "Koscian", "id_order": 12},
+            {"swop_id": "3211", "name": "Kościan", "id_order": 12},
             {"swop_id": "3212", "name": "Krotoszyn", "id_order": 13},
             {"swop_id": "3213", "name": "Leszno", "id_order": 14},
             {"swop_id": "3214", "name": "Międzychód", "id_order": 15},

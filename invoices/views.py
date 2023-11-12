@@ -348,7 +348,6 @@ class CreateCSVForItems(View):
             for item in invoice.items.all():
                 sum_value = item.sum
                 exist = False
-                print(sum_value)
                 for row in objectsForFile:
                     if item.unit.county_swop.name == row['county']:
                         row['sum'] += sum_value
@@ -358,7 +357,6 @@ class CreateCSVForItems(View):
                     objectsForFile.append(
                         {'section': item.section.section, 'county': item.unit.county_swop.name, 'sum': item.sum})
 
-            print(objectsForFile)
             # ---------------------------------------------
 
             response = HttpResponse(content_type='text/csv')

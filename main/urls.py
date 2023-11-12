@@ -3,7 +3,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMa
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
-    CreateCSVForCountyYearSum, MediaInfoCountyView, ArchiveYearUnitMainView
+    CreateCSVForCountyYearSum, MediaInfoCountyView, ArchiveYearUnitMainView, CreateCSVForUnit
 
 app_name = 'main'
 urlpatterns = [
@@ -52,7 +52,8 @@ urlpatterns = [
     path('users/', UsersSiteView.as_view(), name='usersSite'),
     # Tworzenie plików CSV
     path('csvForCountySum/', CreateCSVForCountySum.as_view(), name='csvForCountySumCurrentYear'),
-    path('csvForCountySum/<int:year>', CreateCSVForCountyYearSum.as_view(), name='csvForCountySumAllYear'),
+    path('csvForCountyYearSum/<int:year>', CreateCSVForCountyYearSum.as_view(), name='csvForCountyYearSum'),
+    path('csvForUnit', CreateCSVForUnit.as_view(), name='csvForUnit'),
     # Logowanie
     path('login/', LoginView.as_view(), name="loginApp"),
     # Lista kart obiektów - strona główna

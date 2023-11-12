@@ -63,7 +63,7 @@ class EditUnitView(LoginRequiredMixin, View):
                 instance = form.save(commit=False)
                 instance.author = request.user
                 form.save()
-                return redirect(reverse('main:unitCountyMain', kwargs={'slug': unit.county_unit.slug}))
+                return redirect(reverse('main:unitCountyMain', kwargs={'countySlug': unit.county_unit.slug}))
             context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
