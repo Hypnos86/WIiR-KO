@@ -54,7 +54,6 @@
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Rodzaj dokumentu</th>
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Okres</th>
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Nr. licznika</th>
-            <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Stan licznika</th>
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Czynsz - zużycie</th>
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">Kompleksowa - zużycie</th>
             <th class="align-middle" align="center" valign="middle" width="auto" scope="col">OSD - zużycie</th>
@@ -81,16 +80,19 @@
                 {{ item.period_from|date:'d.m.Y' }} - {{ item.period_from|date:'d.m.Y' }}
                 {% endif %}
             </td>
+            {%if item.counterReading %}
+            <td align="center" valign="middle" width="100" scope="col" data-toggle="info" title="Stan licznika: {{ item.counterReading }}">
+                {% if item.measurementSystemNumber %}
+                {{ item.measurementSystemNumber }}
+                {% endif %}
+            </td>
+            {% else %}
             <td align="center" valign="middle" width="100" scope="col">
                 {% if item.measurementSystemNumber %}
                 {{ item.measurementSystemNumber }}
                 {% endif %}
             </td>
-            <td align="center" valign="middle" width="auto" scope="col">
-                {% if item.counterReading %}
-                {{ item.counterReading }}
-                {% endif %}
-            </td>
+            {% endif %}
             <td align="center" valign="middle" width="110" scope="col">
                 {% if item.contract_types.id == 1%}
                 {{ item.consumption }} {{unitOfMeasure}}
