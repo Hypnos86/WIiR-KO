@@ -68,9 +68,9 @@ class HelpInfo(models.Model):
 
     related_name = "help_view"
 
-    info1 = models.TextField('Informacja_1')
-    info2 = models.TextField('Informacja_2')
-    info3 = models.TextField('Informacja_3')
+    info1 = models.TextField(verbose_name='Informacja_1', null=True, blank=True)
+    info2 = models.TextField(verbose_name='Informacja_2', null=True, blank=True)
+    info3 = models.TextField(verbose_name='Informacja_3', null=True, blank=True)
     create_date = models.DateField("Data dodania", auto_now_add=True)
     change = models.DateTimeField(auto_now=True, verbose_name="Zmiany")
     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
