@@ -17,9 +17,9 @@
         <div class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end">
             <div class="mx-2">
                 {% if query %}
-                <a class="btn-menu" href="" data-toggle="info" title="Zapisz">
+                <button class="btn-menu" onclick="generateTrezorCSV(this)" data-url="{% url 'main:csvForTrezor' %}" data-toggle="info" title="Zapisz">
                     <span class="bi bi-download custom-icon"></span>
-                </a>
+                </button>
                 {% endif %}
             </div>
         </div>
@@ -111,6 +111,13 @@
          $("#date_to").val("");
          $("form").submit();
      }
+    function generateTrezorCSV(button){
+        var url = $(button).data("url");
+        var from = $("#date_from").val();
+        var to = $("#date_to").val();
+        var urlParams = "?from="+from+"&"+"to="+to;
+        window.open(url + urlParams, '_blank').focus();
+    }
 </script>
 {% endif %}
 {% endblock %}

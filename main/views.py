@@ -1227,3 +1227,64 @@ class CreateCSVForUnit(View):
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
+
+
+class CreateCSVForTrezor(View):
+    template_error = 'main/error.html'
+    method = 'CreateCSVForTrezor'
+
+    def get(self, request):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            nowDate = currentDate.current_date()
+            invoices = Invoice.objects.all().order_by("date_of_payment")
+            date_from = request.GET.get("from")
+            date_to = request.GET.get("to")
+            invoiceList = []
+            if date_from:
+                try:
+                    date_from_obj = datetime.datetime.strptime(date_from, "%Y-%m-%d")
+                except ValueError:
+                    date_from_obj = None
+
+            if date_to:
+                try:
+                    date_to_obj = datetime.datetime.strptime(date_to, "%Y-%m-%d")
+                except ValueError:
+                    date_to_obj = None
+
+            if date_from_obj and date_to_obj:
+                days = [date_from_obj + datetime.timedelta(days=x) for x in
+                        range((date_to_obj - date_from_obj).days + 1)]
+                for day in days:
+                    invoiceSums = 0
+                    invoice_list = invoices.filter(date_of_payment=day)
+                    objects = []
+                    for invoice in invoice_list:
+                        invoiceSums += invoice.sum
+                        objects.append({'invoice_no': invoice.no_invoice, 'date': invoice.date.strftime("%d.%m.%Y"),
+                                        'sum': invoice.sum})
+                    invoiceList.append(
+                        {'day': day.strftime("%d.%m.%Y"), 'invoiceSums': invoiceSums, 'objects': objects})
+            # ---------------------------------------------
+            response = HttpResponse(content_type='text/csv')
+            response[
+                'Content-Disposition'] = f'attachment; filename="Weryfikacja trezora- {nowDate.strftime("%d.%m.%Y")}.csv"'
+            # Ustawienie kodowania utf-8
+            response.write(u'\ufeff'.encode('utf8'))
+            # # Tworzenie obiektu writer i zapis do pliku csv
+            writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
+            response.write(f'Weryfikacja trezora z dnia {nowDate}. Zakres weryfikacji - {date_from}-{date_to}\n')
+            for object in invoiceList:
+                writer.writerow([f'Data: {object["day"]}', f'kwota zapotrzebowania: {object["invoiceSums"]}'])
+                for invoice in object['objects']:
+                    writer.writerow(
+                        [f'Faktura: {invoice["invoice_no"]} z dnia {invoice["date"]}', f'Kwota: {invoice["sum"]}'])
+
+            return response
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
+            return render(request, self.template_error, context)
