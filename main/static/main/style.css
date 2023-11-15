@@ -341,3 +341,7 @@ textarea::-webkit-scrollbar-thumb {
 .z-index-nav{
     z-index:5;
 }
+
+tbody tr:hover{
+    background-color: #E3F1FF;
+}
