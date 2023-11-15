@@ -343,5 +343,13 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 tbody tr:hover{
-    background-color: #E3F1FF;
+    background-color: #F5DB90;
+}
+
+th{
+    vertical-align: middle !important;
+}
+
+td{
+    vertical-align: middle !important;
 }
