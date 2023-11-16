@@ -4,20 +4,31 @@ function openLoginModal(button){
         $("#login").modal("show");
     }
 
-    function openHelpModal(button){
+function openHelpModal(button){
         var url = $(button).data("url");
         $("#helpModal .modal-content").load(url);
         $("#helpModal").modal("show");
     }
 
-    $(function () {
+$(function () {
         $('[data-toggle="info"]').tooltip()
     })
 
-    function snackbarFunction() {
+function snackbarFunction() {
     var tost = document.getElementById("snackbar");
     tost.className = "show";
         setTimeout(function () {
             tost.className = tost.className.replace("show", "");
         }, 10000);
     }
+
+document.addEventListener("DOMContentLoaded", function() {
+    var message = document.getElementById("loginMessage");
+    var disappearTime = 5000;
+
+    function hideElement() {
+      message.style.display = "none";
+    }
+
+   setTimeout(hideElement, disappearTime);
+ });
