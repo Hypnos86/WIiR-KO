@@ -1238,9 +1238,11 @@ class CreateCSVForTrezor(View):
         try:
             nowDate = currentDate.current_date()
             invoices = Invoice.objects.all().order_by("date_of_payment")
+            # ---Pobieranie dat jako stringi
             date_from = request.GET.get("from")
             date_to = request.GET.get("to")
             invoiceList = []
+            # ---Zamiana stringów dat na datatime
             if date_from:
                 try:
                     date_from_obj = datetime.datetime.strptime(date_from, "%Y-%m-%d")
@@ -1253,6 +1255,7 @@ class CreateCSVForTrezor(View):
                 except ValueError:
                     date_to_obj = None
 
+            # sprawdzanie czy istnieją daty i tworzenie obiektu z zakresem danych
             if date_from_obj and date_to_obj:
                 days = [date_from_obj + datetime.timedelta(days=x) for x in
                         range((date_to_obj - date_from_obj).days + 1)]
@@ -1266,6 +1269,13 @@ class CreateCSVForTrezor(View):
                                         'sum': invoice.sum})
                     invoiceList.append(
                         {'day': day.strftime("%d.%m.%Y"), 'invoiceSums': invoiceSums, 'objects': objects})
+
+            sumAll = 0
+            for lista in invoiceList:
+                sumAll += lista['invoiceSums']
+            sumAll = str(sumAll).replace('.', ',')
+            strDateFrom = date_from_obj.strftime("%d.%m.%Y")
+            strDateTo = date_to_obj.strftime("%d.%m.%Y")
             # ---------------------------------------------
             response = HttpResponse(content_type='text/csv')
             response[
@@ -1274,12 +1284,15 @@ class CreateCSVForTrezor(View):
             response.write(u'\ufeff'.encode('utf8'))
             # # Tworzenie obiektu writer i zapis do pliku csv
             writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
-            response.write(f'Weryfikacja trezora z dnia {nowDate}. Zakres weryfikacji - {date_from}-{date_to}\n')
-            for object in invoiceList:
-                writer.writerow([f'Data: {object["day"]}', f'kwota zapotrzebowania: {object["invoiceSums"]}'])
-                for invoice in object['objects']:
+            response.write(f'Weryfikacja trezora z dnia {nowDate}\n')
+            response.write(f'Zapotrzebowanie środków w okresie od {strDateFrom} do {strDateTo} w kwocie {sumAll} zł\n')
+            for item in invoiceList:
+                invoiceSum = str(item["invoiceSums"]).replace('.', ',')
+                writer.writerow([f'Data:', f'{item["day"]}', f'Suma:', f'{invoiceSum} zł'])
+                for invoice in item['objects']:
+                    sumValue = str(invoice['sum']).replace('.', ',')
                     writer.writerow(
-                        [f'Faktura: {invoice["invoice_no"]} z dnia {invoice["date"]}', f'Kwota: {invoice["sum"]}'])
+                        ['', f'{invoice["invoice_no"]} z dnia {invoice["date"]}', f'Kwota:', f'{sumValue} zł'])
 
             return response
         except Exception as e:

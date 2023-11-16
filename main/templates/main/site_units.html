@@ -51,7 +51,7 @@
         <div class="list-group-item list-group-item-action d-flex justify-content-between">
             <a class="text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
                href="{%url 'main:unit_details' unit.county_unit.slug unit.slug year %}">
-                <div class="d-flex justify-content-between  align-items-center w-100">
+                <div class="d-flex justify-content-between align-items-center w-100">
                     <span class="w-25">{{unit.county_unit.name}}</span>
                     <span class="w-100">{{unit.type}} {% if unit.object_name %} - {{unit.object_name}} {% endif %} - {{unit.address}}, {{unit.zip_code}}
                 {{unit.city}}</span>
