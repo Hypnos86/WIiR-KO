@@ -27,7 +27,9 @@ document.addEventListener("DOMContentLoaded", function() {
     var disappearTime = 5000;
 
     function hideElement() {
+       if(message){
       message.style.display = "none";
+    }
     }
 
    setTimeout(hideElement, disappearTime);
