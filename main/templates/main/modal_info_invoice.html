@@ -62,6 +62,7 @@
         <div class="mt-3">
             <ul class="list-group">
                 {% for item in items %}
+                {% if user.is_authenticated or item.section.section == accessSection %}
                 <li class="list-group-item d-flex justify-content-between" data-toggle="info"
                     title="{{item.information}}">
                     {% if user.is_authenticated %}
@@ -80,6 +81,7 @@
                         <span class="bold"> {{item.sum|intcomma}} zł</span>
                     </div>
                 </li>
+                {% endif %}
                 {% endfor %}
             </ul>
         </div>

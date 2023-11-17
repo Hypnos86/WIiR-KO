@@ -532,11 +532,12 @@ class InvoiceInfoView(View):
     def get(self, request, id):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            accessSection = '75405'
             yearObject = CurrentDate()
             year = yearObject.current_year()
             invoice = get_object_or_404(Invoice, pk=id)
             items = invoice.items.all()
-            context = {'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group, 'items': items, 'id': id,
+            context = {'invoice': invoice,'accessSection':accessSection, 'user_belongs_to_group': user_belongs_to_group, 'items': items, 'id': id,
                        'year': year}
             return render(request, self.template_name, context)
 
