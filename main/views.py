@@ -802,8 +802,10 @@ class MediaInfoCountyView(View):
                 units = Unit.objects.filter(county_unit__slug=countyCardSlug)
                 for unit in units:
                     unit_id = unit.id
-                    unit_name = f"{unit.type.type_short} {unit.city}"
+                    unit_name = f"{unit.type.type_full} {unit.city}"
                     status = unit.status
+                    address = unit.address
+                    objectName = unit.object_name
                     exist_unit = False
                     # print(unit_name)
                     items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
@@ -824,7 +826,7 @@ class MediaInfoCountyView(View):
 
                         if not exist_unit:
                             new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
-                            year_entry = {'id': unit_id, 'unit': unit_name, 'status': status, 'data': [new_data_entry]}
+                            year_entry = {'id': unit_id, 'unit': unit_name, 'objectName': objectName, 'address': address, 'status': status, 'data': [new_data_entry]}
                             tableObjects.append(year_entry)
                 # print(tableObjects)
                 # KOD DO SPRAWDZENNIA --------------------------------------------------------------------------------------
@@ -909,10 +911,12 @@ class CountyCostUnitListView(View):
             objectDatas = []
 
             for unit in units:
-                policeUnit = f'{unit.unit_full_name}'
+                policeUnit = f'{unit.type.type_full} {unit.city}'
                 status = unit.status
                 items = unit.items.all()
                 costObjectDict = {}
+                address = unit.address
+                objectName = unit.object_name
 
                 # Inicjujemy kwoty dla wszystkich paragrafów jako 0
                 for paragraph in paragraphs:
@@ -927,7 +931,7 @@ class CountyCostUnitListView(View):
                 costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
                                   costObjectDict.items()]
 
-                objectDatas.append({'unit': policeUnit, 'status': status, 'objects': costObjectList})
+                objectDatas.append({'unit': policeUnit, 'address': address, 'objectName': objectName, 'status': status, 'objects': costObjectList})
 
             # Tworzymy słownik do przechowywania sum paragrafów
             paragraphSums = {}

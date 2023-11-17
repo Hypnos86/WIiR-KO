@@ -35,9 +35,11 @@
 <div class="text-center mb-2">
     {% if unit.object_name %}
     <h5 class="h5 mb-0">{{unit.object_name}}</h5><br>
-
     {% endif %}
     <h6 class="h6 my-0">Administrator: <span>{{unit.manager}}</span></h6>
+    {% if unit.information %}
+    <p>Informacje: {{unit.information}}</p>
+    {% endif %}
 </div>
 <div class="text-center text-uppercase my-2 ">Dokumenty wystawione w <span class="info-color">{{year}}</span> roku</div>
 <div class="m-3">

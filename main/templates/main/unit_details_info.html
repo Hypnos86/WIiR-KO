@@ -37,6 +37,9 @@
             <h5 class="h5 my-0">{{unit.object_name}}</h5><br>
             {% endif %}
             <h6 class="h6 my-0">Administrator: <span>{{unit.manager}}</span></h6>
+            {% if unit.information %}
+            <p>Informacje: {{unit.information}}</p>
+            {% endif %}
         </div>
         {% if unit.information %}
         <p>{{unit.information}}</p>

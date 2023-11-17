@@ -9,7 +9,7 @@ class CountyCard(models.Model):
         ordering = ['id_order']
 
     name = models.CharField(max_length=15, null=False, verbose_name="Jednostka powiatowa", unique=True)
-    id_order = models.IntegerField("Kolejność", unique=True, null=True)
+    id_order = models.IntegerField(verbose_name="Kolejność", unique=True, null=True)
     slug = models.SlugField(max_length=20, null=True, blank=True)
 
     @classmethod

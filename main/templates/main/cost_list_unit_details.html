@@ -36,6 +36,9 @@
         <h5 class="h5 my-0">{{unit.object_name}}</h5><br>
         {% endif %}
         <h6 class="h6 my-0">Administrator: <span>{{unit.manager}}</span></h6>
+        {% if unit.information %}
+        <p>Informacje: {{unit.information}}</p>
+        {% endif %}
     </div>
     <div class="text-center text-uppercase my-2 ">
         <span>Dokumenty wystawione w <span class="info-color">{{year}}</span> roku</span>
@@ -94,22 +97,22 @@
             </td>
             {% endif %}
             <td align="center" valign="middle" width="110" scope="col">
-                {% if item.contract_types.id == 1%}
+                {% if item.consumption and item.contract_types.id == 1%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" width="110" scope="col">
-                {% if item.contract_types.id == 2%}
+                {% if item.consumption and item.contract_types.id == 2%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" width="110" scope="col">
-                {% if item.contract_types.id == 3%}
+                {% if item.consumption and item.contract_types.id == 3%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
             <td align="center" valign="middle" width="110" scope="col">
-                {% if item.contract_types.id == 4%}
+                {% if item.consumption and item.contract_types.id == 4%}
                 {{ item.consumption }} {{unitOfMeasure}}
                 {% endif %}
             </td>
