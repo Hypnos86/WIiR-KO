@@ -748,17 +748,12 @@ class MediaInfoUnitView(View):
             paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
             items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(paragraph__paragraph__contains='4260')
             tableObjects = []
-            print(unit)
             for item in items:
-                print(item)
                 year = item.invoice_id.date_of_payment.year
                 year_exist = False
-                print(year)
                 for year_entry in tableObjects:
-                    print(year_entry)
                     if year_entry['year'] == year:
                         for data_entry in year_entry['data']:
-                            print(data_entry)
                             if data_entry['paragraph'] == item.paragraph.paragraph:
                                 data_entry['consumption'] += item.consumption
                                 year_exist = True
@@ -773,7 +768,6 @@ class MediaInfoUnitView(View):
                     new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
                     year_entry = {'year': year, 'data': [new_data_entry]}
                     tableObjects.append(year_entry)
-            print(tableObjects)
             # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
             all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
             for year_entry in tableObjects:

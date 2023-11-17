@@ -8,7 +8,7 @@ from units.models import Unit
 def create_unit_fields(sender, instance, **kwargs):
 
     instance.unit_full_name = f'{instance.type.type_full} {instance.city} - {instance.address}'
+    text = f'{instance.type.type_short} {instance.city} {instance.address} {instance.id}'
 
-    if not instance.slug:
-        text = f'{instance.type.type_short} {instance.city} {instance.address}'
+    if instance.slug != text:
         instance.slug = slugify(text, )
