@@ -56,9 +56,9 @@
                     {%else%}
                     <i class="bi bi-dash-circle text-danger" data-toggle="info" title="Zdany"></i>
                     {%endif%}
-                    <a class="color-sea mx-4" data-toggle="info" title="Informacje"
+                    <a class="color-sea mx-4" data-toggle="info" title="Wydatki"
                        href="{% url 'main:unitDetailsInfo' unit.slug %}">
-                        <i class="bi bi-info-square"></i>
+                        <i class="bi bi-bank "></i>
                     </a>
                     {% if user.is_authenticated and user_belongs_to_group%}
                     <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">

@@ -53,7 +53,6 @@
         <thead class="table-dark">
         <tr class="text-center">
             <th align="center" valign="bottom" width="auto" scope="col">Jednostka</th>
-            <th align="center" valign="bottom" width="auto" scope="col">Rozdział</th>
             {% for paragraph in paragraphs%}
             <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">§
                 {{paragraph.paragraph}}
@@ -67,9 +66,6 @@
             <td align="left" valign="middle" width="auto" scope="col">
                 <span>{{ item.county }}</span>
             </td>
-            <td align="center" valign="bottom" width="auto" scope="col">
-                {{ item.section }}
-            </td>
             {% for paragraph in item.data %}
             <td align="center" valign="bottom" width="auto" scope="col">{{paragraph.sum|intcomma}} zł
                 <!--                <br> (test-{{paragraph.paragraph}})-->
@@ -81,7 +77,7 @@
         </tbody>
         <tfoot>
         <tr class="footer-sum">
-            <td align="right" valign="middle" scope="col" colspan="2" width="auto"
+            <td align="right" valign="middle" scope="col" width="auto"
                 class="text-uppercase table-vertical">Razem
             </td>
             {% for par, sum in paragraphSums.items %}
