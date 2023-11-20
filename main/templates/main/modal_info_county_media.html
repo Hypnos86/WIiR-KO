@@ -23,7 +23,7 @@
             <tbody>
             {% for object in tableObjects %}
             <tr>
-                <td align="center" valign="middle" width="auto" scope="col">
+                <td align="left" valign="middle" width="auto" scope="col">
                     <div class="d-flex justify-content-between align-items-center" data-toggle="info" title="{% if object.objectName %} {{object.objectName}} - {% endif %} {{object.address}}">
                     <span>{{object.unit}}</span>
                     {% if object.status %}
@@ -35,16 +35,16 @@
                 </td>
                 {% for paragraph in paragraphs %}
                 <td align="center" valign="middle" width="auto" scope="col">
-                    {% for data in object.data %}
-                    {% if data.paragraph == paragraph.paragraph %}
-                    {% if data.paragraph == '4260-01' %}
-                    {{ data.consumption|intcomma }} kWh <br>
-                    {% elif data.paragraph == '4260-02' %}
-                    {{ data.consumption|intcomma }} GJ <br>
-                    {% elif data.paragraph == '4260-03' %}
-                    {{ data.consumption|intcomma }} kWh <br>
-                    {% elif data.paragraph == '4260-04' %}
-                    {{ data.consumption|intcomma }} m2 <br>
+                    {% for item in object.data %}
+                    {% if item.paragraph == paragraph.paragraph %}
+                    {% if item.paragraph == '4260-01' %}
+                    {{ item.consumption|intcomma }} kWh <br>
+                    {% elif item.paragraph == '4260-02' %}
+                    {{ item.consumption|intcomma }} GJ <br>
+                    {% elif item.paragraph == '4260-03' %}
+                    {{ item.consumption|intcomma }} kWh <br>
+                    {% elif item.paragraph == '4260-04' %}
+                    {{ item.consumption|intcomma }} m2 <br>
                     {%endif%}
                     {% endif %}
                     {% empty %}

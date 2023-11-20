@@ -27,6 +27,12 @@
                     <span class="bi bi-calculator-fill custom-icon"></span>
                 </a>
             </div>
+            <div class="mx-2">
+                <a class="btn-menu" href="{% url 'main:csvForCountyUnit' county.slug year %}" data-toggle="info"
+                   title="Zapisz">
+                    <span class="bi bi-download custom-icon"></span>
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -48,7 +54,8 @@
         {% for item in items %}
         <tr>
             <td class="table-vertical" align="left" valign="middle" scope="col">
-                <div class="d-flex justify-content-between align-items-center" data-toggle="info" title="{% if item.objectName %} {{item.objectName}} - {% endif %} {{item.address}}">
+                <div class="d-flex justify-content-between align-items-center" data-toggle="info"
+                     title="{% if item.objectName %} {{item.objectName}} - {% endif %} {{item.address}}">
                     <span>{{item.unit}}</span>
                     {% if item.status %}
                     <i class="bi bi-check-circle-fill success" data-toggle="info" title="Aktualny"></i>
