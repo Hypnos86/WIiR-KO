@@ -198,11 +198,10 @@ class InvoiceItems(models.Model):
     period_from = models.DateField(verbose_name='Okres od', null=False)
     period_to = models.DateField(verbose_name='Okres do', null=False)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
-    # counterReading = models.DecimalField(verbose_name='Stan licznika', max_digits=10, decimal_places=2, null=True,
     counterReading = models.CharField(verbose_name='Stan licznika', max_length=80, null=True, blank=True)
     consumption = models.DecimalField(verbose_name='Zużycie', max_digits=10, decimal_places=2, null=True, blank=True)
-    consumption_second = models.DecimalField(verbose_name='Zużycie-2', max_digits=10, decimal_places=2, null=True,
-                                             blank=True)
+    # consumption_second = models.DecimalField(verbose_name='Zużycie-2', max_digits=10, decimal_places=2, null=True,
+    #                                          blank=True)
     unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
     section = models.ForeignKey(to=Section, null=True, blank=True, on_delete=models.CASCADE,
                                 verbose_name='Rozdział',

@@ -30,11 +30,11 @@ class InvoiceItemsForm(ModelForm):
         model = InvoiceItems
         fields = (
             'invoice_id', 'contract_types', 'period_from', 'period_to', 'measurementSystemNumber', 'counterReading',
-            'consumption', 'consumption_second', 'unit', 'section', 'group', 'paragraph', 'sum', 'information')
+            'consumption', 'unit', 'section', 'group', 'paragraph', 'sum', 'information')
         labels = {'invoice_id': 'Faktura', 'period_from': 'Okres od', 'period_to': 'Okres do',
                   'contract_types': 'Rodzaj umowy', 'measurementSystemNumber': 'Nr. licznika',
-                  'counterReading': 'Stan licznika', 'consumption': 'Zużycie', 'consumption_second': 'Zużycie-2',
-                  'unit': 'Jednostka', 'section': 'Rozdział', 'group': 'Grupa', 'paragraph': 'Paragraf', 'sum': 'Kwota',
+                  'counterReading': 'Stan licznika', 'consumption': 'Zużycie', 'unit': 'Jednostka',
+                  'section': 'Rozdział', 'group': 'Grupa', 'paragraph': 'Paragraf', 'sum': 'Kwota',
                   'infomation': 'Uwagi'}
         exclude = ['creation_date', 'invoice_id', 'section', 'group']
         widgets = {'period_from': DateField(),
