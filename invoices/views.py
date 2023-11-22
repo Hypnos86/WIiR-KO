@@ -152,8 +152,23 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                                      "counterReading": str(media_4_last.counterReading),
                                      "measurement": str(media_4_last.measurementSystemNumber)})
 
+                    else_Object_last = selectedItesms.exclude(paragraph__paragraph=ParagraphEnum.MEDIA1.value).exclude(
+                        paragraph__paragraph=ParagraphEnum.MEDIA2.value).exclude(
+                        paragraph__paragraph=ParagraphEnum.MEDIA3.value).exclude(
+                        paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(
+                        contract_types__id=typeObject.id).first()
+                    if else_Object_last:
+                        data.append(
+                            {"par": else_Object_last.paragraph.paragraph, "type": else_Object_last.contract_types.type,
+                             "period": f"{else_Object_last.period_from.strftime('%d.%m.%Y')}-{else_Object_last.period_to.strftime('%d.%m.%Y')}",
+                             "counterReading": "Brak", "measurement": "Brak"})
+
+
+
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
+            for x in measurementSystemNumberList:
+                print(x, end="\n")
             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
             counties = []
             for item in items:

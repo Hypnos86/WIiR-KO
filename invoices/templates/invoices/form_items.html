@@ -307,7 +307,7 @@ function checkParagraph(){
             if (selectedData){
                 console.log("to co wybrano z selected Data: ", selectedData);
                 information.removeAttribute('hidden');
-                information.textContent = " Ostatni okres rozliczeniowy: " + selectedData.period + ", " + "stan licznika:"+ selectedData.counterReading;
+                information.textContent = " Ostatni okres rozliczeniowy: " + selectedData.period + ", " + "stan licznika: "+ selectedData.counterReading;
                 measureData.value = selectedData.measurement;
 
             } else {
