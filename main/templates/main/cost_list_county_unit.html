@@ -55,8 +55,8 @@
         <tr>
             <td class="table-vertical" align="left" valign="middle" scope="col">
                 <div class="d-flex justify-content-between align-items-center" data-toggle="info"
-                     title="{% if item.objectName %} {{item.objectName}} - {% endif %} {{item.address}}">
-                    <span>{{item.unit}}</span>
+                     title="{{item.address}}">
+                    <span>{{item.unit}} {% if item.objectName %} - {{item.objectName}} - {% endif %}</span>
                     {% if item.status %}
                     <i class="bi bi-check-circle-fill success" data-toggle="info" title="Aktualny"></i>
                     {%else%}

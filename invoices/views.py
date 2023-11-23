@@ -167,8 +167,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
-            for x in measurementSystemNumberList:
-                print(x, end="\n")
+            # for x in measurementSystemNumberList:
+            #     print(x, end="\n")
             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
             counties = []
             for item in items:
