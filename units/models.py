@@ -48,6 +48,11 @@ class County(models.Model):
             {"swop_id": "3229", "name": "Wolsztyn", "id_order": 30},
             {"swop_id": "3230", "name": "Września", "id_order": 31},
             {"swop_id": "3231", "name": "Złotów", "id_order": 32},
+            {"swop_id": "3200", "name": "CBZC", "id_order": 33},
+            {"swop_id": "3200", "name": "CBŚP", "id_order": 34},
+            {"swop_id": "3251", "name": "BSWP", "id_order": 35},
+            {"swop_id": "3252", "name": "Laboratorium", "id_order": 36},
+            {"swop_id": "3253", "name": "Lotnictwo", "id_order": 37},
         ]
 
         # Tworzenie i zapisywanie obiektów w pętli
@@ -88,6 +93,8 @@ class TypeUnit(models.Model):
             {"type_short": "Ant.", "type_full": "Antena", "id_order": 11},
             {"type_short": "Inne", "type_full": "Inne", "id_order": 12},
             {"type_short": "CBZC", "type_full": "Centralne Biuro Zwalczania Cyberprzestępczości", "id_order": 13},
+            {"type_short": "LK", "type_full": "Laboratorium Kryminalistyczne", "id_order": 14},
+            {"type_short": "LOT", "type_full": "Lotnictwo", "id_order": 15},
         ]
 
         # Tworzenie i zapisywanie obiektów w pętli
