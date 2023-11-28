@@ -1306,6 +1306,8 @@ class CreateCSVForTrezor(View):
                     invoice_list = invoices.filter(date_of_payment=day)
                     objects = []
                     for invoice in invoice_list:
+                        if invoice.sum == None:
+                            invoice.sum = 0
                         invoiceSums += invoice.sum
                         objects.append({'invoice_no': invoice.no_invoice, 'date': invoice.date.strftime("%d.%m.%Y"),
                                         'sum': invoice.sum})

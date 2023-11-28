@@ -53,6 +53,7 @@ body {
     border-color: white;
     color:white;
     transform:scale(1.1);
+    background-color: #057570 !important;
 }
 
 .btn-main:focus {
@@ -367,4 +368,16 @@ td{
 .table-header{
     position:sticky;
     top:55px
+}
+
+.bg-author{
+    background-color: #122436;
+    font-weight: 600;
+}
+
+.color-span{
+    background-color: #057570;
+    border-radius:10px;
+    padding: 3px 5px;
+    color: white;
 }
