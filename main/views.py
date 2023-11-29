@@ -144,8 +144,17 @@ class HelpModalView(View):
 
     def get(self, request):
         try:
-            text = HelpInfo.objects.last()
-            context = {'text': text}
+            content = HelpInfo.objects.all()
+            if not content.exists():
+                HelpInfo.create_support()
+
+            aut = [65, 117, 116, 111, 114, 32, 97, 112, 108, 105, 107, 97, 99, 106, 105, 58, 32, 75, 97, 109, 105, 108,
+                   32, 75, 117, 98, 105, 97, 107, 32, 50, 48, 50, 51]
+            inAut = [101, 109, 97, 105, 108, 58, 32, 107, 117, 98, 105, 97, 107, 46, 107, 97, 109, 105, 108, 50, 51, 64,
+                     103, 109, 97, 105, 108, 46, 99, 111, 109]
+            mainEnco = ''.join([chr(val) for val in aut])
+            inAutEnco = ''.join([chr(val) for val in inAut])
+            context = {'content': content.last(), 'mainEnco': mainEnco, 'inAutEnco': inAutEnco}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}

@@ -50,11 +50,9 @@ class CountyCard(models.Model):
             {"name": "Złotów", "id_order": 32},
         ]
 
-        # Tworzenie i zapisywanie obiektów w pętli
         for item in data:
             county = cls(name=item["name"], id_order=item["id_order"])
             county.save()
-
         return cls.objects.all()
 
     def __str__(self):
@@ -68,12 +66,21 @@ class HelpInfo(models.Model):
 
     related_name = "help_view"
 
-    info1 = models.TextField(verbose_name='Informacja_1', null=True, blank=True)
-    info2 = models.TextField(verbose_name='Informacja_2', null=True, blank=True)
-    info3 = models.TextField(verbose_name='Informacja_3', null=True, blank=True)
+    info = models.TextField(verbose_name='Informacja', null=True, blank=True)
+    authorEmail = models.EmailField(verbose_name='Email')
+    authorPhone = models.CharField(verbose_name='Telefon', max_length=9)
     create_date = models.DateField("Data dodania", auto_now_add=True)
     change = models.DateTimeField(auto_now=True, verbose_name="Zmiany")
     author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
+
+    @classmethod
+    def create_support(cls):
+        data = [{'authorEmail': 'kamil.kubiak@po.policja.gov.pl', 'authorPhone': '77-124-60', 'author': 1}]
+
+        for item in data:
+            support = cls(authorEmail=item["authorEmail"], authorPhone=item["authorPhone"], author_id=item["author"])
+            support.save()
+        return cls.objects.all()
 
     def __str__(self):
         return f'Informacja: {self.id}'
