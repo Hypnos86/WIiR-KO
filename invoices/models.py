@@ -3,8 +3,6 @@ from enum import Enum
 from units.models import Unit, County
 from main.static_data import SECTION
 
-sectionOptions = [(item['id'], item['section'], item['name']) for item in SECTION]
-
 
 class DocumentsTypeEnum(Enum):
     FAKTURA = "Faktura"
@@ -16,7 +14,7 @@ class DocumentTypes(models.Model):
         verbose_name = "Rodzaj dokumentu księgowego"
         verbose_name_plural = "04 - Rodzaje dokumentów księgowych"
 
-    type = models.CharField("Typ dokumentu", max_length=20)
+    type = models.CharField(verbose_name="Typ dokumentu", max_length=20)
 
     @classmethod
     def create_type(cls):
@@ -41,7 +39,7 @@ class ContractTypes(models.Model):
         verbose_name = "Rodzaj umowy"
         verbose_name_plural = "05 - Rodzaje umów"
 
-    type = models.CharField("Typ dokumentu", max_length=20)
+    type = models.CharField(verbose_name="Typ dokumentu", max_length=20)
 
     @classmethod
     def create_contract_types(cls):
@@ -72,16 +70,17 @@ class Invoice(models.Model):
 
     date_receipt = models.DateField("Data wpływu")
     date = models.DateField("Data wystawienia")
-    no_invoice = models.CharField("Nr. faktury", max_length=30)
+    no_invoice = models.CharField(verbose_name="Nr. faktury", max_length=30)
     doc_types = models.ForeignKey(DocumentTypes, null=False, blank=False, on_delete=models.CASCADE,
                                   verbose_name="Rodzaj dokumentu",
                                   related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
     date_of_payment = models.DateField("Termin płatności")
-    information = models.TextField("Informacje", blank=True, null=True)
-    creation_date = models.DateTimeField("Data utworzenia", auto_now_add=True)
-    change_date = models.DateTimeField("Zmiana", auto_now=True)
-    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
+    information = models.TextField(verbose_name="Informacje", blank=True, null=True)
+    creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
+    change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
+                               verbose_name='Autor')
     slug = models.SlugField(max_length=30, null=True, blank=True, unique=True)
 
     def __str__(self):
@@ -125,8 +124,8 @@ class Group(models.Model):
         verbose_name = "Grupa"
         verbose_name_plural = "02 - Grupy"
 
-    group = models.CharField("Grupa", max_length=2, unique=True)
-    name = models.CharField("Nazwa", max_length=50)
+    group = models.CharField(verbose_name="Grupa", max_length=2, unique=True)
+    name = models.CharField(verbose_name="Nazwa", max_length=50)
 
     @classmethod
     def create_group(cls):
@@ -213,7 +212,7 @@ class InvoiceItems(models.Model):
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
-    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name,
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
                                verbose_name='Autor')
 
     def __str__(self):

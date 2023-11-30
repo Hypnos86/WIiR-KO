@@ -817,11 +817,73 @@ class MediaInfoCountyView(View):
                     status = unit.status
                     address = unit.address
                     objectName = unit.object_name
-                    exist_unit = False
-                    # print(unit_name)
                     items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
                         invoice_id__date_of_payment__year=year).filter(paragraph__paragraph__contains='4260')
-                    # print(items)
+                    for item in items:
+                        exist_unit = False
+                        for object in tableObjects:
+                            if object['id'] == unit_id:
+                                for data_entry in object['data']:
+                                    if data_entry['paragraph'] == item.paragraph.paragraph:
+                                        data_entry['consumption'] += item.consumption
+                                        exist_unit = True
+                                        break
+                                if not exist_unit:
+                                    object['data'].append(
+                                        {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+                                    exist_unit = True
+
+                        if not exist_unit:
+                            new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
+                            year_entry = {'id': unit_id, 'unit': unit_name, 'objectName': objectName,
+                                          'address': address, 'status': status, 'data': [new_data_entry]}
+                            tableObjects.append(year_entry)
+                # ----------------------------------------------------------------------------------------------------------
+
+                # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
+                all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
+                for year_entry in tableObjects:
+                    existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                    missing_paragraphs = all_paragraphs - existing_paragraphs
+                    for missing_paragraph in missing_paragraphs:
+                        year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+
+                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                           'units': unit,
+                           'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
+            except Exception:
+                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                           'year': year}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class MediaInfoAllCountyView(View):
+    template_name = 'main/modal_info_county_media.html'
+    template_error = 'main/error.html'
+    method = "MediaInfoCountyView"
+
+    # TODO metoda zuzycia mediow w statystykach
+    def get(self, request, countyCardSlug, year):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            title = 'Zużycie mediów'
+            county = get_object_or_404(CountyCard, slug=countyCardSlug)
+            paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
+            tableObjects = []
+            try:
+                units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+                for unit in units:
+                    unit_id = unit.id
+                    unit_name = f"{unit.type.type_full} {unit.city}"
+                    status = unit.status
+                    address = unit.address
+                    objectName = unit.object_name
+                    items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
+                        invoice_id__date_of_payment__year=year).filter(paragraph__paragraph__contains='4260')
                     for item in items:
                         exist_unit = False
                         for object in tableObjects:

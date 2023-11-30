@@ -1,9 +1,10 @@
-from django.urls import path, include
+from django.urls import path
 from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMainView, LoginView, UnitsView, \
     InvoiceInfoView, StatisticsView, UsersSiteView, ArchiveYearCostListView, InvoicesListView, CostsDetailsListView, \
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
-    CreateCSVForCountyYearSum, MediaInfoCountyView, ArchiveYearUnitMainView, CreateCSVForUnit, CreateCSVForTrezor, CreateCSVForCountyUnit
+    CreateCSVForCountyYearSum, MediaInfoCountyView, MediaInfoAllCountyView, ArchiveYearUnitMainView, CreateCSVForUnit, \
+    CreateCSVForTrezor, CreateCSVForCountyUnit
 
 app_name = 'main'
 urlpatterns = [
@@ -19,6 +20,9 @@ urlpatterns = [
     path('modal/mediaInfoUnit/id/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
     path('modal/mediaInfoCounty/<slug:countyCardSlug>/year/<int:year>/', MediaInfoCountyView.as_view(),
          name='mediaInfoCountyModal'),
+    # TODO metoda do dokonczenia
+    path('modal/mediaInfoAllCounty/year/<int:year>/', MediaInfoAllCountyView.as_view(),
+         name='mediaInfoAllCountyModal'),
 
     # Lista obiektów
     path('card/<slug:countySlug>/', UnitsListMainView.as_view(), name='unitCountyMain'),
@@ -53,7 +57,8 @@ urlpatterns = [
     # Tworzenie plików CSV
     path('csvForCountySum/', CreateCSVForCountySum.as_view(), name='csvForCountySumCurrentYear'),
     path('csvForCountyYearSum/<int:year>', CreateCSVForCountyYearSum.as_view(), name='csvForCountyYearSum'),
-    path('csvForCountyYearSum/<slug:countyCardSlug>/<int:year>', CreateCSVForCountyUnit.as_view(), name='csvForCountyUnit'),
+    path('csvForCountyYearSum/<slug:countyCardSlug>/<int:year>', CreateCSVForCountyUnit.as_view(),
+         name='csvForCountyUnit'),
     path('csvForUnit', CreateCSVForUnit.as_view(), name='csvForUnit'),
     path('csvForTrezor', CreateCSVForTrezor.as_view(), name='csvForTrezor'),
     # Logowanie

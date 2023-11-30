@@ -69,9 +69,9 @@ class HelpInfo(models.Model):
     info = models.TextField(verbose_name='Informacja', null=True, blank=True)
     authorEmail = models.EmailField(verbose_name='Email')
     authorPhone = models.CharField(verbose_name='Telefon', max_length=9)
-    create_date = models.DateField("Data dodania", auto_now_add=True)
+    create_date = models.DateField(verbose_name="Data dodania", auto_now_add=True)
     change = models.DateTimeField(auto_now=True, verbose_name="Zmiany")
-    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
 
     @classmethod
     def create_support(cls):

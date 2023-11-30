@@ -74,7 +74,7 @@ class TypeUnit(models.Model):
 
     type_short = models.CharField(max_length=30, null=False, verbose_name="Skrócona nazwa")
     type_full = models.CharField(max_length=100, null=False, verbose_name="Pełna nazwa")
-    id_order = models.IntegerField("Kolejność", unique=True, null=True)
+    id_order = models.IntegerField(verbose_name="Kolejność", unique=True, null=True)
 
     @classmethod
     def create_type_unit(cls):
@@ -132,7 +132,7 @@ class Unit(models.Model):
     status = models.BooleanField(default=True, verbose_name='Aktualna')
     slug = models.SlugField(max_length=50, unique=True, blank=True)
     change = models.DateTimeField(auto_now=True, verbose_name='Zmiany')
-    author = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
 
     def __str__(self):
         return f"{self.unit_full_name}"
