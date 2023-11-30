@@ -1,4 +1,3 @@
-import csv
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
@@ -8,6 +7,8 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+import csv
+import matplotlib.pylab as plt
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
@@ -319,6 +320,24 @@ class StatisticsView(LoginRequiredMixin, View):
                         paragraphSums[paragraph] += sum_value
                     else:
                         paragraphSums[paragraph] = sum_value
+            #-------------
+            # fig, ax = plt.subplots()  # Inicjalizacja obiektu figury i osi
+            par = '4260-01'
+            graph_data = []
+
+            for item in objectDatas:
+                for data in item['data']:
+                    if par == data['paragraph']:
+                        graph_data.append({'county': item['county'], 'sum': data['sum']})
+
+            # Wygenerowanie wykresu słupkowego na podstawie danych z graph_data
+            x = [county['county'] for county in graph_data]
+            y = [sum_graph['sum'] for sum_graph in graph_data]
+            print(x,y)
+            # ax.bar([county['county'] for county in graph_data], [sum_graph['sum'] for sum_graph in graph_data])
+
+            # Zapisanie wykresu do pliku nazwa.jng (należy sprawdzić, czy chodziło o .png czy .jpg)
+            # plt.savefig('nazwa.png')
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
                        'user_belongs_to_group': user_belongs_to_group, 'title': title,
@@ -1411,6 +1430,69 @@ class CreateCSVForTrezor(View):
                         ['', f'{invoice["invoice_no"]} z dnia {invoice["date"]}', f'Kwota:', f'{sumValue} zł'])
 
             return response
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
+            return render(request, self.template_error, context)
+
+
+class CreateGraphView(View):
+    template_error = 'main/error.html'
+    method = 'CreateGraphView'
+
+    # todo poprawic cala metode
+    def get(self, request, year, par):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            ax = plt.subplots()
+            paragraphs = Paragraph.objects.all()
+            counties = County.objects.all()
+            objectDatas = []
+
+            for county in counties:
+                sectionObject = county.section.first()
+                section = sectionObject.section
+                units = county.unit.all()
+                costObjectDict = {}
+
+                for paragraph in paragraphs:
+                    costObjectDict[paragraph.paragraph] = 0
+
+                for unit in units:
+                    # Filtruj elementy na podstawie roku płatności
+                    items = unit.items.filter(invoice_id__date_of_payment__year=year)
+
+                    for item in items:
+                        costObjectDict[item.paragraph.paragraph] += item.sum
+
+                costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
+                                  costObjectDict.items()]
+                objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
+
+            paragraphSums = {}
+
+            for data in objectDatas:
+                for item in data['data']:
+                    paragraph = item['paragraph']
+                    sum_value = item['sum']
+                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
+                    if paragraph in paragraphSums:
+                        paragraphSums[paragraph] += sum_value
+                    else:
+                        paragraphSums[paragraph] = sum_value
+            print(objectDatas)
+            # -----------------------
+            graph_data = []
+            for item in objectDatas:
+                for data in item['data']:
+                    if par == data['paragraph']:
+                        graph_data.append({'county': item['county'], 'sum': data['sum']})
+            print(graph_data)
+            ax.bar([county['county'] for county in graph_data], [sum_graph['sum'] for sum_graph in graph_data])
+            plt.savefig('nazwa.jpg')
+
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
