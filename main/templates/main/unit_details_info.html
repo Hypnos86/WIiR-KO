@@ -6,10 +6,12 @@
     <div class="container pt-5">
         <div class="row mb-3">
             <div class="col-3 col-sm-3 col-md-2 col-lg-2  ">
-                <a href="{% url 'main:unitCountyMain' unit.county_unit.slug %}" class="btn-menu" data-toggle="info"
-                   title="Karty">
+                <a href="{% url 'main:unit_details' unit.county_unit.slug unit.slug year %}" class="btn-menu"
+                   data-toggle="info"
+                   title="Wstecz">
                     <span class="bi bi-arrow-90deg-left custom-icon"></span>
                 </a>
+                <!--                {% url 'main:unit_details' unit.county_unit.slug unit.slug year %}-->
             </div>
             <div class="col-8 col-sm-8 col-md-8 col-lg-8 d-flex align-items-center justify-content-center">
                 <div>

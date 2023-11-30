@@ -701,6 +701,7 @@ class UnitDetailsView(View):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
+            year = currentDate.current_year()
             unit = get_object_or_404(Unit, slug=unitSlug)
             paragraphs = Paragraph.objects.all()
 
@@ -737,7 +738,7 @@ class UnitDetailsView(View):
                     year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
             context = {'unit': unit, 'user_belongs_to_group': user_belongs_to_group, 'paragraphs': paragraphs,
-                       'title': title, 'tableObjects': tableObjects}
+                       'title': title, 'tableObjects': tableObjects, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}

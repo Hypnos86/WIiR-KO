@@ -112,7 +112,7 @@ class Unit(models.Model):
     class Meta:
         verbose_name = "Obiekt"
         verbose_name_plural = "04 - Obiekty"
-        ordering = ["county_swop__swop_id", "type"]
+        ordering = ["county_swop__swop_id", "type", "object_name", "information"]
 
     related_name = "unit"
 

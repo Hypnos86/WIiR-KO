@@ -16,6 +16,12 @@
         </div>
         <div class="col-sm-3 col-md-2 col-lg-2 d-flex justify-content-end">
             <div class="mx-2">
+                <a class="btn-menu" href="{% url 'main:unitDetailsInfo' unit.slug %}" data-toggle="info"
+                   title="Wydatki">
+                    <i class="bi bi-bank custom-icon"></i>
+                </a>
+            </div>
+            <div class="mx-2">
                 <a class="btn-menu" data-url="{% url 'main:archiveYearsUnitMain' unit.slug %}"
                    onclick="openArchiveModal(this)"
                    data-toggle="info" title="Archiwum wydatku">
@@ -23,7 +29,7 @@
                 </a>
             </div>
             {% if user.is_authenticated and user_belongs_to_group %}
-            <div class="">
+            <div class="mx-2">
                 <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                     <i class="bi bi-plus-circle custom-icon"></i>
                 </a>
