@@ -51,12 +51,12 @@
         <caption class="title-caption py-3">
             <h6 class="bold">{{title}}</h6>
         </caption>
-        <thead class="table-dark">
+        <thead class="table-dark table-header">
         <tr class="text-center">
             <th align="center" valign="bottom" width="auto" scope="col">Jednostka</th>
             {% for paragraph in paragraphs%}
-            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">§
-                {{paragraph.paragraph}}
+            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">
+                <a class="link-light text-decoration-none" href="{% url 'main:createGraph' year paragraph.paragraph %}">§ {{paragraph.paragraph}}</a>
             </th>
             {% endfor %}
         </tr>

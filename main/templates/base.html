@@ -68,7 +68,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
                     </li>
-                    {% if user.is_authenticated and user_belongs_to_group %}
+                    {% if user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
                     </li>

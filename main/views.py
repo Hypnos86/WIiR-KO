@@ -4,10 +4,11 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 import csv
+from io import BytesIO
 import matplotlib.pylab as plt
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
@@ -320,7 +321,7 @@ class StatisticsView(LoginRequiredMixin, View):
                         paragraphSums[paragraph] += sum_value
                     else:
                         paragraphSums[paragraph] = sum_value
-            #-------------
+            # -------------
             # fig, ax = plt.subplots()  # Inicjalizacja obiektu figury i osi
             par = '4260-01'
             graph_data = []
@@ -333,7 +334,6 @@ class StatisticsView(LoginRequiredMixin, View):
             # Wygenerowanie wykresu słupkowego na podstawie danych z graph_data
             x = [county['county'] for county in graph_data]
             y = [sum_graph['sum'] for sum_graph in graph_data]
-            print(x,y)
             # ax.bar([county['county'] for county in graph_data], [sum_graph['sum'] for sum_graph in graph_data])
 
             # Zapisanie wykresu do pliku nazwa.jng (należy sprawdzić, czy chodziło o .png czy .jpg)
@@ -1323,18 +1323,6 @@ class CreateCSVForUnit(View):
         try:
             nowDate = currentDate.current_date()
             units = Unit.objects.all()
-            # q = request.GET.get("q")
-            # print(q)
-            # if q:
-            #     units = units.filter(type__type_full__icontains=q) \
-            #             | units.filter(city__icontains=q) \
-            #             | units.filter(unit_full_name__icontains=q) \
-            #             | units.filter(county_swop__name__icontains=q) \
-            #             | units.filter(manager__icontains=q) \
-            #             | units.filter(information__icontains=q)
-            # print(units)
-            # ---------------------------------------------
-
             response = HttpResponse(content_type='text/csv')
             response[
                 'Content-Disposition'] = f'attachment; filename="Zestawienie jednostek - {nowDate.strftime("%d.%m.%Y")}.csv"'
@@ -1442,28 +1430,22 @@ class CreateGraphView(View):
     template_error = 'main/error.html'
     method = 'CreateGraphView'
 
-    # todo poprawic cala metode
     def get(self, request, year, par):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            ax = plt.subplots()
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+
             paragraphs = Paragraph.objects.all()
-            counties = County.objects.all()
+            counties = County.objects.prefetch_related('section', 'unit__items__invoice_id').all()
+
             objectDatas = []
+            paragraphSums = {}
 
             for county in counties:
-                sectionObject = county.section.first()
-                section = sectionObject.section
-                units = county.unit.all()
-                costObjectDict = {}
+                section = county.section.first().section
+                costObjectDict = {paragraph.paragraph: 0 for paragraph in paragraphs}
 
-                for paragraph in paragraphs:
-                    costObjectDict[paragraph.paragraph] = 0
-
-                for unit in units:
-                    # Filtruj elementy na podstawie roku płatności
+                for unit in county.unit.all():
                     items = unit.items.filter(invoice_id__date_of_payment__year=year)
-
                     for item in items:
                         costObjectDict[item.paragraph.paragraph] += item.sum
 
@@ -1471,31 +1453,45 @@ class CreateGraphView(View):
                                   costObjectDict.items()]
                 objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
 
-            paragraphSums = {}
+                for data in objectDatas:
+                    for item in data['data']:
+                        paragraph = item['paragraph']
+                        sum_value = item['sum']
+                        paragraphSums[paragraph] = paragraphSums.get(paragraph, 0) + sum_value
 
-            for data in objectDatas:
-                for item in data['data']:
-                    paragraph = item['paragraph']
-                    sum_value = item['sum']
-                    # Dodajemy sumę do istniejącej sumy paragrafu lub inicjujemy nową
-                    if paragraph in paragraphSums:
-                        paragraphSums[paragraph] += sum_value
-                    else:
-                        paragraphSums[paragraph] = sum_value
-            print(objectDatas)
-            # -----------------------
-            graph_data = []
-            for item in objectDatas:
-                for data in item['data']:
-                    if par == data['paragraph']:
-                        graph_data.append({'county': item['county'], 'sum': data['sum']})
-            print(graph_data)
-            ax.bar([county['county'] for county in graph_data], [sum_graph['sum'] for sum_graph in graph_data])
-            plt.savefig('nazwa.jpg')
+            graph_data = [{'county': item['county'], 'sum': data['sum']} for item in objectDatas for data in
+                          item['data'] if par == data['paragraph']]
+            counties = [county['county'] for county in graph_data]
+            sums = [sum_graph['sum'] for sum_graph in graph_data]
+
+            fig, ax = plt.subplots(figsize=(15, 9))
+            ax.bar(counties, sums)
+            plt.xlabel('Jednostki')
+            plt.xticks(rotation=90, fontsize='small')
+            plt.subplots_adjust(bottom=0.2)
+            plt.ylabel('Suma w zł')
+            plt.title(f'Wydział Inwestycji i Remontów KWP w Poznaniu\nWydatki: § {par} w {year} roku.')
+            try:
+                # Dodanie daty na górnym rogu wykresu
+                date_text = currentDate.current_date()  # Przykładowa data
+                plt.text(1.00, 1.10, date_text.strftime('%d.%m.%Y'), ha='right', va='top', transform=ax.transAxes)
+
+                buffer = BytesIO()
+                plt.savefig(buffer, format='png')
+                buffer.seek(0)
+                plt.close()
+
+                response = FileResponse(buffer, as_attachment=True, filename=f'Wykres §{par}-{year}.png')
+                return response
+            except RuntimeError as tk_error:
+                # Tutaj obsłużamy błąd związanym z Tkinter
+                # Możesz dodać kod obsługi tego błędu lub zwrócić komunikat o błędzie
+                context = {'error': str(tk_error), 'user_belongs_to_group': user_belongs_to_group,
+                           'method': self.method}
+                logger.error("Error: %s", tk_error)
+                return render(request, self.template_error, context)
 
         except Exception as e:
-            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
-            # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
