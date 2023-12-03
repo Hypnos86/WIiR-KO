@@ -58,16 +58,20 @@
                 {{unit.city}}</span>
                 </div>
             </a>
-            <div class="d-flex justify-content-between align-items-center mx-2">
+            <div class="d-flex justify-content-between align-items-center">
+                {% if unit.manager == 'Policja' %}
+                <i class="bi bi-buildings-fill manager-police-color mx-2" data-toggle="info" title="{{unit.manager}}"></i>
+                {% else %}
+                <i class="bi bi-buildings-fill manager-other-color mx-2" data-toggle="info" title="{{unit.manager}}"></i>
+                {% endif %}
                 {% if unit.status%}
-                <i class="bi bi-check-circle-fill success mx-4" data-toggle="info" title="Aktualny"></i>
+                <i class="bi bi-check-circle-fill success mx-2" data-toggle="info" title="Aktualny"></i>
                 {%else%}
-                <i class="bi bi-dash-circle text-danger mx-4" data-toggle="info" title="Zdany"></i>
+                <i class="bi bi-dash-circle text-danger mx-2" data-toggle="info" title="Zdany"></i>
                 {%endif%}
-
                 {% if user.is_authenticated and user_belongs_to_group%}
                 <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
-                    <i class="bi bi-pencil-square"></i>
+                    <i class="bi bi-pencil-square mx-2"></i>
                 </a>
                 {% endif %}
             </div>

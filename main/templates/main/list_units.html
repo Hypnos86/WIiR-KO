@@ -15,7 +15,8 @@
         </div>
         <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
             <div class="mx-2">
-                <a class="btn-menu" href="{% url 'main:countyCostUnit' slugCounty year %}" data-toggle="info" title="Wydatki">
+                <a class="btn-menu" href="{% url 'main:countyCostUnit' slugCounty year %}" data-toggle="info"
+                   title="Wydatki">
                     <i class="bi bi-bank custom-icon"></i>
                 </a>
             </div>
@@ -51,14 +52,19 @@
                     </div>
                 </a>
                 <div class="d-flex justify-content-between align-items-center">
+                    {% if unit.manager == 'Policja' %}
+                    <i class="bi bi-buildings-fill manager-police-color mx-2 align-self-center" data-toggle="info" title="{{unit.manager}}"></i>
+                    {% else %}
+                    <i class="bi bi-buildings-fill manager-other-color mx-2 align-self-center" data-toggle="info" title="{{unit.manager}}"></i>
+                    {% endif %}
                     {% if unit.status%}
-                    <i class="bi bi-check-circle-fill success  mx-4" data-toggle="info" title="Aktualny"></i>
+                    <i class="bi bi-check-circle-fill success mx-2 align-self-center" data-toggle="info" title="Aktualny"></i>
                     {%else%}
-                    <i class="bi bi-dash-circle text-danger  mx-4" data-toggle="info" title="Zdany"></i>
+                    <i class="bi bi-dash-circle text-danger mx-2 align-self-center" data-toggle="info" title="Zdany"></i>
                     {%endif%}
                     {% if user.is_authenticated and user_belongs_to_group%}
-                    <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
-                        <i class="bi bi-pencil-square"></i>
+                    <a class="color-sea align-self-center" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
+                        <i class="bi bi-pencil-square mx-2 align-self-center"></i>
                     </a>
                     {% endif %}
                 </div>
