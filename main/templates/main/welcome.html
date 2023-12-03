@@ -13,6 +13,12 @@
                 <i class="bi bi-plus-circle custom-icon"></i>
             </a>
         </div>
+        <div id="dbDiv">
+            <button class="btn-menu" url="{% url 'main:backupDB' %}" data-toggle="info" type="button"
+                    title="Tworzenie kopii zapasowej bazy danych" onclick="showSnackbar()">
+                <i class="bi bi-database-fill-down custom-icon"></i>
+            </button>
+        </div>
         <div>
             <a class="btn-menu" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
                 <i class="bi bi-building-add custom-icon"></i>
@@ -28,10 +34,8 @@
         {% endfor %}
     </div>
 </div>
-
-
 <div id="snackbar">Zapisano</div>
-
+<div id="snackbarDB">Kopia zapasowa bazy danych została utworzona!</div>
 {% if messages %}
 <div class="container text-center mt-4">
     <ul id="loginMessage" class="messages">
@@ -49,7 +53,4 @@
     </ul>
 </div>
 {% endif %}
-<script>
-
-</script>
 {% endblock %}
