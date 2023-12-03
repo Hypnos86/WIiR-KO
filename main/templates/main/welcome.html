@@ -14,10 +14,10 @@
             </a>
         </div>
         <div id="dbDiv">
-            <button class="btn-menu" url="{% url 'main:backupDB' %}" data-toggle="info" type="button"
-                    title="Tworzenie kopii zapasowej bazy danych" onclick="showSnackbar()">
+            <a class="btn-menu" href="{% url 'main:backupDB' %}" data-toggle="info"
+               title="Tworzenie kopii zapasowej bazy danych" onclick="showSnackbar()">
                 <i class="bi bi-database-fill-down custom-icon"></i>
-            </button>
+            </a>
         </div>
         <div>
             <a class="btn-menu" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">

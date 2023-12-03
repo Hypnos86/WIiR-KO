@@ -1499,7 +1499,7 @@ class CreateGraphView(View):
             return render(request, self.template_error, context)
 
 
-class CreataBackupDB(LoginRequiredMixin, View):
+class CreataBackupDB(View):
     template_error = 'main/error.html'
     method = 'CreataBackupDB'
 
