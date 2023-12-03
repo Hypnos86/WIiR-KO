@@ -1,3 +1,6 @@
+import os
+import shutil
+from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
@@ -1284,7 +1287,6 @@ class CreateCSVForCountyUnit(View):
                     else:
                         paragraphSums[paragraph] = sum_value
             # ---------------------------------------------
-
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = f'attachment; filename="{countyCardSlug} za {year}-koszty.csv"'
             # Ustawienie kodowania utf-8
@@ -1490,6 +1492,42 @@ class CreateGraphView(View):
                            'method': self.method}
                 logger.error("Error: %s", tk_error)
                 return render(request, self.template_error, context)
+
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class CreataBackupDB(LoginRequiredMixin, View):
+    template_error = 'main/error.html'
+    method = 'CreataBackupDB'
+
+    def get(self, request):
+        try:
+            # Sprawdzenie przynależności użytkownika do grupy 'AdminZRiWT'
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+
+            # Ścieżka do katalogu kopii zapasowej bazy danych
+            BACKUP_FOLDER = os.path.join(settings.BASE_DIR, 'dbBackup')
+
+            # Ścieżka do oryginalnej bazy danych
+            DB_MAIN = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+
+            # Tworzenie katalogu na kopie zapasowe, jeśli nie istnieje
+            if not os.path.exists(BACKUP_FOLDER):
+                os.makedirs(BACKUP_FOLDER)
+
+            # Generowanie nazwy pliku na podstawie aktualnego czasu
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            backup_filename = f"db_backup_{timestamp}.sqlite3"  # Nowa nazwa pliku kopii zapasowej
+
+            # Ścieżka do nowej kopii zapasowej bazy danych
+            NEW_BACKUP_PATH = os.path.join(BACKUP_FOLDER, backup_filename)
+
+            # Wykonanie kopii zapasowej bazy danych z nową nazwą pliku
+            shutil.copy2(DB_MAIN, NEW_BACKUP_PATH)
+            return redirect('main:welcome')
 
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
