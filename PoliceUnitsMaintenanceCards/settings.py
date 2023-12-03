@@ -111,6 +111,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Ścieżka do katalogu, w którym będą przechowywane pliki dziennika
+LOGS_DIRECTORY = 'logger'
+# Sprawdzenie istnienia katalogu i ewentualne utworzenie go, jeśli nie istnieje
+logs_path = os.path.join(BASE_DIR, LOGS_DIRECTORY)
+if not os.path.exists(logs_path):
+    os.makedirs(logs_path)
 # Konfiguraja loggera
 LOGGING = {
     'version': 1,
@@ -119,7 +126,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': datetime.datetime.now().strftime("logError_%Y-%m-%d_%H.log"),
+            'filename': os.path.join(logs_path, datetime.datetime.now().strftime("logError_%Y-%m-%d_%H.log")),
             'when': 'H',
             'interval': 24,
             'backupCount': 100,
@@ -177,3 +184,4 @@ SHELL_PLUS_PRINT_SQL = True
 LOGIN_URL = 'main:welcome'
 LOGIN_REDIRECT_URL = 'main:welcome'
 LOGOUT_REDIRECT_URL = 'main:welcome'
+
