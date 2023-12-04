@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
 <div class="container pt-5">
     <div class="text-center mb-4">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
@@ -14,10 +13,10 @@
             </a>
         </div>
         <div id="dbDiv">
-            <a class="btn-menu" href="{% url 'main:backupDB' %}" data-toggle="info"
-               title="Tworzenie kopii zapasowej bazy danych" onclick="showSnackbar()">
+            <button class="btn-menu" data-url="{% url 'main:backupDB' %}" data-toggle="info"
+                    title="Tworzenie kopii zapasowej bazy danych" onclick="copyDB(this)">
                 <i class="bi bi-database-fill-down custom-icon"></i>
-            </a>
+            </button>
         </div>
         <div>
             <a class="btn-menu" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
@@ -53,4 +52,46 @@
     </ul>
 </div>
 {% endif %}
+<script>
+    function showHideButton() {
+        var now = new Date();
+        var currentHour = now.getHours();
+
+        // Poniżej ustaw godziny, o których ma być pokazywany/ukrywany przycisk
+        var showHour = 15; // Godzina, o której przycisk ma być pokazany
+        var hideHour = 16; // Godzina, o której przycisk ma być ukryty
+
+        var button = document.getElementById('dbDiv');
+
+        if (currentHour === showHour) {
+            button.classList.add("show"); // Pokazuje przycisk
+            } else if (currentHour === hideHour) {
+            button.classList.remove("show"); // Ukrywa przycisk
+            }
+        }
+
+    function showSnackbar() {
+        var snackbar = document.getElementById("snackbarDB");
+
+        snackbar.classList.add("show");
+        setTimeout(function(){
+            snackbar.classList.remove("show");
+            console.log('snackar');
+        }, 3000); // Snackbar znika po 3 sekundach (3000 milisekund)
+    }
+
+    function dbCopyError(){
+        console.log('error copy db')
+    }
+
+    function copyDB(button){
+        var urlDB = button.getAttribute("data-url");
+        hitEndpoint(urlDB, showSnackbar, dbCopyError);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        showHideButton();
+        setInterval(showHideButton, 60000);
+   });
+</script>
 {% endblock %}

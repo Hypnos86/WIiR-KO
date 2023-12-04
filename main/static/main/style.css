@@ -41,7 +41,11 @@ body {
 
 /* SnackBar DB */
 #dbDiv{
-    visibility:hidden;
+    visibility: hidden;
+}
+
+#dbDiv.show{
+    visibility: visible;
 }
 
 #snackbarDB {

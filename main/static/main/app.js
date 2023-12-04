@@ -32,35 +32,22 @@ document.addEventListener("DOMContentLoaded", function() {
       message.style.display = "none";
     }
 }
-
-   setTimeout(hideElement, disappearTime);
  });
- // Funkcja sprawdzająca aktualny czas i odpowiednio pokazująca/ukrywająca przycisk
-function showHideButton() {
-    var now = new Date();
-    var currentHour = now.getHours();
 
-     // Poniżej ustaw godziny, o których ma być pokazywany/ukrywany przycisk
-     var showHour = 15; // Godzina, o której przycisk ma być pokazany
-     var hideHour = 16; // Godzina, o której przycisk ma być ukryty
-
-     var button = document.getElementById('dbDiv');
-
-     if (currentHour === showHour) {
-       button.style.display = 'block'; // Pokazuje przycisk
-     } else if (currentHour === hideHour) {
-       button.style.display = 'none'; // Ukrywa przycisk
-     }
+function hitEndpoint(url, callbackOnSuccess, callbackOnError ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        //we're done making the request
+        if (this.readyState === 4) {
+            //status code was successful
+            if (this.status === 200) {
+                callbackOnSuccess();
+            } else {
+                callbackOnError();
+            }
+        }
+    };
+    xhttp.open("GET", url);
+    xhttp.send();
     }
-// Funkcja wywoływana co minutę do sprawdzania czasu i pokazywania/ukrywania przycisku
-setInterval(showHideButton, 300000); // Co 5 minut
-
-function showSnackbar() {
-      var snackbar = document.getElementById("snackbarDB");
-      snackbar.classList.add("show");
-      setTimeout(function(){
-        snackbar.classList.remove("show");
-        console.log('snackar');
-      }, 3000); // Snackbar znika po 3 sekundach (3000 milisekund)
-}
 

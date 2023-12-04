@@ -1527,9 +1527,10 @@ class CreataBackupDB(View):
 
             # Wykonanie kopii zapasowej bazy danych z nową nazwą pliku
             shutil.copy2(DB_MAIN, NEW_BACKUP_PATH)
-            return redirect('main:welcome')
+            return HttpResponse(status=200)
+
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'method': self.method}
             logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return render(request, self.template_error, context, status=500)
