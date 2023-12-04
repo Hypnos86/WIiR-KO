@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.http import HttpResponse, FileResponse
@@ -885,63 +886,70 @@ class MediaInfoCountyView(View):
 
 class MediaInfoAllCountyView(View):
     template_name = 'main/modal_info_county_media.html'
+    # stworzyc nowy template
     template_error = 'main/error.html'
     method = "MediaInfoCountyView"
 
-    # TODO metoda zuzycia mediow w statystykach
-    def get(self, request, countyCardSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+    def get(self, request, year):
         try:
+            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             title = 'Zużycie mediów'
-            county = get_object_or_404(CountyCard, slug=countyCardSlug)
-            paragraphsModel = Paragraph.objects.all().filter(paragraph__contains='4260')
-            tableObjects = []
-            try:
-                units = Unit.objects.filter(county_unit__slug=countyCardSlug)
+
+            counties = CountyCard.objects.prefetch_related('unit__items__paragraph').all()
+            paragraphs_model = Paragraph.objects.filter(paragraph__contains='4260')
+
+            table_objects = []
+
+            for county in counties:
+                county_id = county.id
+                units = county.unit.all()
+
                 for unit in units:
-                    unit_id = unit.id
-                    unit_name = f"{unit.type.type_full} {unit.city}"
-                    status = unit.status
-                    address = unit.address
-                    objectName = unit.object_name
-                    items = unit.items.all().exclude(contract_types__type__icontains='Sprzedaż').filter(
-                        invoice_id__date_of_payment__year=year).filter(paragraph__paragraph__contains='4260')
+                    items = unit.items.exclude(contract_types__type__icontains='Sprzedaż') \
+                        .filter(invoice_id__date_of_payment__year=year) \
+                        .filter(paragraph__paragraph__contains='4260')
+
                     for item in items:
                         exist_unit = False
-                        for object in tableObjects:
-                            if object['id'] == unit_id:
-                                for data_entry in object['data']:
+
+                        for table_object in table_objects:
+                            if table_object['id'] == county_id:
+                                for data_entry in table_object['data']:
                                     if data_entry['paragraph'] == item.paragraph.paragraph:
                                         data_entry['consumption'] += item.consumption
                                         exist_unit = True
                                         break
+
                                 if not exist_unit:
-                                    object['data'].append(
-                                        {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption})
+                                    table_object['data'].append({'paragraph': item.paragraph.paragraph,
+                                                                 'consumption': item.consumption})
                                     exist_unit = True
 
                         if not exist_unit:
-                            new_data_entry = {'paragraph': item.paragraph.paragraph, 'consumption': item.consumption}
-                            year_entry = {'id': unit_id, 'unit': unit_name, 'objectName': objectName,
-                                          'address': address, 'status': status, 'data': [new_data_entry]}
-                            tableObjects.append(year_entry)
-                # ----------------------------------------------------------------------------------------------------------
+                            new_data_entry = {'paragraph': item.paragraph.paragraph,
+                                              'consumption': item.consumption}
+                            year_entry = {'id': county_id, 'county': county.name, 'data': [new_data_entry]}
+                            table_objects.append(year_entry)
 
-                # Dodanie zerowych sum dla paragrafów, które nie miały wydatków w danym roku
-                all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphsModel.values('paragraph'))
-                for year_entry in tableObjects:
-                    existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
-                    missing_paragraphs = all_paragraphs - existing_paragraphs
-                    for missing_paragraph in missing_paragraphs:
-                        year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+            all_paragraphs = set(paragraph['paragraph'] for paragraph in paragraphs_model.values('paragraph'))
 
-                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
-                           'units': unit,
-                           'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
-            except Exception:
-                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
-                           'year': year}
+            for year_entry in table_objects:
+                existing_paragraphs = set(data_entry['paragraph'] for data_entry in year_entry['data'])
+                missing_paragraphs = all_paragraphs - existing_paragraphs
+
+                for missing_paragraph in missing_paragraphs:
+                    year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
+            print(table_objects)
+            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,
+                       'paragraphs': paragraphs_model, 'tableObjects': table_objects, 'year': year}
+
             return render(request, self.template_name, context)
+
+        except ObjectDoesNotExist as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Object does not exist: %s", e)
+            return render(request, self.template_error, context)
+
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
@@ -1528,8 +1536,6 @@ class CreataBackupDB(View):
             # Wykonanie kopii zapasowej bazy danych z nową nazwą pliku
             shutil.copy2(DB_MAIN, NEW_BACKUP_PATH)
             return HttpResponse(status=200)
-
-
         except Exception as e:
             context = {'error': e, 'method': self.method}
             logger.error("Error: %s", e)

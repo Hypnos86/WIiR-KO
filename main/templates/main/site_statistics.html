@@ -17,20 +17,22 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end">
             <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:archiveYearsStatistic'%}"
+                <button class="btn-menu" data-url="{% url 'main:archiveYearsStatistic'%}"
                    onclick="openArchiveModal(this)"
                    data-toggle="info" title="Archiwum wydatku">
                     <i class="bi bi-archive-fill custom-icon"></i>
-                </a>
+                </button>
             </div>
             <div class="mx-2">
-                <a class="btn-menu" href="" data-toggle="info" title="Media">
+                <button class="btn-menu" data-url="{% url 'main:mediaInfoAllCountyModal' year %}" data-toggle="info"
+                   title="Media" onclick="openMediaModal(this)">
                     <span class="bi bi-calculator-fill custom-icon"></span>
-                </a>
+                </button>
             </div>
             <div class="mx-2">
                 {% if statisticsSite %}
-                <a class="btn-menu" href="{% url 'main:csvForCountySumCurrentYear' %}" data-toggle="info" title="Zapisz">
+                <a class="btn-menu" href="{% url 'main:csvForCountySumCurrentYear' %}" data-toggle="info"
+                   title="Zapisz">
                     <span class="bi bi-download custom-icon"></span>
                 </a>
                 {% endif %}
@@ -57,7 +59,8 @@
             {% for paragraph in paragraphs%}
             <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">
                 {% if user_belongs_to_group %}
-                <a class="link-light text-decoration-none" href="{% url 'main:createGraph' year paragraph.paragraph %}">§ {{paragraph.paragraph}}</a>
+                <a class="link-light text-decoration-none" href="{% url 'main:createGraph' year paragraph.paragraph %}">§
+                    {{paragraph.paragraph}}</a>
                 {%else %}
                 § {{paragraph.paragraph}}
                 {% endif %}
@@ -100,11 +103,23 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="mediaModal">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     function openArchiveModal(button){
         var url = $(button).data("url");
         $("#archiveModal .modal-content").load(url);
         $("#archiveModal").modal("show");
+    }
+
+    function openMediaModal(button){
+        var url = $(button).data("url");
+        $("#mediaModal .modal-content").load(url);
+        $("#mediaModal").modal("show");
     }
 </script>
 {% endif %}
