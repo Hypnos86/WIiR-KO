@@ -1,3 +1,4 @@
+
 function openLoginModal(button){
         var url = $(button).data("url");
         $("#login .modal-content").load(url);
@@ -20,15 +21,33 @@ function snackbarFunction() {
         setTimeout(function () {
             tost.className = tost.className.replace("show", "");
         }, 10000);
-    }
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     var message = document.getElementById("loginMessage");
     var disappearTime = 5000;
 
     function hideElement() {
+       if(message){
       message.style.display = "none";
     }
-
-   setTimeout(hideElement, disappearTime);
+}
  });
+
+function hitEndpoint(url, callbackOnSuccess, callbackOnError ) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        //we're done making the request
+        if (this.readyState === 4) {
+            //status code was successful
+            if (this.status === 200) {
+                callbackOnSuccess();
+            } else {
+                callbackOnError();
+            }
+        }
+    };
+    xhttp.open("GET", url);
+    xhttp.send();
+    }
+

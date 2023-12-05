@@ -13,7 +13,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 import csv
 from io import BytesIO
-import matplotlib.pylab as plt
+# import matplotlib.pylab as plt
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
@@ -21,6 +21,7 @@ from invoices.models import Invoice, InvoiceItems, Paragraph, Section, DocumentT
 from enum import Enum
 import logging
 import datetime
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
@@ -885,8 +886,7 @@ class MediaInfoCountyView(View):
 
 
 class MediaInfoAllCountyView(View):
-    template_name = 'main/modal_info_county_media.html'
-    # stworzyc nowy template
+    template_name = 'main/modal_info_all_county_media.html'
     template_error = 'main/error.html'
     method = "MediaInfoCountyView"
 
@@ -939,7 +939,6 @@ class MediaInfoAllCountyView(View):
 
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
-            print(table_objects)
             context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,
                        'paragraphs': paragraphs_model, 'tableObjects': table_objects, 'year': year}
 
@@ -1443,7 +1442,6 @@ class CreateGraphView(View):
     def get(self, request, year, par):
         try:
             user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
-
             paragraphs = Paragraph.objects.all()
             counties = County.objects.prefetch_related('section', 'unit__items__invoice_id').all()
 
@@ -1507,15 +1505,12 @@ class CreateGraphView(View):
             return render(request, self.template_error, context)
 
 
-class CreataBackupDB(View):
+class CreateBackupDB(View):
     template_error = 'main/error.html'
-    method = 'CreataBackupDB'
+    method = 'CreateBackupDB'
 
     def get(self, request):
         try:
-            # Sprawdzenie przynależności użytkownika do grupy 'AdminZRiWT'
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
-
             # Ścieżka do katalogu kopii zapasowej bazy danych
             BACKUP_FOLDER = os.path.join(settings.BASE_DIR, 'dbBackup')
 

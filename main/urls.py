@@ -4,7 +4,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMa
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
     CreateCSVForCountyYearSum, MediaInfoCountyView, MediaInfoAllCountyView, ArchiveYearUnitMainView, CreateCSVForUnit, \
-    CreateCSVForTrezor, CreateCSVForCountyUnit, CreateGraphView, CreataBackupDB
+    CreateCSVForTrezor, CreateCSVForCountyUnit, CreateGraphView, CreateBackupDB
 
 app_name = 'main'
 urlpatterns = [
@@ -20,10 +20,8 @@ urlpatterns = [
     path('modal/mediaInfoUnit/id/<int:id>/', MediaInfoUnitView.as_view(), name='mediaInfoModal'),
     path('modal/mediaInfoCounty/<slug:countyCardSlug>/year/<int:year>/', MediaInfoCountyView.as_view(),
          name='mediaInfoCountyModal'),
-    # TODO metoda do dokonczenia
     path('modal/mediaInfoAllCounty/year/<int:year>/', MediaInfoAllCountyView.as_view(),
          name='mediaInfoAllCountyModal'),
-
     # Lista obiektów
     path('card/<slug:countySlug>/', UnitsListMainView.as_view(), name='unitCountyMain'),
     # Koszty jednostek w powiecie
@@ -64,7 +62,7 @@ urlpatterns = [
     # Tworzenie grafów
     path('graph/<int:year>/<str:par>/', CreateGraphView.as_view(), name='createGraph'),
     # Tworzenie pliku zapasowego
-    path('backUP/', CreataBackupDB.as_view(), name='backupDB'),
+    path('backUP/', CreateBackupDB.as_view(), name='backupDB'),
     # Logowanie
     path('login/', LoginView.as_view(), name="loginApp"),
     # Lista kart obiektów - strona główna
