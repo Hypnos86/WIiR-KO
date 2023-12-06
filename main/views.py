@@ -1443,6 +1443,8 @@ class CreateGraphView(View):
         try:
             user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
             paragraphs = Paragraph.objects.all()
+            parObj = Paragraph.objects.get(paragraph=par)
+            parTitle = parObj.name
             counties = County.objects.prefetch_related('section', 'unit__items__invoice_id').all()
 
             objectDatas = []
@@ -1478,7 +1480,7 @@ class CreateGraphView(View):
             plt.xticks(rotation=90, fontsize='small')
             plt.subplots_adjust(bottom=0.2)
             plt.ylabel('Suma w zł')
-            plt.title(f'Wydział Inwestycji i Remontów KWP w Poznaniu\nWydatki: § {par} w {year} roku.')
+            plt.title(f'Wydział Inwestycji i Remontów KWP w Poznaniu\nWydatki: § {par} w {year} roku.\n{parTitle}')
             try:
                 # Dodanie daty na górnym rogu wykresu
                 date_text = currentDate.current_date()  # Przykładowa data
