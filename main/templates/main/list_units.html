@@ -2,25 +2,22 @@
 {%load static%}
 {%block content%}
 <div class="container pt-5">
-    <div class="row mb-1">
-        <div class="col-1 col-sm-1 col-md-1 col-lg-2">
+    <div class="row mb-2">
+        <div class="col-4 col-sm-3 col-md-3 col-lg-2 align-self-center pr-0">
             <a href="{% url 'main:welcome' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
             </a>
         </div>
-        <div class="col-10 col-sm-10 col-md-10 col-lg-8 d-flex align-items-center justify-content-center">
-            <div>
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">{{county}}</h5>
-            </div>
+        <div class="col-4 col-sm-6 col-md-6 col-lg-8 d-flex align-items-center justify-content-center p-0 text-center">
+            <h5 class="h5 m-0 font-weight-bold text-uppercase">{{county}}</h5>
         </div>
-        <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
+        <div class="col-4 col-sm-3 col-md-3 col-lg-2 d-flex justify-content-end align-items-center">
             <div class="mx-2">
                 <a class="btn-menu" href="{% url 'main:countyCostUnit' slugCounty year %}" data-toggle="info"
                    title="Wydatki">
                     <i class="bi bi-bank custom-icon"></i>
                 </a>
             </div>
-
             {% if user.is_authenticated and user_belongs_to_group%}
             <div class="mx-2">
                 <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
@@ -53,17 +50,22 @@
                 </a>
                 <div class="d-flex justify-content-between align-items-center">
                     {% if unit.manager == 'Policja' %}
-                    <i class="bi bi-buildings-fill manager-police-color mx-2 align-self-center" data-toggle="info" title="{{unit.manager}}"></i>
+                    <i class="bi bi-buildings-fill manager-police-color mx-2 align-self-center" data-toggle="info"
+                       title="{{unit.manager}}"></i>
                     {% else %}
-                    <i class="bi bi-buildings-fill manager-other-color mx-2 align-self-center" data-toggle="info" title="{{unit.manager}}"></i>
+                    <i class="bi bi-buildings-fill manager-other-color mx-2 align-self-center" data-toggle="info"
+                       title="{{unit.manager}}"></i>
                     {% endif %}
                     {% if unit.status%}
-                    <i class="bi bi-check-circle-fill success mx-2 align-self-center" data-toggle="info" title="Aktualny"></i>
+                    <i class="bi bi-check-circle-fill success mx-2 align-self-center" data-toggle="info"
+                       title="Aktualny"></i>
                     {%else%}
-                    <i class="bi bi-dash-circle text-danger mx-2 align-self-center" data-toggle="info" title="Zdany"></i>
+                    <i class="bi bi-dash-circle text-danger mx-2 align-self-center" data-toggle="info"
+                       title="Zdany"></i>
                     {%endif%}
                     {% if user.is_authenticated and user_belongs_to_group%}
-                    <a class="color-sea align-self-center" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
+                    <a class="color-sea align-self-center" data-toggle="info" title="Edytuj"
+                       href="{% url 'units:editUnit' unit.slug %}">
                         <i class="bi bi-pencil-square mx-2 align-self-center"></i>
                     </a>
                     {% endif %}
