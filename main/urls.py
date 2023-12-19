@@ -62,7 +62,7 @@ urlpatterns = [
     # Tworzenie grafów
     path('graph/<int:year>/<str:par>/', CreateGraphView.as_view(), name='createGraph'),
     # Tworzenie pliku zapasowego
-    path('backUP/', CreateBackupDB.as_view(), name='backupDB'),
+    # path('backUP/', CreateBackupDB.as_view(), name='backupDB'),
     # Logowanie
     path('login/', LoginView.as_view(), name="loginApp"),
     # Lista kart obiektów - strona główna
