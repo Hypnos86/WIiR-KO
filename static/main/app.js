@@ -34,20 +34,5 @@ document.addEventListener("DOMContentLoaded", function() {
 }
  });
 
-function hitEndpoint(url, callbackOnSuccess, callbackOnError ) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        //we're done making the request
-        if (this.readyState === 4) {
-            //status code was successful
-            if (this.status === 200) {
-                callbackOnSuccess();
-            } else {
-                callbackOnError();
-            }
-        }
-    };
-    xhttp.open("GET", url);
-    xhttp.send();
-    }
+
 

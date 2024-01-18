@@ -23,6 +23,14 @@ function snackbarFunction() {
         }, 10000);
 }
 
+function snackbarLogOutFunction() {
+    var tost = document.getElementById("logOut");
+    tost.className = "show";
+        setTimeout(function () {
+            tost.className = tost.className.replace("show", "");
+        }, 10000);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     var message = document.getElementById("loginMessage");
     var disappearTime = 5000;
@@ -33,21 +41,3 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
  });
-
-function hitEndpoint(url, callbackOnSuccess, callbackOnError ) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        //we're done making the request
-        if (this.readyState === 4) {
-            //status code was successful
-            if (this.status === 200) {
-                callbackOnSuccess();
-            } else {
-                callbackOnError();
-            }
-        }
-    };
-    xhttp.open("GET", url);
-    xhttp.send();
-    }
-

@@ -1507,33 +1507,33 @@ class CreateGraphView(View):
             return render(request, self.template_error, context)
 
 
-class CreateBackupDB(View):
-    template_error = 'main/error.html'
-    method = 'CreateBackupDB'
-
-    def get(self, request):
-        try:
-            # Ścieżka do katalogu kopii zapasowej bazy danych
-            BACKUP_FOLDER = os.path.join(settings.BASE_DIR, 'dbBackup')
-
-            # Ścieżka do oryginalnej bazy danych
-            DB_MAIN = os.path.join(settings.BASE_DIR, 'db.sqlite3')
-
-            # Tworzenie katalogu na kopie zapasowe, jeśli nie istnieje
-            if not os.path.exists(BACKUP_FOLDER):
-                os.makedirs(BACKUP_FOLDER)
-
-            # Generowanie nazwy pliku na podstawie aktualnego czasu
-            timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            backup_filename = f"db_backup_{timestamp}.sqlite3"  # Nowa nazwa pliku kopii zapasowej
-
-            # Ścieżka do nowej kopii zapasowej bazy danych
-            NEW_BACKUP_PATH = os.path.join(BACKUP_FOLDER, backup_filename)
-
-            # Wykonanie kopii zapasowej bazy danych z nową nazwą pliku
-            shutil.copy2(DB_MAIN, NEW_BACKUP_PATH)
-            return HttpResponse(status=200)
-        except Exception as e:
-            context = {'error': e, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context, status=500)
+# class CreateBackupDB(View):
+#     template_error = 'main/error.html'
+#     method = 'CreateBackupDB'
+#
+#     def get(self, request):
+#         try:
+#             # Ścieżka do katalogu kopii zapasowej bazy danych
+#             BACKUP_FOLDER = os.path.join(settings.BASE_DIR, 'dbBackup')
+#
+#             # Ścieżka do oryginalnej bazy danych
+#             DB_MAIN = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+#
+#             # Tworzenie katalogu na kopie zapasowe, jeśli nie istnieje
+#             if not os.path.exists(BACKUP_FOLDER):
+#                 os.makedirs(BACKUP_FOLDER)
+#
+#             # Generowanie nazwy pliku na podstawie aktualnego czasu
+#             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+#             backup_filename = f"db_backup_{timestamp}.sqlite3"  # Nowa nazwa pliku kopii zapasowej
+#
+#             # Ścieżka do nowej kopii zapasowej bazy danych
+#             NEW_BACKUP_PATH = os.path.join(BACKUP_FOLDER, backup_filename)
+#
+#             # Wykonanie kopii zapasowej bazy danych z nową nazwą pliku
+#             shutil.copy2(DB_MAIN, NEW_BACKUP_PATH)
+#             return HttpResponse(status=200)
+#         except Exception as e:
+#             context = {'error': e, 'method': self.method}
+#             logger.error("Error: %s", e)
+#             return render(request, self.template_error, context, status=500)
