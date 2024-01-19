@@ -130,13 +130,12 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    messages.success(request, 'Zalogowano pomyślnie.')
+                    messages.success(request, 'Zalogowano pomyślnie')
                     return redirect('main:welcome')  # Przekierowanie po zalogowaniu
                 else:
                     # Obsługa błędnych danych logowania
-                    messages.error(request, 'Błędna nazwa użytkownika lub hasło.')
+                    messages.error(request, 'Błędna nazwa użytkownika lub hasło')
                     return redirect('main:welcome')
-                    # return render(request, self.template_welcome, {'error_message': 'Błędna nazwa użytkownika lub hasło.'})
             else:
                 return render(request, self.template_name)
         except Exception as e:

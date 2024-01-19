@@ -23,16 +23,10 @@ function snackbarFunction() {
         }, 10000);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    var message = document.getElementById("loginMessage");
-    var disappearTime = 5000;
-
-    function hideElement() {
-       if(message){
-      message.style.display = "none";
-    }
+function snackbarLogOutFunction() {
+    var tost = document.getElementById("logOut");
+    tost.className = "show";
+        setTimeout(function () {
+            tost.className = tost.className.replace("show", "");
+        }, 10000);
 }
- });
-
-
-
