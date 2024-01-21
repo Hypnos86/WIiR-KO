@@ -169,7 +169,7 @@ class HelpModalView(View):
             return render(request, self.template_error, context)
 
 
-class UnitsListMainView(View):
+class UnitsListMainView(LoginRequiredMixin, View):
     template_name = 'main/list_units.html'
     template_error = 'main/error.html'
     method = 'UnitsListMainView'
@@ -183,10 +183,61 @@ class UnitsListMainView(View):
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
             county = CountyCard.objects.get(slug=countySlug)
-            context = {'units': units, 'slug': countySlug, 'county': county, 'activeUnits': activeUnits,
-                       'archiveUnits': archiveUnits, 'slugCounty': countySlug, 'year': year,
+            context = {'units': units,
+                       'slug': countySlug, 'county': county, 'slugCounty': countySlug,
+                       'activeUnits': activeUnits,
+                       'archiveUnits': archiveUnits, 'year': year,
                        'user_belongs_to_group': user_belongs_to_group}
             return render(request, self.template_name, context)
+        except Exception as e:
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class TypeUnitsListView(LoginRequiredMixin, View):
+    template_name = 'main/site_units.html'
+    template_error = 'main/error.html'
+    method = 'UnitsView'
+
+    def get(self, request, type_units):
+        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            currentYear = currentDate.current_year()
+            units = Unit.objects.all().filter(type__type_short=type_units).order_by('county_unit__id_order')
+            activeUnits = len(units.filter(status=True))
+            archiveUnits = len(units.filter(status=False))
+            slugTypeUnits = TypeUnit.objects.get(type_short=type_units)
+            typesUnit = TypeUnit.objects.all()
+
+            typesList = []
+            for element in typesUnit:
+                if element.type_short in ('KMP', 'KPP', 'KP', 'PP'):
+                    item = {'index': element.type_short.lower(), 'type_short': element.type_short, 'type_full': element.type_full}
+
+                    typesList.append(item)
+            query = "Wyczyść"
+            search = "Szukaj"
+            q = request.GET.get("q")
+
+            if q:
+                units = units.filter(unit_full_name__icontains=q) \
+                        | units.filter(county_swop__name__icontains=q) \
+                        | units.filter(city__icontains=q) \
+                        | units.filter(type__type_full__icontains=q) \
+                        | units.filter(manager__icontains=q) \
+                        | units.filter(information__icontains=q)
+
+                context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
+                           'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
+                           'user_belongs_to_group': user_belongs_to_group}
+                return render(request, self.template_name, context)
+            else:
+
+                context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
+                           'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
+                           'user_belongs_to_group': user_belongs_to_group}
+                return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
@@ -252,6 +303,16 @@ class UnitsView(LoginRequiredMixin, View):
             units = Unit.objects.all().order_by('county_unit__id_order')
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
+            typesUnit = TypeUnit.objects.all()
+
+            typesList = []
+            index = 1
+            for element in typesUnit:
+                if element.type_short in ('KMP', 'KPP', 'KP', 'PP'):
+                    item = {'index': element.type_short.lower(), 'type_short': element.type_short, 'type_full': element.type_full}
+                    index += 1
+                    typesList.append(item)
+
             query = "Wyczyść"
             search = "Szukaj"
             q = request.GET.get("q")
@@ -264,13 +325,14 @@ class UnitsView(LoginRequiredMixin, View):
                         | units.filter(manager__icontains=q) \
                         | units.filter(information__icontains=q)
 
-                context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
-                           'archiveUnits': archiveUnits, 'user_belongs_to_group': user_belongs_to_group}
+                context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'typesList': typesList,
+                           'activeUnits': activeUnits, 'archiveUnits': archiveUnits,
+                           'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
             else:
 
                 context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
-                           'archiveUnits': archiveUnits,
+                           'archiveUnits': archiveUnits, 'typesList': typesList,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
         except Exception as e:
@@ -1334,13 +1396,13 @@ class CreateCSVForUnit(View):
             units = Unit.objects.all()
             response = HttpResponse(content_type='text/csv')
             response[
-                'Content-Disposition'] = f'attachment; filename="Zestawienie jednostek - {nowDate.strftime("%d.%m.%Y")}.csv"'
+                'Content-Disposition'] = f'attachment; filename="Zest.Jedn.gr.6 - {nowDate.strftime("%d.%m.%Y")}.csv"'
             # Ustawienie kodowania utf-8
             response.write(u'\ufeff'.encode('utf8'))
             # Tworzenie obiektu writer i zapis do pliku csv
             writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
             # response.write(f'Zestawienie jednostek. Stan na {nowDate.strftime("%d.%m.%Y")}\n')
-            writer.writerow(["Zestawienie jednostek.", f'Stan na {nowDate.strftime("%d.%m.%Y")}r.'])
+            writer.writerow(["Zestawienie jednostek", f'Stan na {nowDate.strftime("%d.%m.%Y")}r.'])
             writer.writerow(
                 ['Powiat', 'Rozdział', 'Rodzaj jednostki', 'Adres', 'Kod pocztowy', 'Miasto', 'Nazwa obiektu',
                  'Administrator', 'Status obiektu', 'Informacje'])
