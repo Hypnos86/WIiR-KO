@@ -23,31 +23,25 @@ function snackbarFunction() {
         }, 10000);
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-    var message = document.getElementById("loginMessage");
-    var disappearTime = 5000;
-
-    function hideElement() {
-       if(message){
-      message.style.display = "none";
+function showLogInSnackbar() {
+    try{
+        var snackbar = document.getElementById("logIn");
+        snackbar.className = "log-in show";
+        setTimeout(function(){
+            snackbar.className = snackbar.className.replace("log-in show", "log-in");
+        }, 3000);
     }
-}
- });
-
-function hitEndpoint(url, callbackOnSuccess, callbackOnError ) {
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        //we're done making the request
-        if (this.readyState === 4) {
-            //status code was successful
-            if (this.status === 200) {
-                callbackOnSuccess();
-            } else {
-                callbackOnError();
-            }
-        }
-    };
-    xhttp.open("GET", url);
-    xhttp.send();
+    catch(error){
+        console.error(error)
     }
-
+};
+function showLogOutSnackbar() {
+    try{
+        var snackbar = document.getElementById("logOut");
+        snackbar.className = "log-out show";
+        setTimeout(function(){ snackbar.className = snackbar.className.replace("log-out show", "log-out"); }, 3000);
+    }
+    catch(error){
+        console.error(error)
+    }
+};

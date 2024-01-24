@@ -27,23 +27,24 @@
         {% endfor %}
     </div>
 </div>
-<div id="snackbar">Zapisano</div>
+
 {% if messages %}
 <div class="container text-center mt-4">
-    <ul id="loginMessage" class="messages">
-        {% for message in messages %}
-
-        {%if message.tags == "error" %}
-        <li class="list-group-item list-group-item-danger">{{ message }}</li>
-        {%endif%}
-
-        {%if message.tags == "success" %}
-        <li class="list-group-item list-group-item-success">{{ message }}</li>
-        {%endif%}
-
-        {% endfor %}
-    </ul>
+    {% for message in messages %}
+        {% if "error" in message.tags %}
+            <span id="logOut" class="log-out">{{ message }}</span>
+            <script>
+                showLogOutSnackbar();
+            </script>
+        {% elif "success" in message.tags %}
+            <span id="logIn" class="log-in">{{ message }}</span>
+            <script>
+                showLogInSnackbar();
+            </script>
+        {% endif %}
+    {% endfor %}
 </div>
+
 {% endif %}
 <script>
     document.addEventListener("DOMContentLoaded", function() {

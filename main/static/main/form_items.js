@@ -1,13 +1,10 @@
 console.log("form_item.html");
 
 function initFormItems(viewsData){
-
     var daneJS = "{{ measurementData|escapejs }}";
     var x = daneJS.replace(/'/g, '"');
     var dataObject = JSON.parse(x);
-
 }
-
 
     paragraph.addEventListener('change', function() {
         var selectedElement = paragraph.options[paragraph.selectedIndex];
@@ -98,8 +95,6 @@ function initFormItems(viewsData){
                         console.log(paragraph.options[paragraph.selectedIndex].text.slice(0,7));
                         console.log(elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7));
 
-
-
                         var measureData = document.getElementById("id_measurementSystemNumber");
                         console.log("measureData");
                         console.log(measureData);
@@ -127,15 +122,9 @@ function initFormItems(viewsData){
             };
         });
     };
-
-
-
     $('#id_contract_types').on('change', function(){
-
         checkData();
     });
-
     $('#id_paragraph').on('change', function(){
-
         checkData();
     });
