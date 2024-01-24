@@ -11,7 +11,6 @@
                    title="Wstecz">
                     <span class="bi bi-arrow-90deg-left custom-icon"></span>
                 </a>
-                <!--                {% url 'main:unit_details' unit.county_unit.slug unit.slug year %}-->
             </div>
             <div class="col-8 col-sm-8 col-md-8 col-lg-8 d-flex align-items-center justify-content-center">
                 <div>
@@ -40,12 +39,9 @@
             {% endif %}
             <h6 class="h6 my-0">Administrator: <span>{{unit.manager}}</span></h6>
             {% if unit.information %}
-            <p>Informacje: {{unit.information}}</p>
+            <p class="my-2">Informacje: {{unit.information}}</p>
             {% endif %}
         </div>
-        {% if unit.information %}
-        <p>{{unit.information}}</p>
-        {%endif %}
     </div>
 </div>
 <div class="m-3">

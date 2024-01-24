@@ -168,7 +168,7 @@ class HelpModalView(View):
             return render(request, self.template_error, context)
 
 
-class UnitsListMainView(LoginRequiredMixin, View):
+class UnitsListMainView(View):
     template_name = 'main/list_units.html'
     template_error = 'main/error.html'
     method = 'UnitsListMainView'
@@ -206,13 +206,16 @@ class TypeUnitsListView(LoginRequiredMixin, View):
             units = Unit.objects.all().filter(type__type_short=type_units).order_by('county_unit__id_order')
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
+            policeManager = units.filter(manager='Policja').count()
+            othersManager = units.exclude(manager='Policja').count()
             slugTypeUnits = TypeUnit.objects.get(type_short=type_units)
             typesUnit = TypeUnit.objects.all()
 
             typesList = []
             for element in typesUnit:
                 if element.type_short in ('KMP', 'KPP', 'KP', 'PP'):
-                    item = {'index': element.type_short.lower(), 'type_short': element.type_short, 'type_full': element.type_full}
+                    item = {'index': element.type_short.lower(), 'type_short': element.type_short,
+                            'type_full': element.type_full}
 
                     typesList.append(item)
             query = "Wyczyść"
@@ -229,12 +232,14 @@ class TypeUnitsListView(LoginRequiredMixin, View):
 
                 context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
+                           'policeManager': policeManager, 'othersManager': othersManager,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
             else:
 
                 context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
+                           'policeManager': policeManager, 'othersManager': othersManager,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
         except Exception as e:
@@ -302,13 +307,16 @@ class UnitsView(LoginRequiredMixin, View):
             units = Unit.objects.all().order_by('county_unit__id_order')
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
+            policeManager = units.filter(manager='Policja').count()
+            othersManager = units.exclude(manager='Policja').count()
             typesUnit = TypeUnit.objects.all()
 
             typesList = []
             index = 1
             for element in typesUnit:
                 if element.type_short in ('KMP', 'KPP', 'KP', 'PP'):
-                    item = {'index': element.type_short.lower(), 'type_short': element.type_short, 'type_full': element.type_full}
+                    item = {'index': element.type_short.lower(), 'type_short': element.type_short,
+                            'type_full': element.type_full}
                     index += 1
                     typesList.append(item)
 
@@ -325,13 +333,15 @@ class UnitsView(LoginRequiredMixin, View):
                         | units.filter(information__icontains=q)
 
                 context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'typesList': typesList,
-                           'activeUnits': activeUnits, 'archiveUnits': archiveUnits,
+                           'activeUnits': activeUnits, 'archiveUnits': archiveUnits, 'policeManager': policeManager,
+                           'othersManager': othersManager,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
             else:
 
                 context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
-                           'archiveUnits': archiveUnits, 'typesList': typesList,
+                           'archiveUnits': archiveUnits, 'typesList': typesList, 'policeManager': policeManager,
+                           'othersManager': othersManager,
                            'user_belongs_to_group': user_belongs_to_group}
                 return render(request, self.template_name, context)
         except Exception as e:
@@ -786,7 +796,7 @@ class UnitDetailsView(View):
         user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
-            year = currentDate.current_year()
+            current_year = currentDate.current_year()
             unit = get_object_or_404(Unit, slug=unitSlug)
             paragraphs = Paragraph.objects.all()
 
@@ -823,7 +833,7 @@ class UnitDetailsView(View):
                     year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
             context = {'unit': unit, 'user_belongs_to_group': user_belongs_to_group, 'paragraphs': paragraphs,
-                       'title': title, 'tableObjects': tableObjects, 'year': year}
+                       'title': title, 'tableObjects': tableObjects, 'year': current_year}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
@@ -1566,7 +1576,6 @@ class CreateGraphView(View):
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
-
 
 # class CreateBackupDB(View):
 #     template_error = 'main/error.html'

@@ -30,6 +30,11 @@
             </div>
             {% if user.is_authenticated and user_belongs_to_group %}
             <div class="mx-2">
+                <a class="btn-menu" href="{% url 'units:editUnit' unit.slug %}" data-toggle="info" title="Edytuj">
+                    <i class="bi bi-pencil-square custom-icon"></i>
+                </a>
+            </div>
+            <div class="mx-2">
                 <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                     <i class="bi bi-plus-circle custom-icon"></i>
                 </a>
