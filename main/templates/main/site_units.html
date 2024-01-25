@@ -14,8 +14,11 @@
                 <h5 id="title" class="h5 m-0 font-weight-bold text-uppercase">Jednostki</h5>
             </div>
         </div>
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
-            <button class="btn-menu" onclick="generateCSV(this)" data-url="{% url 'main:csvForUnit' %}"
+        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-between">
+             <a class="btn-menu mx-2" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
+                <i class="bi bi-building-add custom-icon"></i>
+            </a>
+            <button class="btn-menu mx-2" onclick="generateCSV(this)" data-url="{% url 'main:csvForUnit' %}"
                     data-toggle="info"
                     title="Zapisz">
                 <span class="bi bi-download custom-icon"></span>
