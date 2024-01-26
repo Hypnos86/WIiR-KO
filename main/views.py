@@ -332,6 +332,11 @@ class UnitsView(LoginRequiredMixin, View):
                         | units.filter(manager__icontains=q) \
                         | units.filter(information__icontains=q)
 
+                activeUnits = len(units.filter(status=True))
+                archiveUnits = len(units.filter(status=False))
+                policeManager = units.filter(manager='Policja').count()
+                othersManager = units.exclude(manager='Policja').count()
+
                 context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'typesList': typesList,
                            'activeUnits': activeUnits, 'archiveUnits': archiveUnits, 'policeManager': policeManager,
                            'othersManager': othersManager,
