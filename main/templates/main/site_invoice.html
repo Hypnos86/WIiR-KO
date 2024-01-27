@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-{% if user.is_authenticated and user_belongs_to_group%}
+{% if user.is_authenticated and user_belongs_to_group or user_belongs_to_admin_group %}
 <div class="container pt-5">
     <div class="row mb-1">
         <div class="col-1 col-sm-1 col-md-1 col-lg-2">
@@ -15,6 +15,7 @@
                 <h5 class="h5 m-0 font-weight-bold text-uppercase">Faktury</h5>
             </div>
         </div>
+        {% if user_belongs_to_admin_group %}
         <div class="col-1 col-sm-1 col-md-1 col-lg-2 d-flex justify-content-end">
             <div class="mx-2">
                 <a class="btn-menu" data-url="{% url 'main:paragraphModal' %}" onclick="openParagraphModal(this)"
@@ -28,6 +29,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 <div class="container">
@@ -104,8 +106,8 @@
                 <a class="btn-menu mx-1" data-url="{% url 'main:infoInvoice' invoice.id %}"
                    onclick="openInvoiceInfoModal(this)" data-toggle="info" title="Podgląd">
                     <i class="bi bi-eye"></i>
-                    {% if user.is_authenticated %}
                 </a>
+                {% if user_belongs_to_admin_group %}
                 <a class="btn-menu mx-1" href="{% url 'invoices:deleteInvoice' invoice.slug %}" data-toggle="info"
                    title="Usuń" onclick="return confirm('Czy na pewno chcesz usunąć dokument?')">
                     <i class="bi bi-trash3"></i>

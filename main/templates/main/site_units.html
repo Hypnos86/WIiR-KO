@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
-            {% if user.is_authenticated and user_belongs_to_group %}
+            {% if user_belongs_to_admin_group %}
              <a class="btn-menu mx-2" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
                 <i class="bi bi-building-add custom-icon"></i>
             </a>
@@ -85,7 +85,7 @@
                 {%else%}
                 <i class="bi bi-dash-circle text-danger mx-2" data-toggle="info" title="Zdany"></i>
                 {%endif%}
-                {% if user.is_authenticated and user_belongs_to_group%}
+                {% if user.is_authenticated and user_belongs_to_admin_group%}
                 <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
                     <i class="bi bi-pencil-square mx-2"></i>
                 </a>

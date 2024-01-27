@@ -51,7 +51,8 @@ class WelcomeView(View):
     method = 'WelcomeView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
@@ -100,10 +101,12 @@ class WelcomeView(View):
                     admin in request.user.groups.all() or viewers in request.user.groups.all()):
                 counties = counties.exclude(name="KWP Poznań")
 
-            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group, 'year': year}
+            context = {'counties': counties, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -114,11 +117,11 @@ class LoginView(View):
     template_error = 'main/error.html'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             return render(request, self.template_name)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -174,7 +177,8 @@ class UnitsListMainView(View):
     method = 'UnitsListMainView'
 
     def get(self, request, countySlug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
@@ -185,11 +189,12 @@ class UnitsListMainView(View):
             context = {'units': units,
                        'slug': countySlug, 'county': county, 'slugCounty': countySlug,
                        'activeUnits': activeUnits,
-                       'archiveUnits': archiveUnits, 'year': year,
-                       'user_belongs_to_group': user_belongs_to_group}
+                       'archiveUnits': archiveUnits, 'year': year, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                       'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -200,7 +205,9 @@ class TypeUnitsListView(LoginRequiredMixin, View):
     method = 'UnitsView'
 
     def get(self, request, type_units):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+
         try:
             currentYear = currentDate.current_year()
             units = Unit.objects.all().filter(type__type_short=type_units).order_by('county_unit__id_order')
@@ -233,17 +240,20 @@ class TypeUnitsListView(LoginRequiredMixin, View):
                 context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
                            'policeManager': policeManager, 'othersManager': othersManager,
-                           'user_belongs_to_group': user_belongs_to_group}
+                           'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
                 return render(request, self.template_name, context)
             else:
 
                 context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
                            'policeManager': policeManager, 'othersManager': othersManager,
-                           'user_belongs_to_group': user_belongs_to_group}
+                           'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
                 return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -254,7 +264,8 @@ class CostListMainView(View):
     method = 'CostListMainView'
 
     def get(self, request, countyCardSlug, unitSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             unit = get_object_or_404(Unit, slug=unitSlug)
             invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=year)
@@ -286,11 +297,13 @@ class CostListMainView(View):
                     items.append(selected_properties)
                 paragraph_data.append({'paragraph': paragraph, 'items': items})
             context = {'unit': unit, 'paragraph_data': paragraph_data, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        'year': year, 'countyCardSlug': countyCardSlug}
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -301,7 +314,8 @@ class UnitsView(LoginRequiredMixin, View):
     method = 'UnitsView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             currentYear = currentDate.current_year()
             units = Unit.objects.all().order_by('county_unit__id_order')
@@ -339,15 +353,15 @@ class UnitsView(LoginRequiredMixin, View):
 
                 context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'typesList': typesList,
                            'activeUnits': activeUnits, 'archiveUnits': archiveUnits, 'policeManager': policeManager,
-                           'othersManager': othersManager,
-                           'user_belongs_to_group': user_belongs_to_group}
+                           'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
                 return render(request, self.template_name, context)
             else:
 
                 context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'policeManager': policeManager,
-                           'othersManager': othersManager,
-                           'user_belongs_to_group': user_belongs_to_group}
+                           'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
                 return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
@@ -361,7 +375,8 @@ class StatisticsView(LoginRequiredMixin, View):
     method = 'StatisticsView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             paragraphs = Paragraph.objects.all()
@@ -421,11 +436,13 @@ class StatisticsView(LoginRequiredMixin, View):
             # plt.savefig('nazwa.png')
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
-                       'user_belongs_to_group': user_belongs_to_group, 'title': title,
+                       'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'title': title,
                        'paragraphs': paragraphs, 'year': year, 'statisticsSite': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -436,7 +453,8 @@ class StatisticsYearView(LoginRequiredMixin, View):
     method = 'StatisticsYearView'
 
     def get(self, request, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             paragraphs = Paragraph.objects.all()
@@ -479,11 +497,13 @@ class StatisticsYearView(LoginRequiredMixin, View):
                         paragraphSums[paragraph] = sum_value
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
-                       'user_belongs_to_group': user_belongs_to_group, 'title': title,
+                       'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'title': title,
                        'paragraphs': paragraphs, 'year': year, 'statisticYear': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -494,13 +514,16 @@ class UsersSiteView(LoginRequiredMixin, View):
     method = 'UsersSiteView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             users = User.objects.all()
-            context = {'users': users, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'users': users, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group}
             return render(request, self.template, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -600,7 +623,8 @@ class InvoicesListView(LoginRequiredMixin, View):
     method = 'InvoicesListView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             invoices = Invoice.objects.all()
             paginator = Paginator(invoices, self.paginate_by)
@@ -621,10 +645,12 @@ class InvoicesListView(LoginRequiredMixin, View):
                 invoicesSet = set(invoices)
                 invoices = sorted(invoicesSet, key=lambda x: x.date, reverse=True)
 
-                context = {'invoices': invoices, 'user_belongs_to_group': user_belongs_to_group, 'query': query, 'q': q}
+                context = {'invoices': invoices, 'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group, 'query': query, 'q': q}
                 return render(request, self.template_name, context)
             else:
-                context = {'invoices': invoices_pages, 'user_belongs_to_group': user_belongs_to_group, 'search': search}
+                context = {'invoices': invoices_pages, 'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group, 'search': search}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -1037,7 +1063,8 @@ class CountyCostUnitListView(View):
     method = 'CountyCostUnitListView'
 
     def get(self, request, countyCardSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             county = CountyCard.objects.get(slug=countyCardSlug)
             units = Unit.objects.filter(county_unit=county)
@@ -1082,12 +1109,14 @@ class CountyCostUnitListView(View):
                     else:
                         paragraphSums[paragraph] = sum_value
 
-            context = {'county': county, 'user_belongs_to_group': user_belongs_to_group, 'year': year,
+            context = {'county': county, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'year': year,
                        'paragraphs': paragraphs, 'slugCounty': countyCardSlug,
                        "items": objectDatas, 'paragraphSums': paragraphSums}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -1098,7 +1127,8 @@ class TrezorViews(LoginRequiredMixin, View):
     method = 'TrezorViews'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
 
         try:
             invoices = Invoice.objects.all().order_by("date_of_payment")
@@ -1158,17 +1188,19 @@ class TrezorViews(LoginRequiredMixin, View):
                     'date_from_obj': date_from_obj,
                     'date_to_obj': date_to_obj,
                     'verification_all': verification_all,
-                    'user_belongs_to_group': user_belongs_to_group
+                    'user_belongs_to_admin_group': user_belongs_to_admin_group
                 }
                 return render(request, self.template_name, context)
             else:
                 invoices_sum = 0
-                context = {'user_belongs_to_group': user_belongs_to_group, 'invoices_sum': invoices_sum,
+                context = {'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoices_sum': invoices_sum,
                            'search': search, 'year': year}
                 return render(request, self.template_name, context)
         except Exception as e:
             # Zapisanie informacji o błędzie do loga
-            context = {'error': str(e), 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': str(e), 'user_belongs_to_group': user_belongs_to_group,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -1440,7 +1472,7 @@ class CreateCSVForTrezor(View):
     method = 'CreateCSVForTrezor'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             nowDate = currentDate.current_date()
             invoices = Invoice.objects.all().order_by("date_of_payment")
@@ -1505,7 +1537,7 @@ class CreateCSVForTrezor(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
@@ -1517,7 +1549,7 @@ class CreateGraphView(View):
 
     def get(self, request, year, par):
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+            user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
             paragraphs = Paragraph.objects.all()
             parObj = Paragraph.objects.get(paragraph=par)
             parTitle = parObj.name
@@ -1572,13 +1604,13 @@ class CreateGraphView(View):
             except RuntimeError as tk_error:
                 # Tutaj obsłużamy błąd związanym z Tkinter
                 # Możesz dodać kod obsługi tego błędu lub zwrócić komunikat o błędzie
-                context = {'error': str(tk_error), 'user_belongs_to_group': user_belongs_to_group,
+                context = {'error': str(tk_error), 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                            'method': self.method}
                 logger.error("Error: %s", tk_error)
                 return render(request, self.template_error, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
