@@ -159,11 +159,11 @@ class HelpModalView(View):
 
             aut = [65, 117, 116, 111, 114, 32, 97, 112, 108, 105, 107, 97, 99, 106, 105, 58, 32, 75, 97, 109, 105, 108,
                    32, 75, 117, 98, 105, 97, 107, 32, 50, 48, 50, 51]
-            inAut = [101, 109, 97, 105, 108, 58, 32, 107, 117, 98, 105, 97, 107, 46, 107, 97, 109, 105, 108, 50, 51, 64,
-                     103, 109, 97, 105, 108, 46, 99, 111, 109]
+            # inAut = [101, 109, 97, 105, 108, 58, 32, 107, 117, 98, 105, 97, 107, 46, 107, 97, 109, 105, 108, 50, 51, 64,
+            #          103, 109, 97, 105, 108, 46, 99, 111, 109]
             mainEnco = ''.join([chr(val) for val in aut])
-            inAutEnco = ''.join([chr(val) for val in inAut])
-            context = {'content': content.last(), 'mainEnco': mainEnco, 'inAutEnco': inAutEnco}
+            # inAutEnco = ''.join([chr(val) for val in inAut])
+            context = {'content': content.last(), 'mainEnco': mainEnco}
             return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e}
@@ -534,7 +534,7 @@ class ArchiveYearCostListView(View):
     method = 'ArchiveYearCostListView'
 
     def get(self, request, unitSlug, paragraphSlug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = Unit.objects.get(slug=unitSlug)
             countySlug = unit.county_unit.slug
@@ -546,7 +546,7 @@ class ArchiveYearCostListView(View):
                        'unitCost': False, 'archiveYears': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -557,7 +557,7 @@ class ArchiveYearUnitCostListView(View):
     method = 'ArchiveYearUnitCostListView'
 
     def get(self, request, slugCounty):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             currentYear = currentDate.current_year()
             # unit = Unit.objects.filter(county_unit__slug=slugCounty)
@@ -568,7 +568,7 @@ class ArchiveYearUnitCostListView(View):
             context = {'slugCounty': slugCounty, 'years': years, 'archiveYearsUnitCost': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -579,7 +579,7 @@ class ArchiveYearUnitMainView(View):
     method = 'ArchiveYearUnitMainView'
 
     def get(self, request, slugUnit):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=slugUnit)
@@ -592,7 +592,7 @@ class ArchiveYearUnitMainView(View):
                        'archiveYearsUnitMain': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -603,7 +603,7 @@ class ArchiveYearStatisticView(View):
     method = 'ArchiveYearStatisticView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             items = InvoiceItems.objects.filter()
             yearsSet = set([year.invoice_id.date.year for year in items])
@@ -611,7 +611,7 @@ class ArchiveYearStatisticView(View):
             context = {'years': years, 'archiveYearsStatistic': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -665,7 +665,7 @@ class InvoiceInfoView(View):
     method = 'InvoiceInfoView'
 
     def get(self, request, id):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             accessSection = '75405'
             yearObject = CurrentDate()
@@ -673,12 +673,12 @@ class InvoiceInfoView(View):
             invoice = get_object_or_404(Invoice, pk=id)
             items = invoice.items.all()
             context = {'invoice': invoice, 'accessSection': accessSection,
-                       'user_belongs_to_group': user_belongs_to_group, 'items': items, 'id': id,
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'items': items, 'id': id,
                        'year': year}
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -690,7 +690,7 @@ class CostsDetailsListView(View):
     method = 'CostsDetailsListView'
 
     def get(self, request, countyCardSlug, unitSlug, paragraphSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = get_object_or_404(Unit, slug=unitSlug)
             items = InvoiceItems.objects.filter(unit__slug=unitSlug, paragraph__slug=paragraphSlug,
@@ -709,10 +709,10 @@ class CostsDetailsListView(View):
 
             context = {'unit': unit, 'items': itemsList, 'year': year, 'paragraph': paragraph,
                        'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure,
-                       'user_belongs_to_group': user_belongs_to_group}
+                       'user_belongs_to_admin_group': user_belongs_to_admin_group}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -723,14 +723,14 @@ class ParagraphModalView(View):
     method = 'ParagraphModalView'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             paragraphs = Paragraph.objects.all()
             context = {'paragraphs': paragraphs}
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -743,7 +743,9 @@ class ParagraphCostListView(LoginRequiredMixin, View):
     method = 'ParagraphCostListView'
 
     def get(self, request, paragraphSlug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+
         if paragraphSlug in [
             ParagraphEnum.MEDIA1.value[0], ParagraphEnum.MEDIA2.value[0], ParagraphEnum.MEDIA3.value[0],
             ParagraphEnum.MEDIA4.value[0]]:
@@ -770,18 +772,20 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                             | items.filter(unit__unit_full_name__icontains=q) \
                             | items.filter(information__icontains=q)
 
-                    context = {'items': items, 'user_belongs_to_group': user_belongs_to_group, 'paragraph': paragraph,
-                               'unitOfMeasure': unitOfMeasure,
-                               "query": query, 'q': q}
+                    context = {'items': items, 'user_belongs_to_group': user_belongs_to_group,
+                               'user_belongs_to_admin_group': user_belongs_to_admin_group, 'paragraph': paragraph,
+                               'unitOfMeasure': unitOfMeasure, "query": query, 'q': q}
                     return render(request, self.template_name_media, context)
                 else:
                     context = {'items': items_pages, 'user_belongs_to_group': user_belongs_to_group,
+                               'user_belongs_to_admin_group': user_belongs_to_admin_group,
                                'paragraph': paragraph, 'unitOfMeasure': unitOfMeasure,
                                "search": search, 'q': q}
                     return render(request, self.template_name_media, context)
 
             except Exception as e:
-                context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+                context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
+                           'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
                 logger.error("Error: %s", e)
                 return render(request, self.template_error, context)
         else:
@@ -803,17 +807,17 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                             | items.filter(unit__unit_full_name__icontains=q) \
                             | items.filter(information__icontains=q)
 
-                    context = {'items': items, 'user_belongs_to_group': user_belongs_to_group, 'paragraph': paragraph,
+                    context = {'items': items, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'paragraph': paragraph,
                                "query": query, 'q': q}
                     return render(request, self.template_name_general, context)
                 else:
-                    context = {'items': items_pages, 'user_belongs_to_group': user_belongs_to_group,
+                    context = {'items': items_pages, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                                'paragraph': paragraph,
                                "search": search, 'q': q}
                     return render(request, self.template_name_general, context)
 
             except Exception as e:
-                context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+                context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
                 logger.error("Error: %s", e)
                 return render(request, self.template_error, context)
 
@@ -824,7 +828,7 @@ class UnitDetailsView(View):
     method = "UnitDetailsView"
 
     def get(self, request, unitSlug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             current_year = currentDate.current_year()
@@ -863,11 +867,11 @@ class UnitDetailsView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
-            context = {'unit': unit, 'user_belongs_to_group': user_belongs_to_group, 'paragraphs': paragraphs,
+            context = {'unit': unit, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'paragraphs': paragraphs,
                        'title': title, 'tableObjects': tableObjects, 'year': current_year}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -878,7 +882,7 @@ class MediaInfoUnitView(View):
     method = "MediaInfoUnitView"
 
     def get(self, request, id):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Zużycie mediów'
             unit = get_object_or_404(Unit, pk=id)
@@ -914,11 +918,11 @@ class MediaInfoUnitView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'unit': unit,
+            context = {'title': title, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'unit': unit,
                        'paragraphs': paragraphsModel, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -929,7 +933,7 @@ class MediaInfoCountyView(View):
     method = "MediaInfoCountyView"
 
     def get(self, request, countyCardSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             title = 'Zużycie mediów'
             county = get_object_or_404(CountyCard, slug=countyCardSlug)
@@ -974,15 +978,15 @@ class MediaInfoCountyView(View):
                     for missing_paragraph in missing_paragraphs:
                         year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
 
-                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                context = {'title': title, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'county': county,
                            'units': unit,
                            'paragraphs': paragraphsModel, 'tableObjects': tableObjects, 'year': year}
             except Exception:
-                context = {'title': title, 'user_belongs_to_group': user_belongs_to_group, 'county': county,
+                context = {'title': title, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'county': county,
                            'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -994,7 +998,7 @@ class MediaInfoAllCountyView(View):
 
     def get(self, request, year):
         try:
-            user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+            user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
             title = 'Zużycie mediów'
 
             counties = CountyCard.objects.prefetch_related('unit__items__paragraph').all()
@@ -1041,18 +1045,18 @@ class MediaInfoAllCountyView(View):
 
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'consumption': 0})
-            context = {'title': title, 'user_belongs_to_group': user_belongs_to_group,
+            context = {'title': title, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        'paragraphs': paragraphs_model, 'tableObjects': table_objects, 'year': year}
 
             return render(request, self.template_name, context)
 
         except ObjectDoesNotExist as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Object does not exist: %s", e)
             return render(request, self.template_error, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
 
@@ -1209,7 +1213,7 @@ class CreateCSVForCountySum(View):
     template_error = 'main/error.html'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             paragraphs = Paragraph.objects.all()
             counties = County.objects.all()
@@ -1273,7 +1277,7 @@ class CreateCSVForCountySum(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
@@ -1283,7 +1287,7 @@ class CreateCSVForCountyYearSum(View):
     template_error = 'main/error.html'
 
     def get(self, request, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             paragraphs = Paragraph.objects.all()
             counties = County.objects.all()
@@ -1347,7 +1351,7 @@ class CreateCSVForCountyYearSum(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
@@ -1358,7 +1362,7 @@ class CreateCSVForCountyUnit(View):
     method = 'CreateCSVForCountyUnit'
 
     def get(self, request, countyCardSlug, year):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             nowDate = currentDate.current_date()
             county = CountyCard.objects.get(slug=countyCardSlug)
@@ -1425,7 +1429,7 @@ class CreateCSVForCountyUnit(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
@@ -1436,7 +1440,7 @@ class CreateCSVForUnit(View):
     method = 'CreateCSVForUnit'
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             nowDate = currentDate.current_date()
             units = Unit.objects.all()
@@ -1461,7 +1465,7 @@ class CreateCSVForUnit(View):
             return response
         except Exception as e:
             # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
             # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
