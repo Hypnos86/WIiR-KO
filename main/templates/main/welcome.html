@@ -5,7 +5,7 @@
     <div class="text-center mb-4">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
     </div>
-    {% if user.is_authenticated and user_belongs_to_group%}
+    {% if user.is_authenticated and user_belongs_to_admin_group%}
     <div class="d-flex justify-content-around mb-3">
         <div>
             <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">

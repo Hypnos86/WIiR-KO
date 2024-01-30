@@ -1,6 +1,3 @@
-import os
-import shutil
-from django.conf import settings
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
@@ -13,7 +10,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 import csv
 from io import BytesIO
-# import matplotlib.pylab as plt
 from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
