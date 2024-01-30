@@ -198,6 +198,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
+            # form.fields['unit'].queryset = Unit.objects.all().values_list('type__type_full', 'city', 'object_name')
+
             context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group, "items": items,
                        'invoiceSlug': invoiceSlug, 'countiesSum': counties,
                        'measurementData': measurementSystemNumberList}

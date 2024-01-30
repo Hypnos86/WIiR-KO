@@ -135,4 +135,6 @@ class Unit(models.Model):
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
 
     def __str__(self):
+        if self.object_name:
+            return f"{self.unit_full_name} - {self.object_name}"
         return f"{self.unit_full_name}"
