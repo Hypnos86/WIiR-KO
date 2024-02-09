@@ -532,10 +532,12 @@ class ArchiveYearCostListView(View):
     def get(self, request, unitSlug, paragraphSlug):
         user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=unitSlug)
             countySlug = unit.county_unit.slug
             items = InvoiceItems.objects.filter(paragraph__slug=paragraphSlug, unit__id=unit.id)
             yearsSet = set([year.invoice_id.date.year for year in items])
+            yearsSet.add(currentYear)
             years = sorted(yearsSet, reverse=True)
 
             context = {'countySlug': countySlug, 'unitSlug': unitSlug, 'paragraphSlug': paragraphSlug, 'years': years,
@@ -557,9 +559,9 @@ class ArchiveYearUnitCostListView(View):
         try:
             currentYear = currentDate.current_year()
             # unit = Unit.objects.filter(county_unit__slug=slugCounty)
-
             items = InvoiceItems.objects.filter(unit__county_unit__slug=slugCounty)
             yearsSet = set([year.invoice_id.date.year for year in items])
+            yearsSet.add(currentYear)
             years = sorted(yearsSet, reverse=True)
             context = {'slugCounty': slugCounty, 'years': years, 'archiveYearsUnitCost': True}
             return render(request, self.template_name, context)
@@ -581,8 +583,8 @@ class ArchiveYearUnitMainView(View):
             unit = Unit.objects.get(slug=slugUnit)
             countySlug = unit.county_unit.slug
             items = InvoiceItems.objects.filter(unit__slug=slugUnit)
-
             yearsSet = set([year.invoice_id.date.year for year in items])
+            yearsSet.add(currentYear)
             years = sorted(yearsSet, reverse=True)
             context = {'countySlug': countySlug, 'unitSlug': slugUnit, 'years': years, 'year': currentYear,
                        'archiveYearsUnitMain': True}
@@ -601,8 +603,10 @@ class ArchiveYearStatisticView(View):
     def get(self, request):
         user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            currentYear = currentDate.current_year()
             items = InvoiceItems.objects.filter()
             yearsSet = set([year.invoice_id.date.year for year in items])
+            yearsSet.add(currentYear)
             years = sorted(yearsSet, reverse=True)
             context = {'years': years, 'archiveYearsStatistic': True}
             return render(request, self.template_name, context)
@@ -803,7 +807,8 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                             | items.filter(unit__unit_full_name__icontains=q) \
                             | items.filter(information__icontains=q)
 
-                    context = {'items': items, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'paragraph': paragraph,
+                    context = {'items': items, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                               'paragraph': paragraph,
                                "query": query, 'q': q}
                     return render(request, self.template_name_general, context)
                 else:
@@ -813,7 +818,8 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                     return render(request, self.template_name_general, context)
 
             except Exception as e:
-                context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+                context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                           'method': self.method}
                 logger.error("Error: %s", e)
                 return render(request, self.template_error, context)
 
@@ -863,7 +869,8 @@ class UnitDetailsView(View):
                 for missing_paragraph in missing_paragraphs:
                     year_entry['data'].append({'paragraph': missing_paragraph, 'sum': 0})
 
-            context = {'unit': unit, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'paragraphs': paragraphs,
+            context = {'unit': unit, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                       'paragraphs': paragraphs,
                        'title': title, 'tableObjects': tableObjects, 'year': current_year}
             return render(request, self.template_name, context)
         except Exception as e:
