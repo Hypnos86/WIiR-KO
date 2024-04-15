@@ -119,29 +119,22 @@
     if ("{{slugTypeUnits}}" && "{{slugTypeUnits}}" !== "null") {
         var title = document.getElementById("title");
         title.innerText = "{{slugTypeUnits}}";
-        console.log(title.textContent);
 
         {% for item in typesList %}
             var typeListItem = {{ item | safe }};
-            console.log(typeListItem.type_full == "{{slugTypeUnits}}")
             if(typeListItem.type_full === "{{slugTypeUnits}}"){
 
                 let idTypeUnit = document.getElementById(typeListItem.index);
 
                 if(idTypeUnit){
-
                     idTypeUnit.setAttribute("active", "");
-
                     window.getComputedStyle(idTypeUnit, ':after');
-
                     idTypeUnit.addEventListener('click', function(event) {
 
                         if (event.target.getAttribute('active') === '') {
                         window.location.href = '{% url 'main:unitsSite'%}';
                     }
                 });
-
-
                 }
             }
         {% endfor %}
