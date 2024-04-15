@@ -4,7 +4,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMa
     ArchiveYearUnitCostListView, ParagraphModalView, ParagraphCostListView, UnitDetailsView, MediaInfoUnitView, \
     CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
     CreateCSVForCountyYearSum, MediaInfoCountyView, MediaInfoAllCountyView, ArchiveYearUnitMainView, CreateCSVForUnit, \
-    CreateCSVForTrezor, CreateCSVForCountyUnit, CreateGraphView, CreateBackupDB
+    CreateCSVForTrezor, CreateCSVForCountyUnit, CreateGraphView, TypeUnitsListView
 
 app_name = 'main'
 urlpatterns = [
@@ -50,6 +50,7 @@ urlpatterns = [
 
     # Jednostki
     path('units/', UnitsView.as_view(), name='unitsSite'),
+    path('units/<slug:type_units>/', TypeUnitsListView.as_view(), name='typeUnitsList'),
     # Uzytkownicy
     path('users/', UsersSiteView.as_view(), name='usersSite'),
     # Tworzenie plików CSV
@@ -62,7 +63,7 @@ urlpatterns = [
     # Tworzenie grafów
     path('graph/<int:year>/<str:par>/', CreateGraphView.as_view(), name='createGraph'),
     # Tworzenie pliku zapasowego
-    path('backUP/', CreateBackupDB.as_view(), name='backupDB'),
+    # path('backUP/', CreateBackupDB.as_view(), name='backupDB'),
     # Logowanie
     path('login/', LoginView.as_view(), name="loginApp"),
     # Lista kart obiektów - strona główna

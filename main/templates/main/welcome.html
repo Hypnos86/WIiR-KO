@@ -2,21 +2,15 @@
 {% load static %}
 {% block content %}
 <div class="container pt-5">
-    {% if user.is_authenticated and user_belongs_to_group%}
     <div class="text-center mb-4">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
     </div>
+    {% if user.is_authenticated and user_belongs_to_admin_group%}
     <div class="d-flex justify-content-around mb-3">
         <div>
             <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura">
                 <i class="bi bi-plus-circle custom-icon"></i>
             </a>
-        </div>
-        <div id="dbDiv">
-            <button class="btn-menu" data-url="{% url 'main:backupDB' %}" data-toggle="info"
-                    title="Tworzenie kopii zapasowej bazy danych" onclick="copyDB(this)">
-                <i class="bi bi-database-fill-down custom-icon"></i>
-            </button>
         </div>
         <div>
             <a class="btn-menu" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
@@ -33,62 +27,26 @@
         {% endfor %}
     </div>
 </div>
-<div id="snackbar">Zapisano</div>
-<div id="snackbarDB">Kopia zapasowa bazy danych została utworzona!</div>
+
 {% if messages %}
 <div class="container text-center mt-4">
-    <ul id="loginMessage" class="messages">
-        {% for message in messages %}
-
-        {%if message.tags == "error" %}
-        <li class="list-group-item list-group-item-danger">{{ message }}</li>
-        {%endif%}
-
-        {%if message.tags == "success" %}
-        <li class="list-group-item list-group-item-success">{{ message }}</li>
-        {%endif%}
-
-        {% endfor %}
-    </ul>
+    {% for message in messages %}
+        {% if "error" in message.tags %}
+            <span id="logOut" class="log-out">{{ message }}</span>
+            <script>
+                showLogOutSnackbar();
+            </script>
+        {% elif "success" in message.tags %}
+            <span id="logIn" class="log-in">{{ message }}</span>
+            <script>
+                showLogInSnackbar();
+            </script>
+        {% endif %}
+    {% endfor %}
 </div>
+
 {% endif %}
 <script>
-    function showHideButton() {
-        var now = new Date();
-        var currentHour = now.getHours();
-
-        // Poniżej ustaw godziny, o których ma być pokazywany/ukrywany przycisk
-        var showHour = 15; // Godzina, o której przycisk ma być pokazany
-        var hideHour = 16; // Godzina, o której przycisk ma być ukryty
-
-        var button = document.getElementById('dbDiv');
-
-        if (currentHour === showHour) {
-            button.classList.add("show"); // Pokazuje przycisk
-            } else if (currentHour === hideHour) {
-            button.classList.remove("show"); // Ukrywa przycisk
-            }
-        }
-
-    function showSnackbar() {
-        var snackbar = document.getElementById("snackbarDB");
-
-        snackbar.classList.add("show");
-        setTimeout(function(){
-            snackbar.classList.remove("show");
-            console.log('snackar');
-        }, 3000); // Snackbar znika po 3 sekundach (3000 milisekund)
-    }
-
-    function dbCopyError(){
-        console.log('error copy db')
-    }
-
-    function copyDB(button){
-        var urlDB = button.getAttribute("data-url");
-        hitEndpoint(urlDB, showSnackbar, dbCopyError);
-    }
-
     document.addEventListener("DOMContentLoaded", function() {
         showHideButton();
         setInterval(showHideButton, 60000);

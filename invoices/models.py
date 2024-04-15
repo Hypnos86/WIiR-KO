@@ -187,7 +187,7 @@ class InvoiceItems(models.Model):
     class Meta:
         ordering = ["-creation_date"]
         verbose_name = "Element faktury"
-        verbose_name_plural = "06 - Elementy faktury"
+        verbose_name_plural = "06 - Elementy faktur"
 
     related_name = "items"
 

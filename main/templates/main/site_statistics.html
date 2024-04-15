@@ -58,7 +58,7 @@
             <th align="center" valign="bottom" width="auto" scope="col">Jednostka</th>
             {% for paragraph in paragraphs%}
             <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">
-                {% if user_belongs_to_group %}
+                {% if user_belongs_to_admin_group %}
                 <a class="link-light text-decoration-none" href="{% url 'main:createGraph' year paragraph.paragraph %}">§
                     {{paragraph.paragraph}}</a>
                 {%else %}

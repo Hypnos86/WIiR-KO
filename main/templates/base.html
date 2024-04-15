@@ -55,12 +55,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
                     </li>
-                    {% if user.is_authenticated and user_belongs_to_group %}
+                    {% if user_belongs_to_admin_group or user_belongs_to_group %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:invoiceSite'%}">Faktury</a>
                     </li>
                     {%endif%}
-                    {% if user.is_authenticated and user_belongs_to_group %}
+                    {% if user_belongs_to_admin_group %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
                     </li>
@@ -105,7 +105,7 @@
         <div class="container py-1">
             <!-- Section: CTA -->
             <section class="">
-                <button class="btn btn-light btn-sm bi bi-info-square-fill" data-url="{%url 'main:showHelpModal'%}"
+                <button class="btn btn-light btn-sm bi bi-info-square-fill m-1" data-url="{%url 'main:showHelpModal'%}"
                         onclick="openHelpModal(this)"></button>
             </section>
             <!-- Section: CTA -->

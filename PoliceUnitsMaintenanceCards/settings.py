@@ -1,6 +1,12 @@
 import os
 import datetime
 
+import environ
+from environ import Env
+env = Env()
+environ.Env.read_env()
+
+
 """
 Django settings for PoliceUnitsMaintenanceCards project.
 
@@ -95,11 +101,11 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'database',
-#         'USER': 'mydatabaseuser',
-#         'PASSWORD': 'mypassword',
-#         'HOST': '127.0.0.1',
-#         'PORT': '5432',
+#         'NAME': env('NAME'),
+#         'USER': env('USER'),
+#         'PASSWORD': env('PASSWORD'),
+#         'HOST': env('HOST'),  # Host, na którym działa baza danych (może być inny)
+#         'PORT': env('PORT'),  # Port bazy danych (domyślnie 5432)
 #     }
 # }
 

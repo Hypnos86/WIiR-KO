@@ -6,7 +6,7 @@
         {%csrf_token%}
         <div>
             <div class="d-flex justify-content-around align-items-center">
-                {% if user.is_authenticated and user_belongs_to_group %}
+                {% if user.is_authenticated and user_belongs_to_admin_group %}
                 <div></div>
                 <div class=" h5 m-0">
                     <span class="text-muted">Nr. dokumentu:&nbsp;</span>
@@ -87,5 +87,10 @@
         </div>
     </form>
 </div>
+<script>
+       $(function () {
+        $('[data-toggle="info"]').tooltip()
+    })
+</script>
 {%endblock%}
 

@@ -7,7 +7,9 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font: inherit;
   vertical-align: baseline;
 }
-
+*{
+    box-sizing: border-box;
+    }
 html {
     font-family: Arial, Helvetica, sans-serif;
 
@@ -39,19 +41,11 @@ body {
     animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
-/* SnackBar DB */
-#dbDiv{
-    visibility: hidden;
-}
-
-#dbDiv.show{
-    visibility: visible;
-}
-
-#snackbarDB {
+.logIn{
     visibility: hidden;
     min-width: 250px;
-    background-color: #057570;
+    margin-left: -125px;
+    background-color: #333;
     color: #fff;
     text-align: center;
     border-radius: 2px;
@@ -59,13 +53,32 @@ body {
     position: fixed;
     z-index: 1;
     left: 50%;
-    bottom: 90px;
-    transform: translateX(-50%);
+    bottom: 30px;
 }
 
-#snackbarDB.show {
+.logIn.show{
     visibility: visible;
-    animation: fadein 0.6s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+.logOut{
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+}
+
+.logOut.show{
+   visibility: visible;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
 
 @keyframes fadein {
