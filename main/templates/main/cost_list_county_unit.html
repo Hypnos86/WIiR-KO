@@ -3,6 +3,11 @@
 {% load humanize %}
 {% block content %}
 <div class="container pt-5">
+    {% if not user.is_authenticated %}
+    <div class="text-center mb-4">
+        <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
+    </div>
+    {% endif %}
     <div class="row mb-1">
         <div class="col-3 col-sm-3 col-md-3 col-lg-2 align-self-center">
             <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn-menu">
@@ -10,7 +15,7 @@
             </a>
         </div>
         <div class="col-6 col-sm-6 col-md-6 col-lg-8 d-flex align-items-center justify-content-center p-0 text-center">
-                <h5 class="h5 m-0 font-weight-bold">Wydatki: {{county}}</h5>
+            <h5 class="h5 m-0 font-weight-bold">Wydatki: {{county}}</h5>
         </div>
         <div class="col-12 col-sm-3 col-md-3 col-lg-2 d-flex align-self-center justify-content-end p-0 py-3">
             <div class="mx-2">

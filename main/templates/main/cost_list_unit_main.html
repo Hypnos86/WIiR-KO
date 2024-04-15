@@ -3,6 +3,11 @@
 {% load humanize %}
 {% block content %}
 <div class="container pt-5">
+    {% if not user.is_authenticated %}
+    <div class="text-center mb-4">
+        <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
+    </div>
+    {% endif %}
     <div class="row mb-1">
         <div class="col-sm-3 col-md-2 col-lg-2">
             <a href="{% url 'main:unitCountyMain' countyCardSlug %}" class="btn-menu">
@@ -47,7 +52,7 @@
     {% if unit.object_name %}
     <h5 class="h5 mb-0">{{unit.object_name}}</h5><br>
     {% endif %}
-    <h6 class="h6 my-0">Administrator: <span>{{unit.manager}}</span></h6>
+    <h6 class="h6 my-0">Administrator obiektu: <span>{{unit.manager}}</span></h6>
     {% if unit.information %}
     <p>Informacje: {{unit.information}}</p>
     {% endif %}

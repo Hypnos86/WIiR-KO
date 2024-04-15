@@ -129,7 +129,7 @@ class LoginView(View):
                 user = authenticate(request, username=username, password=password)
                 if user is not None:
                     login(request, user)
-                    messages.success(request, 'Zalogowano pomyślnie')
+                    messages.success(request, 'Zalogowano')
                     return redirect('main:welcome')  # Przekierowanie po zalogowaniu
                 else:
                     # Obsługa błędnych danych logowania
