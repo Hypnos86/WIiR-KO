@@ -14,16 +14,16 @@ class AddUnitView(LoginRequiredMixin, View):
     form_class = UnitForm
 
     def get(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             form = self.form_class()
-            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'new': True}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)
 
     def post(self, request):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             form = self.form_class(request.POST or None)
             if form.is_valid():
@@ -31,7 +31,7 @@ class AddUnitView(LoginRequiredMixin, View):
                 instance.author = request.user
                 form.save()
                 return redirect('main:welcome')
-            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'new': True}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error:s%", e)
