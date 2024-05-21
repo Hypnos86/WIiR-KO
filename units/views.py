@@ -42,19 +42,19 @@ class EditUnitView(LoginRequiredMixin, View):
     form_class = UnitForm
 
     def get(self, request, slug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
             form = self.form_class(instance=unit)
-            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
 
         except Exception as e:
             logger.error("Error: %s", e)
 
     def post(self, request, slug):
-        user_belongs_to_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
@@ -64,7 +64,7 @@ class EditUnitView(LoginRequiredMixin, View):
                 instance.author = request.user
                 form.save()
                 return redirect(reverse('main:unitCountyMain', kwargs={'countySlug': unit.county_unit.slug}))
-            context = {'form': form, 'user_belongs_to_group': user_belongs_to_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)
