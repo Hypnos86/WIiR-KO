@@ -130,7 +130,7 @@ class Unit(models.Model):
     manager = models.CharField(max_length=150, verbose_name='Administrator', default='Policja')
     information = models.TextField(null=True, blank=True, verbose_name='Informacje')
     status = models.BooleanField(default=True, verbose_name='Aktualna')
-    slug = models.SlugField(max_length=50, unique=True, blank=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
     change = models.DateTimeField(auto_now=True, verbose_name='Zmiany')
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
 
