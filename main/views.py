@@ -18,6 +18,7 @@ from enum import Enum
 import logging
 import datetime
 import matplotlib.pyplot as plt
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -314,56 +315,61 @@ class UnitsView(LoginRequiredMixin, View):
         user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
             currentYear = currentDate.current_year()
-            units = Unit.objects.all().order_by('county_unit__id_order')
-            activeUnits = len(units.filter(status=True))
-            archiveUnits = len(units.filter(status=False))
+            units = Unit.objects.only(
+                'status', 'manager', 'unit_full_name', 'county_swop', 'city', 'type', 'information'
+            ).order_by('county_unit__id_order')
+            activeUnits = units.filter(status=True).count()
+            archiveUnits = units.filter(status=False).count()
             policeManager = units.filter(manager='Policja').count()
             othersManager = units.exclude(manager='Policja').count()
             typesUnit = TypeUnit.objects.all()
 
             typesList = []
-            index = 1
             for element in typesUnit:
                 if element.type_short in ('KMP', 'KPP', 'KP', 'PP'):
-                    item = {'index': element.type_short.lower(), 'type_short': element.type_short,
-                            'type_full': element.type_full}
-                    index += 1
+                    item = {
+                        'index': element.type_short.lower(),
+                        'type_short': element.type_short,
+                        'type_full': element.type_full
+                    }
                     typesList.append(item)
 
-            query = "Wyczyść"
-            search = "Szukaj"
             q = request.GET.get("q")
 
             if q:
-                units = units.filter(unit_full_name__icontains=q) \
-                        | units.filter(county_swop__name__icontains=q) \
-                        | units.filter(city__icontains=q) \
-                        | units.filter(type__type_full__icontains=q) \
-                        | units.filter(manager__icontains=q) \
-                        | units.filter(information__icontains=q)
+                units = units.filter(
+                    Q(unit_full_name__icontains=q) |
+                    Q(county_swop__name__icontains=q) |
+                    Q(city__icontains=q) |
+                    Q(type__type_full__icontains=q) |
+                    Q(manager__icontains=q) |
+                    Q(information__icontains=q)
+                )
 
-                activeUnits = len(units.filter(status=True))
-                archiveUnits = len(units.filter(status=False))
+                activeUnits = units.filter(status=True).count()
+                archiveUnits = units.filter(status=False).count()
                 policeManager = units.filter(manager='Policja').count()
                 othersManager = units.exclude(manager='Policja').count()
 
-                context = {'year': currentYear, 'units': units, "query": query, 'q': q, 'typesList': typesList,
-                           'activeUnits': activeUnits, 'archiveUnits': archiveUnits, 'policeManager': policeManager,
-                           'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
-                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
+                context = {
+                    'year': currentYear, 'units': units, 'query': "Wyczyść", 'q': q, 'typesList': typesList,
+                    'activeUnits': activeUnits, 'archiveUnits': archiveUnits, 'policeManager': policeManager,
+                    'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
+                    'user_belongs_to_admin_group': user_belongs_to_admin_group
+                }
                 return render(request, self.template_name, context)
             else:
-
-                context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
-                           'archiveUnits': archiveUnits, 'typesList': typesList, 'policeManager': policeManager,
-                           'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
-                           'user_belongs_to_admin_group': user_belongs_to_admin_group}
+                context = {
+                    'year': currentYear, 'units': units, 'search': "Szukaj", 'activeUnits': activeUnits,
+                    'archiveUnits': archiveUnits, 'typesList': typesList, 'policeManager': policeManager,
+                    'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
+                    'user_belongs_to_admin_group': user_belongs_to_admin_group
+                }
                 return render(request, self.template_name, context)
         except Exception as e:
             context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
             logger.error("Error: %s", e)
             return render(request, self.template_error, context)
-
 
 class StatisticsView(LoginRequiredMixin, View):
     template_name = 'main/site_statistics.html'

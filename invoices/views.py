@@ -25,27 +25,31 @@ class NewInvoiceView(LoginRequiredMixin, View):
     form_class = InvoiceForm
     method = 'NewInvoiceView'
 
-    def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        try:
+    def get_user_groups(self, user):
+        return user.groups.filter(name='AdminZRiWT').exists()
 
+    def handle_exception(self, request, e):
+        user_belongs_to_admin_group = self.get_user_groups(request.user)
+        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+        logger.error("Error: %s", e)
+        return render(request, self.template_error, context)
+
+    def get(self, request):
+        try:
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
             form = self.form_class()
-            doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
+            doc_types = DocumentTypes.objects.all()
             context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'doc_types': doc_types,
                        'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
     def post(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
             form = self.form_class(request.POST or None)
-            # doc_types = form.fields["doc_types"].queryset = DocumentTypes.objects.all()
             doc_types = DocumentTypes.objects.all()
-            # type_contract = form.fields["type_contract"].queryset = ContractTypes.objects.all()
             type_contract = ContractTypes.objects.all()
             if request.method == 'POST':
                 if form.is_valid():
@@ -57,9 +61,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                        'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
 
 class EditInvoiceView(LoginRequiredMixin, View):
@@ -67,38 +69,139 @@ class EditInvoiceView(LoginRequiredMixin, View):
     template_error = 'main/error.html'
     method = 'EditInvoiceView'
 
+    def get_user_groups(self, user):
+        return user.groups.filter(name='AdminZRiWT').exists()
+
+    def handle_exception(self, request, e):
+        user_belongs_to_admin_group = self.get_user_groups(request.user)
+        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+        logger.error("Error: %s", e)
+        return render(request, self.template_error, context)
+
+    def get_invoice(self, invoiceSlug):
+        return get_object_or_404(Invoice, slug=invoiceSlug)
+
     def get(self, request, invoiceSlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
+            invoice = self.get_invoice(invoiceSlug)
             form = InvoiceForm(instance=invoice)
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice, 'new': False}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice,
+                       'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
     def post(self, request, invoiceSlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
+            invoice = self.get_invoice(invoiceSlug)
             form = InvoiceForm(request.POST, instance=invoice)
 
-            if request.method == 'POST':
-                if form.is_valid():
-                    instance = form.save(commit=False)
-                    instance.author = request.user
-                    form.save()
-                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice, 'new': False}
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.author = request.user
+                form.save()
+                return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
+
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice,
+                       'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
 
+# //////////////////////////////////////////
+#
+# class AddInvoiceItemsView(LoginRequiredMixin, View):
+#     template_name = 'invoices/form_items.html'
+#     template_error = 'main/error.html'
+#     form_class = InvoiceItemsForm
+#     method = 'AddInvoiceItemsView'
+#
+#     def get_user_groups(self, user):
+#         return user.groups.filter(name='AdminZRiWT').exists()
+#
+#     def handle_exception(self, request, e):
+#         user_belongs_to_admin_group = self.get_user_groups(request.user)
+#         context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+#         logger.error("Error: %s", e)
+#         return render(request, self.template_error, context)
+#
+#     def get_invoice(self, slug):
+#         return get_object_or_404(Invoice, slug=slug)
+#
+#     def get(self, request, invoiceSlug):
+#         try:
+#             user_belongs_to_admin_group = self.get_user_groups(request.user)
+#             invoice = self.get_invoice(invoiceSlug)
+#             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
+#             units = Unit.objects.all()
+#             contractTypes = ContractTypes.objects.all()
+#
+#             measurementSystemNumberList = []
+#
+#             for unit in units:
+#                 selectedItems = unit.items.all()
+#                 data = []
+#                 for typeObject in contractTypes:
+#                     for paragraphEnum in ParagraphEnum:
+#                         media_last = selectedItems.filter(paragraph__paragraph=paragraphEnum.value).filter(
+#                             contract_types__id=typeObject.id).first()
+#                         if media_last:
+#                             data.append({
+#                                 "par": media_last.paragraph.paragraph,
+#                                 "type": media_last.contract_types.type,
+#                                 "period": f"{media_last.period_from.strftime('%d.%m.%Y')}-{media_last.period_to.strftime('%d.%m.%Y')}",
+#                                 "counterReading": str(media_last.counterReading),
+#                                 "measurement": str(media_last.measurementSystemNumber)
+#                             })
+#
+#                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
+#
+#             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
+#             counties = []
+#             for item in items:
+#                 sum_value = item.sum
+#                 exist = False
+#                 for county in counties:
+#                     if item.section.section == county['county']:
+#                         county['sum'] += sum_value
+#                         exist = True
+#
+#                 if not exist:
+#                     counties.append({'county': item.section.section, 'sum': sum_value})
+#
+#             context = {'form': self.form_class(), "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+#                        "items": items, 'invoiceSlug': invoiceSlug, 'countiesSum': counties,
+#                        'measurementData': measurementSystemNumberList}
+#             return render(request, self.template_name, context)
+#
+#         except Exception as e:
+#             return self.handle_exception(request, e)
+#
+#     def post(self, request, invoiceSlug):
+#         user_belongs_to_admin_group = self.get_user_groups(request.user)
+#         try:
+#             invoice = self.get_invoice(invoiceSlug)
+#             form = self.form_class(request.POST)
+#             items = InvoiceItems.objects.filter(invoice=invoice)
+#
+#             if form.is_valid():
+#                 instance = form.save(commit=False)
+#                 instance.invoice = invoice
+#                 instance.author = request.user
+#                 form.save()
+#
+#                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
+#
+#             context = {'form': form, 'invoice': invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+#                        'items': items, 'invoiceSlug': invoiceSlug}
+#             return render(request, self.template_name, context)
+#         except Exception as e:
+#             return self.handle_exception(request, e)
+
+# //////////////////////////////////////////
 class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
     template_error = 'main/error.html'
@@ -163,8 +266,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                              "period": f"{else_Object_last.period_from.strftime('%d.%m.%Y')}-{else_Object_last.period_to.strftime('%d.%m.%Y')}",
                              "counterReading": "Brak", "measurement": "Brak"})
 
-
-
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
             # for x in measurementSystemNumberList:
@@ -200,7 +301,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             )
             # form.fields['unit'].queryset = Unit.objects.all().values_list('type__type_full', 'city', 'object_name')
 
-            context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group, "items": items,
+            context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                       "items": items,
                        'invoiceSlug': invoiceSlug, 'countiesSum': counties,
                        'measurementData': measurementSystemNumberList}
             return render(request, self.template_name, context)
@@ -224,7 +326,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 form.save()
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
-            context = {'form': form, 'invoice': invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'items': items,
+            context = {'form': form, 'invoice': invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                       'items': items,
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
@@ -281,7 +384,8 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
                 if not exist:
                     counties.append({'county': item.section.section, 'sum': sum_value})
 
-            context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group, "items": items,
+            context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+                       "items": items,
                        'invoiceSlug': invoiceSlug, 'counties_sum': counties,
                        'measurementData': measurementSystemNumberList}
             return render(request, self.template_name, context)
