@@ -1,19 +1,17 @@
-console.log("form_item.html");
-
 function initFormItems(viewsData){
-    var daneJS = "{{ measurementData|escapejs }}";
-    var x = daneJS.replace(/'/g, '"');
-    var dataObject = JSON.parse(x);
+    let daneJS = "{{ measurementData|escapejs }}";
+    let x = daneJS.replace(/'/g, '"');
+    let dataObject = JSON.parse(x);
 }
 
     paragraph.addEventListener('change', function() {
-        var selectedElement = paragraph.options[paragraph.selectedIndex];
-        var checkPar = selectedElement.textContent.substring(0, 4);
+        let selectedElement = paragraph.options[paragraph.selectedIndex];
+        let checkPar = selectedElement.textContent.substring(0, 4);
 
-        var measurementSystemNumber = document.getElementById("divMeasurementSystemNumber");
-        var counterReading = document.getElementById("divCounterReading");
-        var consumption = document.getElementById("divConsumption");
-        var information = document.getElementById("dataInfo");
+        let measurementSystemNumber = document.getElementById("divMeasurementSystemNumber");
+        let counterReading = document.getElementById("divCounterReading");
+        let consumption = document.getElementById("divConsumption");
+        let information = document.getElementById("dataInfo");
 
         if (checkPar === "4260") {
 
@@ -24,7 +22,7 @@ function initFormItems(viewsData){
 
         } else if (checkPar === "4210") {
 
-            var labelConsumption = document.querySelector('label[for="id_consumption"]');
+            let labelConsumption = document.querySelector('label[for="id_consumption"]');
 
             if (labelConsumption){
 
@@ -46,23 +44,23 @@ function initFormItems(viewsData){
     });
 
 
-    var unit = document.getElementById("id_unit");
-    var unitSelected = unit.addEventListener('change', function() {
-        var selectedUnit = unit.value;
-        var selectedUnitext = unit.options[unit.selectedIndex].text;
+    let unit = document.getElementById("id_unit");
+    let unitSelected = unit.addEventListener('change', function() {
+        let selectedUnit = unit.value;
+        let selectedUnitext = unit.options[unit.selectedIndex].text;
         console.log("Wybrany unit: " + selectedUnitext);
     });
 
-    var type = document.getElementById("id_contract_types");
-    var typeSelect = type.addEventListener('change', function() {
-        var typeText = type.options[type.selectedIndex].text;
+    let type = document.getElementById("id_contract_types");
+    let typeSelect = type.addEventListener('change', function() {
+        let typeText = type.options[type.selectedIndex].text;
         console.log("Wybrany type: " + typeText);
     });
 
-    var paragraphSelect = paragraph.addEventListener('change', function() {
-        var selectedElement = paragraph.options[paragraph.selectedIndex];
-        var parText = selectedElement.text;
-        var checkParagraph = parText.substring(0, 7);
+    let paragraphSelect = paragraph.addEventListener('change', function() {
+        let selectedElement = paragraph.options[paragraph.selectedIndex];
+        let parText = selectedElement.text;
+        let checkParagraph = parText.substring(0, 7);
         console.log("Wybrany paragraph: " + checkParagraph);
     });
 
@@ -70,8 +68,8 @@ function initFormItems(viewsData){
         $(dataObject).each(function(i, element) {
             if( element.unit_id == unit.value) {
 
-                var elementData = element.data;
-                var information = document.getElementById("dataInfo");
+                let elementData = element.data;
+                let information = document.getElementById("dataInfo");
 
                 for (let y = 0; y < elementData.length; y++ ){
                     console.log("elementData.length: "+elementData.length);
@@ -95,7 +93,7 @@ function initFormItems(viewsData){
                         console.log(paragraph.options[paragraph.selectedIndex].text.slice(0,7));
                         console.log(elementData[y].par === paragraph.options[paragraph.selectedIndex].text.slice(0,7));
 
-                        var measureData = document.getElementById("id_measurementSystemNumber");
+                        let measureData = document.getElementById("id_measurementSystemNumber");
                         console.log("measureData");
                         console.log(measureData);
 
@@ -111,7 +109,7 @@ function initFormItems(viewsData){
 
                     console.log("wchodze do else");
 
-                    var measureData = document.getElementById("id_measurementSystemNumber");
+                    let measureData = document.getElementById("id_measurementSystemNumber");
                     measureData.value = "";
                     information.setAttribute('hidden', 'true');
 
@@ -125,6 +123,7 @@ function initFormItems(viewsData){
     $('#id_contract_types').on('change', function(){
         checkData();
     });
+
     $('#id_paragraph').on('change', function(){
         checkData();
     });
