@@ -79,7 +79,8 @@ class EditInvoiceView(LoginRequiredMixin, View):
         return render(request, self.template_error, context)
 
     def get_invoice(self, invoiceSlug):
-        return get_object_or_404(Invoice, slug=invoiceSlug)
+        invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
+        return get_object_or_404(invoice, slug=invoiceSlug)
 
     def get(self, request, invoiceSlug):
         try:
@@ -110,110 +111,23 @@ class EditInvoiceView(LoginRequiredMixin, View):
         except Exception as e:
             return self.handle_exception(request, e)
 
-
-# //////////////////////////////////////////
-#
-# class AddInvoiceItemsView(LoginRequiredMixin, View):
-#     template_name = 'invoices/form_items.html'
-#     template_error = 'main/error.html'
-#     form_class = InvoiceItemsForm
-#     method = 'AddInvoiceItemsView'
-#
-#     def get_user_groups(self, user):
-#         return user.groups.filter(name='AdminZRiWT').exists()
-#
-#     def handle_exception(self, request, e):
-#         user_belongs_to_admin_group = self.get_user_groups(request.user)
-#         context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-#         logger.error("Error: %s", e)
-#         return render(request, self.template_error, context)
-#
-#     def get_invoice(self, slug):
-#         return get_object_or_404(Invoice, slug=slug)
-#
-#     def get(self, request, invoiceSlug):
-#         try:
-#             user_belongs_to_admin_group = self.get_user_groups(request.user)
-#             invoice = self.get_invoice(invoiceSlug)
-#             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
-#             units = Unit.objects.all()
-#             contractTypes = ContractTypes.objects.all()
-#
-#             measurementSystemNumberList = []
-#
-#             for unit in units:
-#                 selectedItems = unit.items.all()
-#                 data = []
-#                 for typeObject in contractTypes:
-#                     for paragraphEnum in ParagraphEnum:
-#                         media_last = selectedItems.filter(paragraph__paragraph=paragraphEnum.value).filter(
-#                             contract_types__id=typeObject.id).first()
-#                         if media_last:
-#                             data.append({
-#                                 "par": media_last.paragraph.paragraph,
-#                                 "type": media_last.contract_types.type,
-#                                 "period": f"{media_last.period_from.strftime('%d.%m.%Y')}-{media_last.period_to.strftime('%d.%m.%Y')}",
-#                                 "counterReading": str(media_last.counterReading),
-#                                 "measurement": str(media_last.measurementSystemNumber)
-#                             })
-#
-#                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
-#
-#             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
-#             counties = []
-#             for item in items:
-#                 sum_value = item.sum
-#                 exist = False
-#                 for county in counties:
-#                     if item.section.section == county['county']:
-#                         county['sum'] += sum_value
-#                         exist = True
-#
-#                 if not exist:
-#                     counties.append({'county': item.section.section, 'sum': sum_value})
-#
-#             context = {'form': self.form_class(), "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
-#                        "items": items, 'invoiceSlug': invoiceSlug, 'countiesSum': counties,
-#                        'measurementData': measurementSystemNumberList}
-#             return render(request, self.template_name, context)
-#
-#         except Exception as e:
-#             return self.handle_exception(request, e)
-#
-#     def post(self, request, invoiceSlug):
-#         user_belongs_to_admin_group = self.get_user_groups(request.user)
-#         try:
-#             invoice = self.get_invoice(invoiceSlug)
-#             form = self.form_class(request.POST)
-#             items = InvoiceItems.objects.filter(invoice=invoice)
-#
-#             if form.is_valid():
-#                 instance = form.save(commit=False)
-#                 instance.invoice = invoice
-#                 instance.author = request.user
-#                 form.save()
-#
-#                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
-#
-#             context = {'form': form, 'invoice': invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
-#                        'items': items, 'invoiceSlug': invoiceSlug}
-#             return render(request, self.template_name, context)
-#         except Exception as e:
-#             return self.handle_exception(request, e)
-
-# //////////////////////////////////////////
 class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
     template_error = 'main/error.html'
     form_class = InvoiceItemsForm
     method = 'AddInvoiceItemsView'
 
+    def get_invoice(self, invoiceSlug):
+        invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
+        return get_object_or_404(invoice, slug=invoiceSlug)
+
+
     def get(self, request, invoiceSlug):
         user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
-            invoice = get_object_or_404(Invoice, slug=invoiceSlug)
+            invoice = self.get_invoice(invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
-            units = Unit.objects.all()
+            units = Unit.objects.only("unit_full_name")
             contractTypes = ContractTypes.objects.all()
 
             measurementSystemNumberList = []
@@ -268,8 +182,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
                 measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
-            # for x in measurementSystemNumberList:
-            #     print(x, end="\n")
             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
             counties = []
             for item in items:
@@ -279,7 +191,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                     if item.section.section == county['county']:
                         county['sum'] += sum_value
                         exist = True
-
                 if not exist:
                     counties.append({'county': item.section.section, 'sum': sum_value})
 
@@ -299,8 +210,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
-            # form.fields['unit'].queryset = Unit.objects.all().values_list('type__type_full', 'city', 'object_name')
-
+            
             context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        "items": items,
                        'invoiceSlug': invoiceSlug, 'countiesSum': counties,

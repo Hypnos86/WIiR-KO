@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <div class="">
+    <div>
         <form method="POST">
             {%csrf_token%}
             <div class="row mb-3 d-flex justify-content-center">
@@ -80,10 +80,17 @@
                     <span>{{form.information|bootstrap}}</span>
                 </div>
             </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-main d-inline" onclick="snackbarFunction()">
-                    <span class="bi bi-arrow-return-right"> Dalej</span>
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-6 mb-3 d-flex justify-content-between">
+                <button type="submit" class="btn btn-main d-inline">
+                    <span class="bi bi-arrow-return-right"> Zapisz</span>
                 </button>
+                {% if not new %}
+                <button type="button" onclick="location.href='{% url 'invoices:addItems' invoice.slug %}'" class="btn btn-main d-inline">
+                    <span class="bi bi-card-list"> Elementy</span>
+                </button>
+                {% endif %}
+            </div>
             </div>
         </form>
     </div>
