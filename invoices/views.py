@@ -81,7 +81,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
     def get_invoice(self, invoiceSlug):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
         return get_object_or_404(invoice, slug=invoiceSlug)
-    
+
     def get(self, request, invoiceSlug):
         try:
             user_belongs_to_admin_group = self.get_user_groups(request.user)
@@ -111,6 +111,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
         except Exception as e:
             return self.handle_exception(request, e)
 
+
 class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
     template_error = 'main/error.html'
@@ -119,18 +120,17 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
     def get_user_groups(self, user):
         return user.groups.filter(name='AdminZRiWT').exists()
-    
+
     def get_invoice(self, invoiceSlug):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
         return get_object_or_404(invoice, slug=invoiceSlug)
-
 
     def handle_exception(self, request, e):
         user_belongs_to_admin_group = self.get_user_groups(request.user)
         context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
         logger.error("Error: %s", e)
         return render(request, self.template_error, context)
-    
+
     def get(self, request, invoiceSlug):
         try:
             user_belongs_to_admin_group = self.get_user_groups(request.user)
@@ -221,7 +221,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(
                 initial={'contract_types': ContractTypes.objects.first()}
             )
-            
+
             context = {'form': form, "invoice": invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        "items": items,
                        'invoiceSlug': invoiceSlug, 'countiesSum': counties,

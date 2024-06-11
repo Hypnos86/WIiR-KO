@@ -1,4 +1,6 @@
-{% load static %} {% load humanize %} {% block content %}
+{% load static %}
+{% load humanize %}
+{% block content %}
 <div>
   <form class="p-4" method="GET" action="{% url 'main:infoInvoice' id %}">
     {% csrf_token %}
@@ -14,9 +16,9 @@
           class="btn-menu"
           href="{% url 'invoices:editInvoice' invoice.slug %}"
           data-toggle="info"
-          title="Podgląd"
-          ><i class="bi bi-file-earmark-text custom-icon"></i
-        ></a>
+          title="Podgląd">
+          <i class="bi bi-file-earmark-text custom-icon"></i>
+        </a>
         {% else %}
         <div class="h5 m-0">
           <span class="text-muted">Nr. dokumentu:&nbsp;</span>
@@ -61,16 +63,15 @@
       {% if invoice.information %}
       <div class="my-2">
         <p>
-          <span class="text-muted">Informacje:&nbsp;</span>{{
-          invoice.information }}
+          <span class="text-muted">Informacje:&nbsp;</span>
+          {{ invoice.information }}
         </p>
       </div>
       {% endif %}
     </div>
     <div class="mt-3">
       <ul class="list-group">
-        {% for item in items %} {% if user.is_authenticated or
-        item.section.section == accessSection %}
+        {% for item in items %} {% if user.is_authenticated or item.section.section == accessSection %}
         <li
           class="list-group-item d-flex justify-content-between"
           data-toggle="info"
@@ -78,31 +79,25 @@
         >
           {% if user.is_authenticated %}
           <span>
-            {{ item.unit.type.type_short }} {{ item.unit.city }}, {{
-            item.unit.address }} ({{ item.unit.county_unit }})
+            {{ item.unit.type.type_short }} {{ item.unit.city }},
+            {{item.unit.address }} ({{ item.unit.county_unit }})
             <a
               class="w-50 color-sea"
               href="{% url 'main:unit_details' item.unit.county_unit.slug item.unit.slug year %}"
               data-toggle="info"
-              title="Przenieś"
-              ><i class="bi bi-folder-symlink custom-icon"></i
-            ></a>
+              title="Przenieś"><i class="bi bi-folder-symlink custom-icon"></i></a>
           </span>
           {% else %}
-          <span class="w-50"
-            >{{ item.unit.type.type_short }} {{ item.unit.city }}, {{
-            item.unit.address }} ({{ item.unit.county_unit }})</span
-          >
+          <span class="w-50">
+            {{ item.unit.type.type_short }} {{ item.unit.city }}, {{item.unit.address }} ({{ item.unit.county_unit }})</span>
           {% endif %}
           <div class="d-flex justify-content-between w-50">
-            <span class=""
-              >| {{ item.section.section }} - {{ item.group }} - §{{
-              item.paragraph.paragraph }} |</span
-            >
+            <span class="">| {{ item.section.section }} - {{ item.group }} - §{{item.paragraph.paragraph }} |</span>
             <span class="bold">{{ item.sum|intcomma }} zł</span>
           </div>
         </li>
-        {% endif %} {% endfor %}
+        {% endif %}
+        {% endfor %}
       </ul>
     </div>
   </form>

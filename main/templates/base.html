@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="pl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <!-- Bootstrap -->
-    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap.rtl.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap.rtl.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-grid.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-grid.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-grid.rtl.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-grid.rtl.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.rtl.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.rtl.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.rtl.css' %}" rel="stylesheet" />
-    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.rtl.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'main/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap.rtl.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap.rtl.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-grid.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-grid.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-grid.rtl.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-grid.rtl.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.rtl.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-reboot.rtl.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.rtl.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/bootstrap/css/bootstrap-utilities.rtl.min.css' %}" rel="stylesheet"/>
     <!-- Select2 -->
-    <link href="{% static 'main/select2/css/select2.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'main/select2/css/select2.min.css' %}" rel="stylesheet"/>
     <!-- Frontend styles -->
-    <link href="{% static 'main/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'main/style.css' %}" rel="stylesheet"/>
     <!-- Icon source -->
-    <link href="{% static 'main/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+    <link href="{% static 'main/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet"/>
     <!-- logo -->
-    <link rel="shortcut icon" href="{% static 'main/media/logo.ico' %}" type="x-icon" />
+    <link rel="shortcut icon" href="{% static 'main/media/logo.ico' %}" type="x-icon"/>
     <!-- Bootstrap JS -->
     <script src="{% static 'main/bootstrap/js/bootstrap.bundle.js' %}"></script>
     <!-- jquery -->
@@ -36,96 +37,101 @@
     <script src="{% static 'main/bootstrap/jquery/select2.min.js' %}"></script>
     <script src="{% static 'main/app.js' %}"></script>
     <title>Karty Utrzymania Obiektów Wielkopolskiej Policji</title>
-  </head>
-  <body>
-    <section>
-      {% if user.is_authenticated %}
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-index-nav">
-          <div class="container">
+</head>
+<body>
+<section>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-fixed z-index-nav">
+        <div class="container">
             <a class="navbar-brand bi bi-house-fill" href="/">
-              {% if user.first_name and user.last_name %}
+                {% if user.first_name and user.last_name %}
                 {{ user.first_name }}
                 {{ user.last_name.0 }}.
-              {% else %}
+                {% else %}
                 {{ user.username }}
-              {% endif %}
+                {% endif %}
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span
+                    class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
-                </li>
-                {% if user_belongs_to_admin_group or user_belongs_to_group %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:invoiceSite' %}">Faktury</a>
-                  </li>
-                {% endif %}
-                {% if user_belongs_to_admin_group %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
-                  </li>
-                {% endif %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
-                </li>
-                {% if user.is_superuser %}
-                  <li class="nav-item">
-                    <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
-                  </li>
-                {% endif %}
-                <li>
-                  <a href="{% url 'logout' %}" type="button" class="nav-link">Wyloguj</a>
-                </li>
-              </ul>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
+                    </li>
+                    {% if user_belongs_to_admin_group or user_belongs_to_group %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:invoiceSite' %}">Faktury</a>
+                    </li>
+                    {% endif %}
+                    {% if user_belongs_to_admin_group %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
+                    </li>
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{% url 'logout' %}" type="button" class="nav-link">Wyloguj</a>
+                    </li>
+                </ul>
             </div>
-          </div>
-        </nav>
-      {% else %}
-        <div class="d-flex flex-row-reverse">
-          <div class="p-2">
-            <button type="button" class="btn btn-outline-dark btn-sm" data-url="{% url 'main:loginApp' %}" onclick="openLoginModal(this)">Zaloguj</button>
-          </div>
         </div>
-      {% endif %}
-    </section>
-    <main class="footer body mb-footer mt-5">
-      {% block content %}
+    </nav>
+    {% else %}
+    <div class="d-flex flex-row-reverse">
+        <div class="p-2">
+            <button type="button" class="btn btn-outline-dark btn-sm" data-url="{% url 'main:loginApp' %}"
+                    onclick="openLoginModal(this)">Zaloguj
+            </button>
+        </div>
+    </div>
+    {% endif %}
+</section>
+<main class="footer body mb-footer mt-5">
+    {% block content %}
 
-      {% endblock %}
-    </main>
-    <section class="fixed-bottom">
-      <!-- Footer -->
-      <footer class="text-center text-white" style="background-color: #0a4275;">
+    {% endblock %}
+</main>
+<section class="fixed-bottom">
+    <!-- Footer -->
+    <footer class="text-center text-white" style="background-color: #0a4275;">
         <!-- Grid container -->
         <div class="container py-1">
-          <!-- Section: CTA -->
-          <section class="">
-            <button class="btn btn-light btn-sm bi bi-info-square-fill m-1" data-url="{% url 'main:showHelpModal' %}" onclick="openHelpModal(this)"></button>
-          </section>
-          <!-- Section: CTA -->
+            <!-- Section: CTA -->
+            <section class="">
+                <button class="btn btn-light btn-sm bi bi-info-square-fill m-1"
+                        data-url="{% url 'main:showHelpModal' %}" onclick="openHelpModal(this)"></button>
+            </section>
+            <!-- Section: CTA -->
         </div>
         <!-- Grid container -->
         <!-- Copyright -->
         <div class="text-center p-1" style="background-color: rgba(0, 0, 0, 0.2);">
-          <span>© 2023 Wydział inwestycji i Remontów KWP w Poznaniu</span>
+            <span>© 2023 Wydział inwestycji i Remontów KWP w Poznaniu</span>
         </div>
         <!-- Copyright -->
-      </footer>
-      <!-- Footer -->
-    </section>
-    <!-- Help Modal -->
-    <div class="modal fade" id="helpModal">
-      <div class="modal-dialog" role="document">
+    </footer>
+    <!-- Footer -->
+</section>
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content"></div>
-      </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="login">
-      <div class="modal-dialog" role="document">
+</div>
+<!-- Modal -->
+<div class="modal fade" id="login">
+    <div class="modal-dialog" role="document">
         <div class="modal-content"></div>
-      </div>
     </div>
-    <div id="snackbar">Zapisano</div>
-  </body>
+</div>
+<div id="snackbar">Zapisano</div>
+</body>
 </html>

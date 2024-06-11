@@ -83,9 +83,13 @@
           </div>
           <div class="row d-flex justify-content-center">
             <div class="col-md-12 col-lg-6 mb-3 d-flex justify-content-between">
-              <button type="submit" class="btn btn-main d-inline"><span class="bi bi-arrow-return-right">Zapisz</span></button>
+              <button type="submit" class="btn btn-main d-inline">
+                <span class="bi bi-arrow-return-right"> Zapisz</span>
+              </button>
               {% if not new %}
-                <button type="button" onclick="location.href='{% url 'invoices:addItems' invoice.slug %}'" class="btn btn-main d-inline"><span class="bi bi-card-list">Elementy</span></button>
+                <button type="button" onclick="location.href='{% url 'invoices:addItems' invoice.slug %}'" class="btn btn-main d-inline">
+                  <span class="bi bi-card-list"> Elementy</span>
+                </button>
               {% endif %}
             </div>
           </div>
