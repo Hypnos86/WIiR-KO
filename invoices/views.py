@@ -81,7 +81,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
     def get_invoice(self, invoiceSlug):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
         return get_object_or_404(invoice, slug=invoiceSlug)
-
+    
     def get(self, request, invoiceSlug):
         try:
             user_belongs_to_admin_group = self.get_user_groups(request.user)
@@ -117,25 +117,36 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
     form_class = InvoiceItemsForm
     method = 'AddInvoiceItemsView'
 
+    def get_user_groups(self, user):
+        return user.groups.filter(name='AdminZRiWT').exists()
+    
     def get_invoice(self, invoiceSlug):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
         return get_object_or_404(invoice, slug=invoiceSlug)
 
 
+    def handle_exception(self, request, e):
+        user_belongs_to_admin_group = self.get_user_groups(request.user)
+        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+        logger.error("Error: %s", e)
+        return render(request, self.template_error, context)
+    
     def get(self, request, invoiceSlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
             invoice = self.get_invoice(invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
             units = Unit.objects.only("unit_full_name")
             contractTypes = ContractTypes.objects.all()
 
             measurementSystemNumberList = []
-
+            print(items)
             for unit in units:
                 selectedItesms = unit.items.all()
+                # print(selectedItesms)
                 data = []
                 for typeObject in contractTypes:
+                    print(typeObject)
 
                     media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(
                         contract_types__id=typeObject.id).first()
@@ -223,8 +234,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_error, context)
 
     def post(self, request, invoiceSlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
+            user_belongs_to_admin_group = self.get_user_groups(request.user)
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = self.form_class(request.POST)
             items = InvoiceItems.objects.filter(invoice_id=invoice)
@@ -241,9 +252,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error('Error: %s', e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
 
 class EditInvoiceItemsView(LoginRequiredMixin, View):
