@@ -1,126 +1,161 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load humanize %}
-{% block content %}
-{% if user.is_authenticated%}
+{% extends 'base.html' %} {% load static %} {% load humanize %} {% block content
+%} {% if user.is_authenticated%}
 <div class="container pt-5">
-    <div class="row mb-2">
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
-            <a href="{% url 'main:welcome' %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
-        </div>
-        <div class="col-sm-10 col-md-10 col-lg-8">
-            <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">Statystyki</h5>
-            </div>
-        </div>
-        <div class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end">
-            <div class="mx-2">
-                <button class="btn-menu" data-url="{% url 'main:archiveYearsStatistic'%}"
-                   onclick="openArchiveModal(this)"
-                   data-toggle="info" title="Archiwum wydatku">
-                    <i class="bi bi-archive-fill custom-icon"></i>
-                </button>
-            </div>
-            <div class="mx-2">
-                <button class="btn-menu" data-url="{% url 'main:mediaInfoAllCountyModal' year %}" data-toggle="info"
-                   title="Media" onclick="openMediaModal(this)">
-                    <span class="bi bi-calculator-fill custom-icon"></span>
-                </button>
-            </div>
-            <div class="mx-2">
-                {% if statisticsSite %}
-                <a class="btn-menu" href="{% url 'main:csvForCountySumCurrentYear' %}" data-toggle="info"
-                   title="Zapisz">
-                    <span class="bi bi-download custom-icon"></span>
-                </a>
-                {% endif %}
-                {% if statisticYear %}
-                <a class="btn-menu" href="{% url 'main:csvForCountyYearSum' year %}" data-toggle="info" title="Zapisz">
-                    <span class="bi bi-download custom-icon"></span>
-                </a>
-                {% endif %}
-            </div>
-        </div>
+  <div class="row mb-2">
+    <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+      <a href="{% url 'main:welcome' %}" class="btn-menu">
+        <span class="bi bi-arrow-90deg-left custom-icon"></span>
+      </a>
     </div>
-    <div class="text-center text-uppercase my-2 ">
-        <h6>Wydatki poniesione w <span class="info-color">{{year}}</span> roku</h6>
+    <div class="col-sm-10 col-md-10 col-lg-8">
+      <div class="text-center">
+        <h5 class="h5 m-0 font-weight-bold text-uppercase">Statystyki</h5>
+      </div>
     </div>
+    <div
+      class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end"
+    >
+      <div class="mx-2">
+        <button
+          class="btn-menu"
+          data-url="{% url 'main:archiveYearsStatistic'%}"
+          onclick="openArchiveModal(this)"
+          data-toggle="info"
+          title="Archiwum wydatku"
+        >
+          <i class="bi bi-archive-fill custom-icon"></i>
+        </button>
+      </div>
+      <div class="mx-2">
+        <button
+          class="btn-menu"
+          data-url="{% url 'main:mediaInfoAllCountyModal' year %}"
+          data-toggle="info"
+          title="Media"
+          onclick="openMediaModal(this)"
+        >
+          <span class="bi bi-calculator-fill custom-icon"></span>
+        </button>
+      </div>
+      <div class="mx-2">
+        {% if statisticsSite %}
+        <a
+          class="btn-menu"
+          href="{% url 'main:csvForCountySumCurrentYear' %}"
+          data-toggle="info"
+          title="Zapisz"
+        >
+          <span class="bi bi-download custom-icon"></span>
+        </a>
+        {% endif %} {% if statisticYear %}
+        <a
+          class="btn-menu"
+          href="{% url 'main:csvForCountyYearSum' year %}"
+          data-toggle="info"
+          title="Zapisz"
+        >
+          <span class="bi bi-download custom-icon"></span>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="text-center text-uppercase my-2">
+    <h6>Wydatki poniesione w <span class="info-color">{{year}}</span> roku</h6>
+  </div>
 </div>
 <div class="mx-3">
-    <table class="table table-striped table-hover table-caption mb-5 font-size">
-        <caption class="title-caption py-3">
-            <h6 class="bold">{{title}}</h6>
-        </caption>
-        <thead class="table-dark table-header">
-        <tr class="text-center">
-            <th align="center" valign="bottom" width="auto" scope="col">Jednostka</th>
-            {% for paragraph in paragraphs%}
-            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">
-                {% if user_belongs_to_admin_group %}
-                <a class="link-light text-decoration-none" href="{% url 'main:createGraph' year paragraph.paragraph %}">§
-                    {{paragraph.paragraph}}</a>
-                {%else %}
-                § {{paragraph.paragraph}}
-                {% endif %}
-            </th>
-            {% endfor %}
-        </tr>
-        </thead>
-        <tbody>
-        {% for item in objectDatas %}
-        <tr>
-            <td align="left" valign="middle" width="auto" scope="col">
-                <span>{{ item.county }}</span>
-            </td>
-            {% for paragraph in item.data %}
-            <td align="center" valign="bottom" width="auto" scope="col">{{paragraph.sum|intcomma}} zł
-                <!--                <br> (test-{{paragraph.paragraph}})-->
-            </td>
-            {% endfor %}
-
-        </tr>
+  <table class="table table-striped table-hover table-caption mb-5 font-size">
+    <caption class="title-caption py-3">
+      <h6 class="bold">{{title}}</h6>
+    </caption>
+    <thead class="table-dark table-header">
+      <tr class="text-center">
+        <th align="center" valign="bottom" width="auto" scope="col">
+          Jednostka
+        </th>
+        {% for paragraph in paragraphs%}
+        <th
+          align="center"
+          valign="middle"
+          width="auto"
+          scope="col"
+          data-toggle="info"
+          title="{{paragraph.name}}"
+        >
+          {% if user_belongs_to_admin_group %}
+          <a
+            class="link-light text-decoration-none"
+            href="{% url 'main:createGraph' year paragraph.paragraph %}"
+            >§ {{paragraph.paragraph}}</a
+          >
+          {%else %} § {{paragraph.paragraph}} {% endif %}
+        </th>
         {% endfor %}
-        </tbody>
-        <tfoot>
-        <tr class="footer-sum">
-            <td align="right" valign="middle" scope="col" width="auto"
-                class="text-uppercase table-vertical">Razem
-            </td>
-            {% for par, sum in paragraphSums.items %}
-            <td class="table-vertical" align="center" valign="middle" width="200" scope="col">
-                {{sum|intcomma}} zł
-            </td>
-            {% endfor %}
-        </tr>
-        </tfoot>
-    </table>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in objectDatas %}
+      <tr>
+        <td align="left" valign="middle" width="auto" scope="col">
+          <span>{{ item.county }}</span>
+        </td>
+        {% for paragraph in item.data %}
+        <td align="center" valign="bottom" width="auto" scope="col">
+          {{paragraph.sum|intcomma}} zł
+          <!--                <br> (test-{{paragraph.paragraph}})-->
+        </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr class="footer-sum">
+        <td
+          align="right"
+          valign="middle"
+          scope="col"
+          width="auto"
+          class="text-uppercase table-vertical"
+        >
+          Razem
+        </td>
+        {% for par, sum in paragraphSums.items %}
+        <td
+          class="table-vertical"
+          align="center"
+          valign="middle"
+          width="200"
+          scope="col"
+        >
+          {{sum|intcomma}} zł
+        </td>
+        {% endfor %}
+      </tr>
+    </tfoot>
+  </table>
 </div>
 <div class="modal fade" id="archiveModal">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
 </div>
 <div class="modal fade" id="mediaModal">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-        </div>
-    </div>
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content"></div>
+  </div>
 </div>
 <script type="text/javascript">
-    function openArchiveModal(button){
-        var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
-    }
+  function openArchiveModal(button) {
+    var url = $(button).data("url");
+    $("#archiveModal .modal-content").load(url);
+    $("#archiveModal").modal("show");
+  }
 
-    function openMediaModal(button){
-        var url = $(button).data("url");
-        $("#mediaModal .modal-content").load(url);
-        $("#mediaModal").modal("show");
-    }
+  function openMediaModal(button) {
+    var url = $(button).data("url");
+    $("#mediaModal .modal-content").load(url);
+    $("#mediaModal").modal("show");
+  }
 </script>
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}

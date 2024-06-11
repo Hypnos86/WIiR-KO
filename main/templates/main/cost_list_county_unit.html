@@ -2,116 +2,105 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-<div class="container pt-5">
+  <div class="container pt-5">
     {% if not user.is_authenticated %}
-    <div class="text-center mb-4">
+      <div class="text-center mb-4">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
-    </div>
+      </div>
     {% endif %}
     <div class="row mb-1">
-        <div class="col-3 col-sm-3 col-md-3 col-lg-2 align-self-center">
-            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
+      <div class="col-3 col-sm-3 col-md-3 col-lg-2 align-self-center">
+        <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn-menu"><span class="bi bi-arrow-90deg-left custom-icon"></span></a>
+      </div>
+      <div class="col-6 col-sm-6 col-md-6 col-lg-8 d-flex align-items-center justify-content-center p-0 text-center">
+        <h5 class="h5 m-0 font-weight-bold">Wydatki: {{ county }}</h5>
+      </div>
+      <div class="col-12 col-sm-3 col-md-3 col-lg-2 d-flex align-self-center justify-content-end p-0 py-3">
+        <div class="mx-2">
+          <a class="btn-menu" data-url="{% url 'main:archiveYearsUnitCost' slugCounty %}" onclick="openArchiveModal(this)" data-toggle="info" title="Archiwum"><i class="bi bi-archive-fill custom-icon"></i></a>
         </div>
-        <div class="col-6 col-sm-6 col-md-6 col-lg-8 d-flex align-items-center justify-content-center p-0 text-center">
-            <h5 class="h5 m-0 font-weight-bold">Wydatki: {{county}}</h5>
+        <div class="mx-2">
+          <a class="btn-menu" data-url="{% url 'main:mediaInfoCountyModal' slugCounty year %}" onclick="openInfoCountyModal(this)" data-toggle="info" title="Media"><span class="bi bi-calculator-fill custom-icon"></span></a>
         </div>
-        <div class="col-12 col-sm-3 col-md-3 col-lg-2 d-flex align-self-center justify-content-end p-0 py-3">
-            <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:archiveYearsUnitCost' slugCounty %}"
-                   onclick="openArchiveModal(this)" data-toggle="info" title="Archiwum">
-                    <i class="bi bi-archive-fill custom-icon"></i>
-                </a>
-            </div>
-            <div class="mx-2">
-                <a class="btn-menu" data-url="{% url 'main:mediaInfoCountyModal' slugCounty year%}"
-                   onclick="openInfoCountyModal(this)" data-toggle="info" title="Media">
-                    <span class="bi bi-calculator-fill custom-icon"></span>
-                </a>
-            </div>
-            <div class="mx-2">
-                <a class="btn-menu" href="{% url 'main:csvForCountyUnit' county.slug year %}" data-toggle="info"
-                   title="Zapisz">
-                    <span class="bi bi-download custom-icon"></span>
-                </a>
-            </div>
+        <div class="mx-2">
+          <a class="btn-menu" href="{% url 'main:csvForCountyUnit' county.slug year %}" data-toggle="info" title="Zapisz"><span class="bi bi-download custom-icon"></span></a>
         </div>
+      </div>
     </div>
-</div>
-<div class="text-center text-uppercase my-2 ">Zestawienie dla <span class="info-color">{{year}}</span> roku</div>
-<div class="m-3">
-    {%if items %}
-    <table class="table table-striped table-hover table-caption mb-5">
+  </div>
+  <div class="text-center text-uppercase my-2">
+    Zestawienie dla <span class="info-color">{{ year }}</span> roku
+  </div>
+  <div class="m-3">
+    {% if items %}
+      <table class="table table-striped table-hover table-caption mb-5">
         <thead class="table-dark">
-        <tr class="text-center">
+          <tr class="text-center">
             <th align="center" valign="middle" width="15%" scope="col">Jednostka</th>
-            {% for paragraph in paragraphs%}
-            <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{paragraph.name}}">§
-                {{paragraph.paragraph}}
-            </th>
-            {%endfor%}
-        </tr>
+            {% for paragraph in paragraphs %}
+              <th align="center" valign="middle" width="auto" scope="col" data-toggle="info" title="{{ paragraph.name }}">§
+                {{ paragraph.paragraph }}</th>
+            {% endfor %}
+          </tr>
         </thead>
         <tbody>
-        {% for item in items %}
-        <tr>
-            <td class="table-vertical" align="left" valign="middle" scope="col">
-                <div class="d-flex justify-content-between align-items-center" data-toggle="info"
-                     title="{{item.address}}">
-                    <span>{{item.unit}} {% if item.objectName %} - {{item.objectName}} - {% endif %}</span>
-                    {% if item.status %}
+          {% for item in items %}
+            <tr>
+              <td class="table-vertical" align="left" valign="middle" scope="col">
+                <div class="d-flex justify-content-between align-items-center" data-toggle="info" title="{{ item.address }}">
+                  <span>
+                    {{ item.unit }} {% if item.objectName %}
+                      - {{ item.objectName }} -
+                    {% endif %}
+                  </span>
+                  {% if item.status %}
                     <i class="bi bi-check-circle-fill success" data-toggle="info" title="Aktualny"></i>
-                    {%else%}
+                  {% else %}
                     <i class="bi bi-dash-circle text-danger" data-toggle="info" title="Zdany"></i>
-                    {%endif%}
+                  {% endif %}
                 </div>
-            </td>
-            {% for object in item.objects %}
-            <td class="table-vertical" align="center" valign="middle" scope="col">
-                {{object.sum|intcomma}} zł <br>
-            </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
+              </td>
+              {% for object in item.objects %}
+                <td class="table-vertical" align="center" valign="middle" scope="col">
+                  {{ object.sum|intcomma }} zł <br />
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
         </tbody>
         <tfoot>
-        <tr class="footer-sum">
+          <tr class="footer-sum">
             <td align="right" valign="middle" scope="col" class="text-uppercase table-vertical">Razem</td>
             {% for par, sum in paragraphSums.items %}
-            <td class="table-vertical" align="center" valign="middle" width="200" scope="col">
-                {{sum|intcomma}} zł
-            </td>
+              <td class="table-vertical" align="center" valign="middle" width="200" scope="col">{{ sum|intcomma }} zł</td>
             {% endfor %}
-        </tr>
+          </tr>
         </tfoot>
-    </table>
+      </table>
     {% endif %}
-</div>
-<!--Modal-->
-<div class="modal fade" id="archiveModal">
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="archiveModal">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        </div>
+      <div class="modal-content"></div>
     </div>
-</div>
-<div class="modal fade" id="infoModal">
+  </div>
+  <div class="modal fade" id="infoModal">
     <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-        </div>
+      <div class="modal-content"></div>
     </div>
-</div>
-<script type="text/javascript">
-    function openArchiveModal(button){
-        var url = $(button).data("url");
-        $("#archiveModal .modal-content").load(url);
-        $("#archiveModal").modal("show");
+  </div>
+  <script type="text/javascript">
+    function openArchiveModal(button) {
+      var url = $(button).data('url')
+      $('#archiveModal .modal-content').load(url)
+      $('#archiveModal').modal('show')
     }
-
-    function openInfoCountyModal(button){
-        var url = $(button).data("url");
-        $("#infoModal .modal-content").load(url);
-        $("#infoModal").modal("show");
+    
+    function openInfoCountyModal(button) {
+      var url = $(button).data('url')
+      $('#infoModal .modal-content').load(url)
+      $('#infoModal').modal('show')
     }
-</script>
+  </script>
 {% endblock %}

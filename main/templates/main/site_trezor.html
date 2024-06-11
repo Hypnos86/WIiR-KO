@@ -1,123 +1,161 @@
-{% extends 'base.html' %}
-{% load humanize %}
-{% block content %}
-{% if user.is_authenticated and user_belongs_to_admin_group%}
+{% extends 'base.html' %} {% load humanize %} {% block content %} {% if
+user.is_authenticated and user_belongs_to_admin_group%}
 <div class="container pt-5">
-    <div class="row mb-1">
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
-            <a href="{% url 'main:welcome' %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
-        </div>
-        <div class="col-sm-10 col-md-10 col-lg-8">
-            <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">Trezor</h5>
-            </div>
-        </div>
-        <div class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end">
-            <div class="mx-2">
-                {% if query %}
-                <button class="btn-menu" onclick="generateTrezorCSV(this)" data-url="{% url 'main:csvForTrezor' %}" data-toggle="info" title="Zapisz">
-                    <span class="bi bi-download custom-icon"></span>
-                </button>
-                {% endif %}
-            </div>
-        </div>
+  <div class="row mb-1">
+    <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+      <a href="{% url 'main:welcome' %}" class="btn-menu">
+        <span class="bi bi-arrow-90deg-left custom-icon"></span>
+      </a>
     </div>
-    <div class="text-center">
-        <h5>Weryfikacja<span class="info-color">{{year}}</span>roku</h5>
+    <div class="col-sm-10 col-md-10 col-lg-8">
+      <div class="text-center">
+        <h5 class="h5 m-0 font-weight-bold text-uppercase">Trezor</h5>
+      </div>
     </div>
-    <div class="d-flex justify-content-center my-5">
-        <form class="row col-md-6">
-            <div class="col-md-5">
-                <div>
-                    <label class="control-label" for="date_from">Data płatności od</label>
-                    <div>
-                        <input type="date" name="from" class="form-control" id="date_from" value="{{date_from}}">
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-5">
-                <div>
-                    <label class="control-label" for="date_to">Data płatności do</label>
-                    <div>
-                        <input type="date" name="to" class="form-control" id="date_to" value="{{date_to}}">
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <button id="searchButton" style="{% if query %} display:none; {% endif %}" type="submit"
-                        class="btn btn-outline-primary btn-search">Szukaj
-                </button>
-                <button id="cleanButton" style="{% if not query %} display:none; {% endif %}" type="submit"
-                        class="btn btn-outline-primary btn-search" onclick="cleanSearch()">Wyczyść
-                </button>
-            </div>
-        </form>
-    </div>
-    {{suma}}
-    <div class="row ">
+    <div
+      class="col-sm-10 col-md-10 col-lg-2 d-flex align-items-center justify-content-end"
+    >
+      <div class="mx-2">
         {% if query %}
-        <div class="container col-md-8">
-            {%if date_from_obj and date_to_obj%}
-            <h4 class="mb-4 text-center">Zakres weryfikacji: {{date_from_obj|date:'d.m.Y'}} r. -
-                {{date_to_obj|date:'d.m.Y'}} r.</h4>
-            {%endif%}
-            <div class="d-flex justify-content-around">
-                <div>
-                    <span>Liczba faktur: </span><span class="">{%if query%} {{invoices_sum}} {%else%} {{invoices_sum}} {%endif%}</span>
-                </div>
-                <div>
-                    <h5>Suma wydatków wymagalnych: <span>{{verification_all|intcomma}} zł.</span></h5>
-                </div>
-            </div>
-            <div>
-                {% regroup invoices by date_of_payment as list_payment %}
-
-                {% for lista in list_payment %}
-                {% for key, value in day_sum.items %}
-                {% if key == lista.grouper and value > 0 %}
-                <div class="col-12 mt-4 mb-1 d-flex justify-content-between">
-                    <strong class="">Płatności na {{lista.grouper}}&nbsp;r. {%if lista.list.sum%} - {{lista.list.sum}}&nbsp;zł.
-                        {%else%} - {{value|intcomma}}&nbsp;zł. {%endif%}</strong>
-                    <div>
-                        <span class="badge text-white info badge-pill my-badge-pill">{{lista.list|length}}</span>
-                    </div>
-                </div>
-                {%endif%}
-                {%endfor%}
-                <ul class="list-group">
-                    {% for invoice in lista.list %}
-                    <li class="list-group-item list-group-item-action list-group-item-light">
-                        {{invoice.no_invoice}} z dnia {{invoice.date}} r. - wartość:
-                        {%if invoice.sum%}
-                        {{invoice.sum|intcomma}} zł.
-                        {%else%}
-                        {{invoice.sum|default_if_none:'0 zł.'}}
-                        {%endif%}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endfor %}
-            </div>
-            {%endif%}
-        </div>
+        <button
+          class="btn-menu"
+          onclick="generateTrezorCSV(this)"
+          data-url="{% url 'main:csvForTrezor' %}"
+          data-toggle="info"
+          title="Zapisz"
+        >
+          <span class="bi bi-download custom-icon"></span>
+        </button>
+        {% endif %}
+      </div>
     </div>
+  </div>
+  <div class="text-center">
+    <h5>Weryfikacja<span class="info-color">{{year}}</span>roku</h5>
+  </div>
+  <div class="d-flex justify-content-center my-5">
+    <form class="row col-md-6">
+      <div class="col-md-5">
+        <div>
+          <label class="control-label" for="date_from">Data płatności od</label>
+          <div>
+            <input
+              type="date"
+              name="from"
+              class="form-control"
+              id="date_from"
+              value="{{date_from}}"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div>
+          <label class="control-label" for="date_to">Data płatności do</label>
+          <div>
+            <input
+              type="date"
+              name="to"
+              class="form-control"
+              id="date_to"
+              value="{{date_to}}"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button
+          id="searchButton"
+          style="{% if query %} display:none; {% endif %}"
+          type="submit"
+          class="btn btn-outline-primary btn-search"
+        >
+          Szukaj
+        </button>
+        <button
+          id="cleanButton"
+          style="{% if not query %} display:none; {% endif %}"
+          type="submit"
+          class="btn btn-outline-primary btn-search"
+          onclick="cleanSearch()"
+        >
+          Wyczyść
+        </button>
+      </div>
+    </form>
+  </div>
+  {{suma}}
+  <div class="row">
+    {% if query %}
+    <div class="container col-md-8">
+      {%if date_from_obj and date_to_obj%}
+      <h4 class="mb-4 text-center">
+        Zakres weryfikacji: {{date_from_obj|date:'d.m.Y'}} r. -
+        {{date_to_obj|date:'d.m.Y'}} r.
+      </h4>
+      {%endif%}
+      <div class="d-flex justify-content-around">
+        <div>
+          <span>Liczba faktur: </span
+          ><span class=""
+            >{%if query%} {{invoices_sum}} {%else%} {{invoices_sum}}
+            {%endif%}</span
+          >
+        </div>
+        <div>
+          <h5>
+            Suma wydatków wymagalnych:
+            <span>{{verification_all|intcomma}} zł.</span>
+          </h5>
+        </div>
+      </div>
+      <div>
+        {% regroup invoices by date_of_payment as list_payment %} {% for lista
+        in list_payment %} {% for key, value in day_sum.items %} {% if key ==
+        lista.grouper and value > 0 %}
+        <div class="col-12 mt-4 mb-1 d-flex justify-content-between">
+          <strong class=""
+            >Płatności na {{lista.grouper}}&nbsp;r. {%if lista.list.sum%} -
+            {{lista.list.sum}}&nbsp;zł. {%else%} - {{value|intcomma}}&nbsp;zł.
+            {%endif%}</strong
+          >
+          <div>
+            <span class="badge text-white info badge-pill my-badge-pill"
+              >{{lista.list|length}}</span
+            >
+          </div>
+        </div>
+        {%endif%} {%endfor%}
+        <ul class="list-group">
+          {% for invoice in lista.list %}
+          <li
+            class="list-group-item list-group-item-action list-group-item-light"
+          >
+            {{invoice.no_invoice}} z dnia {{invoice.date}} r. - wartość: {%if
+            invoice.sum%} {{invoice.sum|intcomma}} zł. {%else%}
+            {{invoice.sum|default_if_none:'0 zł.'}} {%endif%}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+      </div>
+      {%endif%}
+    </div>
+  </div>
 </div>
 <script>
-    function cleanSearch(){
-         $("#q").val("");
-         $("#date_from").val("");
-         $("#date_to").val("");
-         $("form").submit();
-     }
-    function generateTrezorCSV(button){
-        var url = $(button).data("url");
-        var from = $("#date_from").val();
-        var to = $("#date_to").val();
-        var urlParams = "?from="+from+"&"+"to="+to;
-        window.open(url + urlParams, '_blank').focus();
-    }
+  function cleanSearch() {
+    $("#q").val("");
+    $("#date_from").val("");
+    $("#date_to").val("");
+    $("form").submit();
+  }
+  function generateTrezorCSV(button) {
+    var url = $(button).data("url");
+    var from = $("#date_from").val();
+    var to = $("#date_to").val();
+    var urlParams = "?from=" + from + "&" + "to=" + to;
+    window.open(url + urlParams, "_blank").focus();
+  }
 </script>
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}

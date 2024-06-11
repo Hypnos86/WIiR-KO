@@ -1,145 +1,199 @@
-{%extends 'base.html'%}
-{%load static%}
-{%block content%}
-{% if user.is_authenticated %}
+{%extends 'base.html'%} {%load static%} {%block content%} {% if
+user.is_authenticated %}
 <div class="container pt-5">
-    <div class="row mb-1">
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
-            <a href="{% url 'main:welcome' %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
+  <div class="row mb-1">
+    <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+      <a href="{% url 'main:welcome' %}" class="btn-menu">
+        <span class="bi bi-arrow-90deg-left custom-icon"></span>
+      </a>
+    </div>
+    <div class="col-sm-10 col-md-10 col-lg-8">
+      <div class="text-center">
+        <h5 id="title" class="h5 m-0 font-weight-bold text-uppercase">
+          Jednostki
+        </h5>
+      </div>
+    </div>
+    <div
+      class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end"
+    >
+      {% if user_belongs_to_admin_group %}
+      <a
+        class="btn-menu mx-2"
+        href="{% url 'units:newUnit' %}"
+        data-toggle="info"
+        title="Nowa jednostka"
+      >
+        <i class="bi bi-building-add custom-icon"></i>
+      </a>
+      {% endif %}
+      <button
+        class="btn-menu mx-2"
+        onclick="generateCSV(this)"
+        data-url="{% url 'main:csvForUnit' %}"
+        data-toggle="info"
+        title="Zapisz"
+      >
+        <span class="bi bi-download custom-icon"></span>
+      </button>
+    </div>
+  </div>
+  <div>
+    <div
+      class="w-100 pb-4 d-flex justify-content-center align-items-center flex-column text_center"
+    >
+      <form id="form-search" method="get">
+        <div class="input-group">
+          <input
+            name="q"
+            id="q"
+            type="text"
+            class="form-control rounded"
+            placeholder="szukaj jednostki"
+            aria-label="Search"
+            aria-describedby="search-addon"
+            value="{% if q %} {{q}} {% endif %}"
+          />
+          <button
+            id="searchButton"
+            style="{%if query%}display:none;{%endif%}"
+            type="submit"
+            class="btn btn-outline-primary btn-search"
+          >
+            Szukaj
+          </button>
+          <button
+            id="cleanButton"
+            style="{%if not query%}display:none;{%endif%}"
+            type="button"
+            class="btn btn-outline-primary btn-search"
+            onclick="cleanSearch()"
+          >
+            Wyczyść
+          </button>
         </div>
-        <div class="col-sm-10 col-md-10 col-lg-8">
-            <div class="text-center">
-                <h5 id="title" class="h5 m-0 font-weight-bold text-uppercase">Jednostki</h5>
-            </div>
-        </div>
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
-            {% if user_belongs_to_admin_group %}
-             <a class="btn-menu mx-2" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
-                <i class="bi bi-building-add custom-icon"></i>
-            </a>
-            {% endif %}
-            <button class="btn-menu mx-2" onclick="generateCSV(this)" data-url="{% url 'main:csvForUnit' %}"
-                    data-toggle="info"
-                    title="Zapisz">
-                <span class="bi bi-download custom-icon"></span>
-            </button>
-        </div>
+      </form>
+    </div>
+  </div>
+  <div>
+    <ul class="d-flex justify-content-between my-2">
+      {% for type in typesList %}
+      <li id="{{type.index}}" class="unitLinkLi">
+        <a href="{% url 'main:typeUnitsList' type.type_short %}"
+          >{{ type.type_full }}</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="d-flex justify-content-around mb-3">
+    <div>
+      <span>Aktywnych: {{activeUnits}}</span>
     </div>
     <div>
-        <div class="w-100 pb-4 d-flex justify-content-center align-items-center flex-column text_center">
-            <form id="form-search" method="get">
-                <div class="input-group">
-                    <input name="q" id="q" type="text" class="form-control rounded"
-                           placeholder="szukaj jednostki" aria-label="Search"
-                           aria-describedby="search-addon" value="{% if q %} {{q}} {% endif %}">
-                    <button id="searchButton" style="{%if query%}display:none;{%endif%}" type="submit"
-                            class="btn btn-outline-primary btn-search">Szukaj
-                    </button>
-                    <button id="cleanButton" style="{%if not query%}display:none;{%endif%}" type="button"
-                            class="btn btn-outline-primary btn-search" onclick="cleanSearch()">Wyczyść
-                    </button>
-                </div>
-            </form>
+      <span>Zarchiwizowanych: {{archiveUnits}} </span>
+    </div>
+  </div>
+  <div>
+    {% for unit in units%}
+    <div
+      class="list-group-item list-group-item-action d-flex justify-content-between"
+    >
+      <a
+        class="text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
+        href="{%url 'main:unit_details' unit.county_unit.slug unit.slug year %}"
+      >
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <span class="w-25">{{unit.county_unit.name}}</span>
+          <span class="w-100"
+            >{{unit.type}} {% if unit.object_name %} - {{unit.object_name}} {%
+            endif %} - {{unit.address}}, {{unit.zip_code}} {{unit.city}}</span
+          >
         </div>
+      </a>
+      <div class="d-flex justify-content-between align-items-center">
+        {% if unit.manager == 'Policja' %}
+        <i
+          class="bi bi-buildings-fill manager-police-color mx-2"
+          data-toggle="info"
+          title="{{unit.manager}}"
+        ></i>
+        {% else %}
+        <i
+          class="bi bi-buildings-fill manager-other-color mx-2"
+          data-toggle="info"
+          title="{{unit.manager}}"
+        ></i>
+        {% endif %} {% if unit.status%}
+        <i
+          class="bi bi-check-circle-fill success mx-2"
+          data-toggle="info"
+          title="Aktualny"
+        ></i>
+        {%else%}
+        <i
+          class="bi bi-dash-circle text-danger mx-2"
+          data-toggle="info"
+          title="Zdany"
+        ></i>
+        {%endif%} {% if user.is_authenticated and user_belongs_to_admin_group%}
+        <a
+          class="color-sea"
+          data-toggle="info"
+          title="Edytuj"
+          href="{% url 'units:editUnit' unit.slug %}"
+        >
+          <i class="bi bi-pencil-square mx-2"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="d-flex justify-content-around mt-3">
+    <div>
+      <span>W trwałym zarządzie: {{policeManager}}</span>
     </div>
     <div>
-        <ul class="d-flex justify-content-between my-2">
-            {% for type in typesList %}
-            <li id="{{type.index}}" class="unitLinkLi">
-                <a href="{% url 'main:typeUnitsList' type.type_short %}">{{ type.type_full }}</a>
-            </li>
-            {% endfor %}
-        </ul>
+      <span>Inne: {{othersManager}} </span>
     </div>
-    <div class="d-flex justify-content-around mb-3">
-        <div>
-            <span>Aktywnych: {{activeUnits}}</span>
-        </div>
-        <div>
-            <span>Zarchiwizowanych: {{archiveUnits}} </span>
-        </div>
-    </div>
-    <div>
-        {% for unit in units%}
-        <div class="list-group-item list-group-item-action d-flex justify-content-between">
-            <a class="text-secondary text-decoration-none list-group-item-action d-flex justify-content-between"
-               href="{%url 'main:unit_details' unit.county_unit.slug unit.slug year %}">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <span class="w-25">{{unit.county_unit.name}}</span>
-                    <span class="w-100">{{unit.type}} {% if unit.object_name %} - {{unit.object_name}} {% endif %} - {{unit.address}}, {{unit.zip_code}}
-                {{unit.city}}</span>
-                </div>
-            </a>
-            <div class="d-flex justify-content-between align-items-center">
-                {% if unit.manager == 'Policja' %}
-                <i class="bi bi-buildings-fill manager-police-color mx-2" data-toggle="info"
-                   title="{{unit.manager}}"></i>
-                {% else %}
-                <i class="bi bi-buildings-fill manager-other-color mx-2" data-toggle="info"
-                   title="{{unit.manager}}"></i>
-                {% endif %}
-                {% if unit.status%}
-                <i class="bi bi-check-circle-fill success mx-2" data-toggle="info" title="Aktualny"></i>
-                {%else%}
-                <i class="bi bi-dash-circle text-danger mx-2" data-toggle="info" title="Zdany"></i>
-                {%endif%}
-                {% if user.is_authenticated and user_belongs_to_admin_group%}
-                <a class="color-sea" data-toggle="info" title="Edytuj" href="{% url 'units:editUnit' unit.slug %}">
-                    <i class="bi bi-pencil-square mx-2"></i>
-                </a>
-                {% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    <div class="d-flex justify-content-around mt-3">
-        <div>
-            <span>W trwałym zarządzie: {{policeManager}}</span>
-        </div>
-        <div>
-            <span>Inne: {{othersManager}} </span>
-        </div>
-    </div>
+  </div>
 </div>
 <script>
-    function cleanSearch(){
-        $("#q").val("");
-        $("#form-search").submit();
-    }
+  function cleanSearch(){
+      $("#q").val("");
+      $("#form-search").submit();
+  }
 
-    function generateCSV(button){
-        var url = $(button).data("url");
-        var q = $("#q").val();
-        var urlParams = "?q=" + q;
-        window.open(url + urlParams, '_blank').focus();
-    }
+  function generateCSV(button){
+      var url = $(button).data("url");
+      var q = $("#q").val();
+      var urlParams = "?q=" + q;
+      window.open(url + urlParams, '_blank').focus();
+  }
 
-    if ("{{slugTypeUnits}}" && "{{slugTypeUnits}}" !== "null") {
-        var title = document.getElementById("title");
-        title.innerText = "{{slugTypeUnits}}";
+  if ("{{slugTypeUnits}}" && "{{slugTypeUnits}}" !== "null") {
+      var title = document.getElementById("title");
+      title.innerText = "{{slugTypeUnits}}";
 
-        {% for item in typesList %}
-            var typeListItem = {{ item | safe }};
-            if(typeListItem.type_full === "{{slugTypeUnits}}"){
+      {% for item in typesList %}
+          var typeListItem = {{ item | safe }};
+          if(typeListItem.type_full === "{{slugTypeUnits}}"){
 
-                let idTypeUnit = document.getElementById(typeListItem.index);
+              let idTypeUnit = document.getElementById(typeListItem.index);
 
-                if(idTypeUnit){
-                    idTypeUnit.setAttribute("active", "");
-                    window.getComputedStyle(idTypeUnit, ':after');
-                    idTypeUnit.addEventListener('click', function(event) {
+              if(idTypeUnit){
+                  idTypeUnit.setAttribute("active", "");
+                  window.getComputedStyle(idTypeUnit, ':after');
+                  idTypeUnit.addEventListener('click', function(event) {
 
-                        if (event.target.getAttribute('active') === '') {
-                        window.location.href = '{% url 'main:unitsSite'%}';
-                    }
-                });
-                }
-            }
-        {% endfor %}
-    }
+                      if (event.target.getAttribute('active') === '') {
+                      window.location.href = '{% url 'main:unitsSite'%}';
+                  }
+              });
+              }
+          }
+      {% endfor %}
+  }
 </script>
-{% endif %}
-{%endblock%}
-
+{% endif %} {%endblock%}
