@@ -19,6 +19,7 @@ import logging
 import datetime
 import matplotlib.pyplot as plt
 from django.db.models import Q
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
 
@@ -196,24 +197,66 @@ class UnitsListMainView(View):
             return render(request, self.template_error, context)
 
 
+# def load_more_units(request, countySlug):
+#     offset = int(request.GET.get('offset', 0))
+#     limit = int(request.GET.get('limit', 20))
+#     units = Unit.objects.filter(county_unit__slug=countySlug)[offset:offset + limit]
+#     units_data = [
+#         {
+#             'county_unit_name': unit.county_unit.name,
+#             'type': unit.type,
+#             'object_name': unit.object_name,
+#             'address': unit.address,
+#             'zip_code': unit.zip_code,
+#             'city': unit.city,
+#             'manager': unit.manager,
+#             'status': unit.status,
+#             'slug': unit.slug,
+#             'county_unit_slug': unit.county_unit.slug,
+#         }
+#         for unit in units
+#     ]
+#     return JsonResponse({'units': units_data})
+
+
 class TypeUnitsListView(LoginRequiredMixin, View):
     template_name = 'main/site_units.html'
     template_error = 'main/error.html'
+    paginate_by = 50
     method = 'UnitsView'
 
-    def get(self, request, type_units):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+    def get_user_info(self, request):
+        user = request.user
+        user_belongs_to_admin_group = user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = user.groups.filter(name='Viewers').exists()
+        return user, user_belongs_to_admin_group, user_belongs_to_group
 
+    def handle_exception(self, request, error):
+        user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
+        context = {
+            'error': error,
+            'user_belongs_to_group': user_belongs_to_group,
+            'user_belongs_to_admin_group': user_belongs_to_admin_group,
+            'method': self.method
+        }
+        logger.error("Error: %s", error)
+        return render(request, self.template_error, context)
+
+    def get(self, request, type_units):
         try:
+            user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
             currentYear = currentDate.current_year()
             units = Unit.objects.all().filter(type__type_short=type_units).order_by('county_unit__id_order')
+            paginator = Paginator(units, self.paginate_by)
+            page_number = request.GET.get('page')
+            units_pages = paginator.get_page(page_number)
             activeUnits = len(units.filter(status=True))
             archiveUnits = len(units.filter(status=False))
             policeManager = units.filter(manager='Policja').count()
             othersManager = units.exclude(manager='Policja').count()
             slugTypeUnits = TypeUnit.objects.get(type_short=type_units)
             typesUnit = TypeUnit.objects.all()
+            # typesUnit = TypeUnit.objects.filter(type_short__in=('KMP', 'KPP', 'KP', 'PP'))
 
             typesList = []
             for element in typesUnit:
@@ -242,17 +285,14 @@ class TypeUnitsListView(LoginRequiredMixin, View):
                 return render(request, self.template_name, context)
             else:
 
-                context = {'year': currentYear, 'units': units, "search": search, 'activeUnits': activeUnits,
+                context = {'year': currentYear, 'units': units_pages, "search": search, 'activeUnits': activeUnits,
                            'archiveUnits': archiveUnits, 'typesList': typesList, 'slugTypeUnits': slugTypeUnits,
                            'policeManager': policeManager, 'othersManager': othersManager,
                            'user_belongs_to_group': user_belongs_to_group,
                            'user_belongs_to_admin_group': user_belongs_to_admin_group}
                 return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
-                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
 
 class CostListMainView(View):
@@ -260,10 +300,26 @@ class CostListMainView(View):
     template_error = 'main/error.html'
     method = 'CostListMainView'
 
+    def get_user_info(self, request):
+        user = request.user
+        user_belongs_to_admin_group = user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = user.groups.filter(name='Viewers').exists()
+        return user, user_belongs_to_admin_group, user_belongs_to_group
+
+    def handle_exception(self, request, error):
+        user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
+        context = {
+            'error': error,
+            'user_belongs_to_group': user_belongs_to_group,
+            'user_belongs_to_admin_group': user_belongs_to_admin_group,
+            'method': self.method
+        }
+        logger.error("Error: %s", error)
+        return render(request, self.template_error, context)
+
     def get(self, request, countyCardSlug, unitSlug, year):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
+            user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
             unit = get_object_or_404(Unit, slug=unitSlug)
             invoiceItems = InvoiceItems.objects.filter(unit__id=unit.id, invoice_id__date__year=year)
             paragraphs = Paragraph.objects.all()
@@ -299,25 +355,42 @@ class CostListMainView(View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group,
-                       'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
 
 
 class UnitsView(LoginRequiredMixin, View):
     template_name = 'main/site_units.html'
     template_error = 'main/error.html'
+    paginate_by = 50
     method = 'UnitsView'
 
+    def get_user_info(self, request):
+        user = request.user
+        user_belongs_to_admin_group = user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_group = user.groups.filter(name='Viewers').exists()
+        return user, user_belongs_to_admin_group, user_belongs_to_group
+
+    def handle_exception(self, request, error):
+        user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
+        context = {
+            'error': error,
+            'user_belongs_to_group': user_belongs_to_group,
+            'user_belongs_to_admin_group': user_belongs_to_admin_group,
+            'method': self.method
+        }
+        logger.error("Error: %s", error)
+        return render(request, self.template_error, context)
+
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
+            user, user_belongs_to_admin_group, user_belongs_to_group = self.get_user_info(request)
             currentYear = currentDate.current_year()
             units = Unit.objects.only(
                 'status', 'manager', 'unit_full_name', 'county_swop', 'city', 'type', 'information'
             ).order_by('county_unit__id_order')
+            paginator = Paginator(units, self.paginate_by)
+            page_number = request.GET.get('page')
+            units_pages = paginator.get_page(page_number)
             activeUnits = units.filter(status=True).count()
             archiveUnits = units.filter(status=False).count()
             policeManager = units.filter(manager='Policja').count()
@@ -360,16 +433,15 @@ class UnitsView(LoginRequiredMixin, View):
                 return render(request, self.template_name, context)
             else:
                 context = {
-                    'year': currentYear, 'units': units, 'search': "Szukaj", 'activeUnits': activeUnits,
+                    'year': currentYear, 'units': units_pages, 'search': "Szukaj", 'activeUnits': activeUnits,
                     'archiveUnits': archiveUnits, 'typesList': typesList, 'policeManager': policeManager,
                     'othersManager': othersManager, 'user_belongs_to_group': user_belongs_to_group,
                     'user_belongs_to_admin_group': user_belongs_to_admin_group
                 }
                 return render(request, self.template_name, context)
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_group': user_belongs_to_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return self.handle_exception(request, e)
+
 
 class StatisticsView(LoginRequiredMixin, View):
     template_name = 'main/site_statistics.html'
@@ -632,7 +704,7 @@ class InvoicesListView(LoginRequiredMixin, View):
         user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
         try:
-            invoices = Invoice.objects.all()
+            invoices = Invoice.objects.only('id', 'date', 'no_invoice','doc_types','sum', 'information','slug')
             paginator = Paginator(invoices, self.paginate_by)
             page_number = request.GET.get('page')
             invoices_pages = paginator.get_page(page_number)

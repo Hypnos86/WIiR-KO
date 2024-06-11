@@ -56,7 +56,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                     instance = form.save(commit=False)
                     instance.author = request.user
                     form.save()
-                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
+                    return redirect(reverse('invoices:editInvoice', kwargs={'invoiceSlug': instance.slug}))
             context = {'form': form, 'doc_types': doc_types, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
@@ -103,7 +103,7 @@ class EditInvoiceView(LoginRequiredMixin, View):
                 instance = form.save(commit=False)
                 instance.author = request.user
                 form.save()
-                return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
+                return redirect(reverse('invoices:editInvoice', kwargs={'invoiceSlug': instance.slug}))
 
             context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice,
                        'new': False}
@@ -140,13 +140,11 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             contractTypes = ContractTypes.objects.all()
 
             measurementSystemNumberList = []
-            print(items)
             for unit in units:
                 selectedItesms = unit.items.all()
-                # print(selectedItesms)
+
                 data = []
                 for typeObject in contractTypes:
-                    print(typeObject)
 
                     media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(
                         contract_types__id=typeObject.id).first()
