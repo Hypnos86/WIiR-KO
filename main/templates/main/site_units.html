@@ -74,12 +74,20 @@
             {% endfor %}
         </ul>
     </div>
-    <div class="d-flex justify-content-around mb-3">
+    <div class="d-flex justify-content-around my-3">
         <div>
             <span>Aktywnych: {{activeUnits}}</span>
         </div>
         <div>
             <span>Zarchiwizowanych: {{archiveUnits}} </span>
+        </div>
+    </div>
+    <div class="d-flex justify-content-around my-3">
+        <div>
+            <span>W trwałym zarządzie: {{policeManager}}</span>
+        </div>
+        <div>
+            <span>Inne: {{othersManager}} </span>
         </div>
     </div>
     <div>
@@ -125,17 +133,9 @@
         </div>
         {% endfor %}
     </div>
-    <div class="d-flex justify-content-around mt-3">
-        <div>
-            <span>W trwałym zarządzie: {{policeManager}}</span>
-        </div>
-        <div>
-            <span>Inne: {{othersManager}} </span>
-        </div>
-    </div>
 </div>
 <!--Paginator-->
-<nav aria-labelledby="Page navigation">
+<nav class="py-4" aria-labelledby="Page navigation">
     <ul class="pagination justify-content-center">
         {% if units.has_previous %}
         <li class="page-item">

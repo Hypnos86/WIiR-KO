@@ -56,7 +56,7 @@ class NewInvoiceView(LoginRequiredMixin, View):
                     instance = form.save(commit=False)
                     instance.author = request.user
                     form.save()
-                    return redirect(reverse('invoices:editInvoice', kwargs={'invoiceSlug': instance.slug}))
+                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
             context = {'form': form, 'doc_types': doc_types, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        'type_contract': type_contract, 'new': True}
             return render(request, self.template_name, context)
