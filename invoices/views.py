@@ -135,60 +135,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             user_belongs_to_admin_group = get_user_groups(request)
             invoice = self.get_invoice(invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
-            units = Unit.objects.only("unit_full_name")
-            contractTypes = ContractTypes.objects.all()
-
-            # measurementSystemNumberList = []
-            # for unit in units:
-            #     selectedItesms = unit.items.all()
-            #
-            #     data = []
-            #     for typeObject in contractTypes:
-            #
-            #         media_1_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA1.value).filter(
-            #             contract_types__id=typeObject.id).first()
-            #         if media_1_last:
-            #             data.append({"par": media_1_last.paragraph.paragraph, "type": media_1_last.contract_types.type,
-            #                          "period": f"{media_1_last.period_from.strftime('%d.%m.%Y')}-{media_1_last.period_to.strftime('%d.%m.%Y')}",
-            #                          "counterReading": str(media_1_last.counterReading),
-            #                          "measurement": str(media_1_last.measurementSystemNumber)})
-            #
-            #         media_2_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA2.value).filter(
-            #             contract_types__id=typeObject.id).first()
-            #         if media_2_last:
-            #             data.append({"par": media_2_last.paragraph.paragraph, "type": media_2_last.contract_types.type,
-            #                          "period": f"{media_2_last.period_from.strftime('%d.%m.%Y')}-{media_2_last.period_to.strftime('%d.%m.%Y')}",
-            #                          "counterReading": str(media_2_last.counterReading),
-            #                          "measurement": str(media_2_last.measurementSystemNumber)})
-            #
-            #         media_3_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA3.value).filter(
-            #             contract_types__id=typeObject.id).first()
-            #         if media_3_last:
-            #             data.append({"par": media_3_last.paragraph.paragraph, "type": media_3_last.contract_types.type,
-            #                          "period": f"{media_3_last.period_from.strftime('%d.%m.%Y')}-{media_3_last.period_to.strftime('%d.%m.%Y')}",
-            #                          "counterReading": str(media_3_last.counterReading),
-            #                          "measurement": str(media_3_last.measurementSystemNumber)})
-            #
-            #         media_4_last = selectedItesms.filter(paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(
-            #             contract_types__id=typeObject.id).first()
-            #         if media_4_last:
-            #             data.append({"par": media_4_last.paragraph.paragraph, "type": media_4_last.contract_types.type,
-            #                          "period": f"{media_4_last.period_from.strftime('%d.%m.%Y')}-{media_4_last.period_to.strftime('%d.%m.%Y')}",
-            #                          "counterReading": str(media_4_last.counterReading),
-            #                          "measurement": str(media_4_last.measurementSystemNumber)})
-            #
-            #         else_Object_last = selectedItesms.exclude(paragraph__paragraph=ParagraphEnum.MEDIA1.value).exclude(
-            #             paragraph__paragraph=ParagraphEnum.MEDIA2.value).exclude(
-            #             paragraph__paragraph=ParagraphEnum.MEDIA3.value).exclude(
-            #             paragraph__paragraph=ParagraphEnum.MEDIA4.value).filter(
-            #             contract_types__id=typeObject.id).first()
-            #         if else_Object_last:
-            #             data.append(
-            #                 {"par": else_Object_last.paragraph.paragraph, "type": else_Object_last.contract_types.type,
-            #                  "period": f"{else_Object_last.period_from.strftime('%d.%m.%Y')}-{else_Object_last.period_to.strftime('%d.%m.%Y')}",
-            #                  "counterReading": "Brak", "measurement": "Brak"})
-            #
-            #     measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
             # Tworzenie dodatkowych informacji na temat rozdziałów i sumowania ich
             counties = []
@@ -225,7 +171,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'countiesSum': counties,
-                       # 'measurementData': measurementSystemNumberList
                        }
             return render(request, self.template_name, context)
 
@@ -278,25 +223,25 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
             form = self.form_class(instance=item)
             contract_types = ContractTypes.objects.all()
 
-            measurementSystemNumberList = []
-
-            for unit in units:
-                selected_items = unit.items.all()
-                data = []
-                for type_object in contract_types:
-                    for paragraph_enum in ParagraphEnum:
-                        media_last = selected_items.filter(paragraph__paragraph=paragraph_enum.value).filter(
-                            contract_types__id=type_object.id).first()
-                        if media_last:
-                            data.append({
-                                "par": media_last.paragraph.paragraph,
-                                "type": media_last.contract_types.type,
-                                "period": f"{media_last.period_from.strftime('%d.%m.%Y')}-{media_last.period_to.strftime('%d.%m.%Y')}",
-                                "counterReading": str(media_last.counterReading),
-                                "measurement": str(media_last.measurementSystemNumber)
-                            })
-
-                measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
+            # measurementSystemNumberList = []
+            #
+            # for unit in units:
+            #     selected_items = unit.items.all()
+            #     data = []
+            #     for type_object in contract_types:
+            #         for paragraph_enum in ParagraphEnum:
+            #             media_last = selected_items.filter(paragraph__paragraph=paragraph_enum.value).filter(
+            #                 contract_types__id=type_object.id).first()
+            #             if media_last:
+            #                 data.append({
+            #                     "par": media_last.paragraph.paragraph,
+            #                     "type": media_last.contract_types.type,
+            #                     "period": f"{media_last.period_from.strftime('%d.%m.%Y')}-{media_last.period_to.strftime('%d.%m.%Y')}",
+            #                     "counterReading": str(media_last.counterReading),
+            #                     "measurement": str(media_last.measurementSystemNumber)
+            #                 })
+            #
+            #     measurementSystemNumberList.append({"unit_id": unit.id, "data": data})
 
             counties = []
             for item in items:
@@ -316,7 +261,7 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'counties_sum': counties,
-                       'measurementData': measurementSystemNumberList
+                       # 'measurementData': measurementSystemNumberList
                        }
             return render(request, self.template_name, context)
 
@@ -448,9 +393,14 @@ class HandleRequestView(View):
             invoiceItem = InvoiceItems.objects.filter(unit=unit_id, contract_types=contractTypes_id,
                                                       paragraph=paragraph_id).values('period_from', 'period_to',
                                                                                      'counterReading',
-                                                                                     'consumption').last()
-            if invoiceItem != None:
+                                                                                     'consumption',
+                                                                                     'measurementSystemNumber').first()
+            if invoiceItem and all(invoiceItem.get(key) is not None for key in
+                                   ['period_from', 'period_to', 'counterReading', 'consumption',
+                                    'measurementSystemNumber']):
                 return JsonResponse(invoiceItem, status=200)
-            return JsonResponse({"data": "None"}, status=200)
+            return JsonResponse({'period_from': None, 'period_to': None, 'counterReading': None, 'consumption': None,
+                                 'measurementSystemNumber': None}, status=200)
         except Exception as e:
-            return JsonResponse({'error': e, }, status=405)
+            logger.error(f"Błąd podczas przetwarzania żądania: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
