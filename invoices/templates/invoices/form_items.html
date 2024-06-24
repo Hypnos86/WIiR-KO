@@ -89,9 +89,25 @@
             </div>
             <div class="row mb-1 d-flex justify-content-center">
                 <div class="col-lg-8 mb-2">{{ form.information|bootstrap }}</div>
+                {% if edit_item %}
+                <div class="col-lg-2 mb-2 d-flex align-items-end justify-content-between">
+                    <button type="button" class="btn btn-outline-danger d-inline" data-toggle="info" title="Anuluj">
+                        <i class="bi bi-x-octagon-fill custom-icon"></i>
+                    </button>
+                    <button type="submit" class="btn btn-main d-inline" data-toggle="info" title="Dodaj"
+                            onclick="snackbarFunction()">
+                            <i class="bi bi-plus-circle custom-icon"></i>
+                    </button>
+
+                </div>
+                {% else %}
                 <div class="col-lg-2 mb-2 d-flex align-items-end justify-content-end">
                     <button type="submit" class="btn btn-main d-inline" data-toggle="info" title="Dodaj"
-                            onclick="snackbarFunction()"><i class="bi bi-plus-circle custom-icon"></i></button>
+                    onclick="snackbarFunction()">
+                    <i class="bi bi-plus-circle custom-icon"></i>
+                </button>
+                </div>
+                {% endif %}
                 </div>
             </div>
         </form>
@@ -327,118 +343,6 @@ document.addEventListener("DOMContentLoaded", function () {
     paragraph.addEventListener("change", getDate);
     });
 
-
-
-<!--      $(document).ready(function () {-->
-<!--        $('#id_unit').select2({ placeholder: 'Wybierz jednostkę' })-->
-<!--        checkData()-->
-<!--      })-->
-<!--      -->
-<!--      var daneJS = '{{ measurementData|escapejs }}'-->
-<!--      var x = daneJS.replace(/'/g, '"')-->
-<!--      var dataObject = JSON.parse(x)-->
-<!--      var paragraph = document.getElementById('id_paragraph')-->
-<!--      var measurementSystemNumber = document.getElementById('divMeasurementSystemNumber')-->
-<!--      var counterReading = document.getElementById('divCounterReading')-->
-<!--      var consumption = document.getElementById('divConsumption')-->
-<!--      var information = document.getElementById('dataInfo')-->
-<!--      -->
-<!--      var unit = document.getElementById('id_unit')-->
-<!--      var unitSelected = unit.addEventListener('change', function () {-->
-<!--        var selectedUnit = unit.value-->
-<!--        var selectedUnitext = unit.options[unit.selectedIndex].text-->
-<!--        console.log('Wybrany unit: ' + selectedUnitext)-->
-<!--      })-->
-<!--      -->
-<!--      var type = document.getElementById('id_contract_types')-->
-<!--      var typeSelect = type.addEventListener('change', function () {-->
-<!--        var typeText = type.options[type.selectedIndex].text-->
-<!--        console.log('Wybrany type: ' + typeText)-->
-<!--        checkData()-->
-<!--      })-->
-<!--      -->
-<!--      var paragraphSelect = paragraph.addEventListener('change', function () {-->
-<!--        var selectedElement = paragraph.options[paragraph.selectedIndex]-->
-<!--        var parText = selectedElement.text-->
-<!--        var checkParagraph = parText.substring(0, 7)-->
-<!--        console.log('Wybrany paragraph: ' + checkParagraph)-->
-<!--        checkData()-->
-<!--      })-->
-<!--      -->
-<!--      $('#id_unit').on('change', function () {-->
-<!--        var selectedUnit = unit.options[unit.selectedIndex].value-->
-<!--        var selectedElement = dataObject.find((x) => x.unit_id == selectedUnit)-->
-<!--        if (selectedElement.data.length > 0) {-->
-<!--          console.info('Wartości dla: ' + unit.options[unit.selectedIndex].text + ' - id: ' + selectedUnit + ' | liczba elementów: ' + selectedElement.data.length)-->
-<!--          console.table(selectedElement.data)-->
-<!--        } else {-->
-<!--          console.log('Brak danych dla: ' + unit.options[unit.selectedIndex].text + ' - id: ' + unit.options[unit.selectedIndex].value + ' | liczba elementów: ' + selectedElement.data.length)-->
-<!--        }-->
-<!--      })-->
-<!--      -->
-<!--      function checkParagraph() {-->
-<!--        var selectedElement = paragraph.options[paragraph.selectedIndex]-->
-<!--        var checkPar = selectedElement.textContent.substring(0, 4)-->
-<!--        var measurementSystemNumber = document.getElementById('divMeasurementSystemNumber')-->
-<!--        var counterReading = document.getElementById('divCounterReading')-->
-<!--        var consumption = document.getElementById('divConsumption')-->
-<!--        var information = document.getElementById('dataInfo')-->
-<!--      -->
-<!--        if (checkPar === '4260') {-->
-<!--          information.removeAttribute('hidden')-->
-<!--          measurementSystemNumber.removeAttribute('hidden')-->
-<!--          counterReading.removeAttribute('hidden')-->
-<!--          consumption.removeAttribute('hidden')-->
-<!--        } else if (checkPar === '4210') {-->
-<!--          var labelConsumption = document.querySelector('label[for="id_consumption"]')-->
-<!--      -->
-<!--          if (labelConsumption) {-->
-<!--            labelConsumption.textContent = 'Ilość surowca'-->
-<!--          }-->
-<!--      -->
-<!--          consumption.removeAttribute('hidden')-->
-<!--          console.log(labelConsumption.value)-->
-<!--          measurementSystemNumber.setAttribute('hidden', 'true')-->
-<!--          counterReading.setAttribute('hidden', 'true')-->
-<!--          information.setAttribute('hidden', 'true')-->
-<!--        } else {-->
-<!--          measurementSystemNumber.setAttribute('hidden', 'true')-->
-<!--          counterReading.setAttribute('hidden', 'true')-->
-<!--          consumption.setAttribute('hidden', 'true')-->
-<!--          information.setAttribute('hidden', 'true')-->
-<!--        }-->
-<!--      }-->
-<!--      -->
-<!--      function checkData() {-->
-<!--        checkParagraph()-->
-<!--      -->
-<!--        var selectedHtml = unit.options[unit.selectedIndex].value-->
-<!--        var selectedUnit = dataObject.find((x) => x.unit_id == selectedHtml)-->
-<!--        var selectedPar = paragraph.options[paragraph.selectedIndex].text.slice(0, 7)-->
-<!--        console.log(selectedPar)-->
-<!--      -->
-<!--        var typeText = type.options[type.selectedIndex].text-->
-<!--        console.log(typeText)-->
-<!--      -->
-<!--        if (selectedUnit && selectedUnit.data.length > 0) {-->
-<!--          var information = document.getElementById('dataInfo')-->
-<!--          console.table(selectedUnit.data)-->
-<!--      -->
-<!--          var selectedData = selectedUnit.data.find((x) => x.type === typeText && x.par === selectedPar)-->
-<!--          var measureData = document.getElementById('id_measurementSystemNumber')-->
-<!--      -->
-<!--          if (selectedData) {-->
-<!--            console.log('to co wybrano z selected Data: ', selectedData)-->
-<!--            information.removeAttribute('hidden')-->
-<!--            information.textContent = ' Ostatni okres rozliczeniowy: ' + selectedData.period + ', ' + 'stan licznika: ' + selectedData.counterReading-->
-<!--            measureData.value = selectedData.measurement-->
-<!--          } else {-->
-<!--            information.setAttribute('hidden', 'true')-->
-<!--            measureData.value = ''-->
-<!--            console.log('Nie znaleziono pasujących danych.')-->
-<!--          }-->
-<!--        }-->
-<!--      }-->
 </script>
 {% endif %}
 {% endblock %}

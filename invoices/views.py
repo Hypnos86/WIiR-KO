@@ -171,6 +171,7 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'countiesSum': counties,
+                       'edit_item': False
                        }
             return render(request, self.template_name, context)
 
@@ -261,6 +262,7 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'counties_sum': counties,
+                       'edit_item': True
                        # 'measurementData': measurementSystemNumberList
                        }
             return render(request, self.template_name, context)
