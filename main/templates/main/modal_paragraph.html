@@ -1,16 +1,18 @@
-{% load static %}
-{% load humanize %}
-{% block content %}
+{% load static %} {% load humanize %} {% block content %}
 <div class="my-4">
-    <div>
-        <h6 class="h5 m-0 text-center bold">Paragraf</h6>
+  <div>
+    <h6 class="h5 m-0 text-center bold">Paragraf</h6>
+  </div>
+  <div class="d-flex justify-content-center p-3">
+    <div class="list-group">
+      {% for paragraph in paragraphs %}
+      <a
+        href="{% url 'main:paragraphCostList' paragraph.slug %}"
+        class="btn-menu d-block my-2"
+        >§ {{ paragraph }}</a
+      >
+      {% endfor %}
     </div>
-    <div class="d-flex justify-content-center  p-3">
-        <div class="list-group">
-            {% for paragraph in paragraphs %}
-            <a href="{% url 'main:paragraphCostList' paragraph.slug %}" class="btn-menu d-block my-2">§ {{ paragraph }}</a>
-            {% endfor %}
-        </div>
-    </div>
+  </div>
 </div>
 {%endblock%}

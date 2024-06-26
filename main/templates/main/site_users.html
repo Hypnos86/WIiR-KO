@@ -12,7 +12,9 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">Użytkownicy z dostępem</h5>
+                <h5 class="h5 m-0 font-weight-bold text-uppercase">
+                    Użytkownicy z dostępem
+                </h5>
             </div>
         </div>
     </div>
@@ -39,7 +41,9 @@
             <tr>
                 <td align="left" valign="middle" width="auto" scope="col">
                     {% if user.first_name and user.last_name %}
-                    <span class="px-2">{{ user.first_name }} {{ user.last_name.0 }}.</span>
+                    <span class="px-2"
+                    >{{ user.first_name }} {{ user.last_name.0 }}.</span
+                    >
                     {% else %}
                     <span class="px-2">{{ user.username }}</span>
                     {% endif %}
@@ -60,9 +64,13 @@
                 </td>
                 <td align="center" valign="middle" width="auto" scope="col">
                     {% if user.is_authenticated and user.is_active %}
-                    <i class="bi bi-check-circle-fill mx-4 success" data-toggle="info" title="Aktywny"></i>
+                    <i class="bi bi-check-circle-fill mx-4 success"
+                        data-toggle="info"
+                        title="Aktywny"></i>
                     {%else%}
-                    <i class="bi bi-dash-circle mx-4 text-danger" data-toggle="info" title="Nie aktywny"></i>
+                    <i class="bi bi-dash-circle mx-4 text-danger"
+                        data-toggle="info"
+                        title="Nie aktywny"></i>
                     {%endif%}
                 </td>
             </tr>

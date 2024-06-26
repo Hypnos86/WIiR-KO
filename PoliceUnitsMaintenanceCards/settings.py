@@ -90,24 +90,24 @@ WSGI_APPLICATION = 'PoliceUnitsMaintenanceCards.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-# Database postgres
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env('NAME'),
-#         'USER': env('USER'),
-#         'PASSWORD': env('PASSWORD'),
-#         'HOST': env('HOST'),  # Host, na którym działa baza danych (może być inny)
-#         'PORT': env('PORT'),  # Port bazy danych (domyślnie 5432)
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+# Database postgres
+DATABASES = {
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "wiir_test",
+        'USER': "charon",
+        'PASSWORD': "obol",
+        'HOST': "localhost",  # Host, na którym działa baza danych (może być inny)
+        'PORT': 5432,  # Port bazy danych (domyślnie 5432)
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

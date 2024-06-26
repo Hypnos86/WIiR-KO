@@ -1,42 +1,41 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-<div class="m-2">
+  <div class="m-2">
     <div>
-        <h5 class="h5 text-center">Archiwum</h5>
+      <h5 class="h5 text-center">Archiwum</h5>
     </div>
     {% if archiveYearsUnitCost %}
-    <form class="" method="GET" action="{% url 'main:archiveYearsUnitCost' slugCounty %}">
-        {%csrf_token%}
-        {% for year in years%}
-        <a href="{% url 'main:countyCostUnit' slugCounty year %}" class="btn-menu m-2">{{year}}</a>
+      <form class="" method="GET" action="{% url 'main:archiveYearsUnitCost' slugCounty %}">
+        {% csrf_token %}
+        {% for year in years %}
+          <a href="{% url 'main:countyCostUnit' slugCounty year %}" class="btn-menu m-2">{{ year }}</a>
         {% endfor %}
-    </form>
+      </form>
     {% endif %}
     {% if archiveYears %}
-    <form class="" method="GET" action="{% url 'main:archiveYears' unitSlug paragraphSlug %}">
-        {%csrf_token%}
-        {% for year in years%}
-        <a href="{% url 'main:unitCostList' countySlug unitSlug paragraphSlug year %}" class="btn-menu m-2">{{year}}</a>
+      <form class="" method="GET" action="{% url 'main:archiveYears' unitSlug paragraphSlug %}">
+        {% csrf_token %}
+        {% for year in years %}
+          <a href="{% url 'main:unitCostList' countySlug unitSlug paragraphSlug year %}" class="btn-menu m-2">{{ year }}</a>
         {% endfor %}
-    </form>
-    {%endif%}
+      </form>
+    {% endif %}
     {% if archiveYearsUnitMain %}
-    <form class="" method="GET" action="{% url 'main:unit_details' countySlug unitSlug year %}">
-        {%csrf_token%}
-        {% for year in years%}
-        <a href="{% url 'main:unit_details' countySlug unitSlug year %}" class="btn-menu m-2">{{year}}</a>
+      <form class="" method="GET" action="{% url 'main:unit_details' countySlug unitSlug year %}">
+        {% csrf_token %}
+        {% for year in years %}
+          <a href="{% url 'main:unit_details' countySlug unitSlug year %}" class="btn-menu m-2">{{ year }}</a>
         {% endfor %}
-    </form>
+      </form>
     {% endif %}
     {% if archiveYearsStatistic %}
-    <form class="" method="GET" action="{% url 'main:statisticsSite' %}">
-        {%csrf_token%}
-        {% for year in years%}
-        <a href="{% url 'main:statisticYear' year %}" class="btn-menu m-2">{{year}}</a>
+      <form class="" method="GET" action="{% url 'main:statisticsSite' %}">
+        {% csrf_token %}
+        {% for year in years %}
+          <a href="{% url 'main:statisticYear' year %}" class="btn-menu m-2">{{ year }}</a>
         {% endfor %}
-    </form>
+      </form>
     {% endif %}
-</div>
-{%endblock%}
-
+  </div>
+{% endblock %}

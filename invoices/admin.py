@@ -85,7 +85,7 @@ class InvoiceResource(resources.ModelResource):
 
 @admin.register(Invoice)
 class CountyAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ['date_receipt', 'date', 'no_invoice', 'sum', 'creation_date',
+    list_display = ['id', 'date_receipt', 'date', 'no_invoice', 'sum', 'creation_date',
                     'author']
     list_display_links = ['no_invoice']
     search_fields = ['no_invoice']

@@ -476,7 +476,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 /*-------------------------------------------------*/
 .font-size {
-  font-size: 15px;
+  font-size: 0.9rem;
 }
 
 .success {
