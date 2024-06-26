@@ -1,11 +1,11 @@
 import os
 import datetime
-
 import environ
 from environ import Env
+from pathlib import Path
+
 env = Env()
 environ.Env.read_env()
-
 
 """
 Django settings for PoliceUnitsMaintenanceCards project.
@@ -19,7 +19,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -90,24 +90,24 @@ WSGI_APPLICATION = 'PoliceUnitsMaintenanceCards.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# Database postgres
 DATABASES = {
-     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "wiir_test",
-        'USER': "charon",
-        'PASSWORD': "obol",
-        'HOST': "localhost",  # Host, na którym działa baza danych (może być inny)
-        'PORT': 5432,  # Port bazy danych (domyślnie 5432)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Database postgres
+# DATABASES = {
+#      'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "wiir_test",
+#         'USER': "charon",
+#         'PASSWORD': "obol",
+#         'HOST': "localhost",  # Host, na którym działa baza danych (może być inny)
+#         'PORT': 5432,  # Port bazy danych (domyślnie 5432)
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -202,4 +202,3 @@ SHELL_PLUS_PRINT_SQL = True
 LOGIN_URL = 'main:welcome'
 LOGIN_REDIRECT_URL = 'main:welcome'
 LOGOUT_REDIRECT_URL = 'main:welcome'
-
