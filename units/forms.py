@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Textarea, widgets
-from units.models import Unit
+from units.models import Unit, Mention
 
 
 class UnitForm(ModelForm):
@@ -24,3 +24,22 @@ class UnitForm(ModelForm):
         widgets = {'information': Textarea(attrs={'rows': 3}),
                    'zip_code': widgets.TextInput(attrs={'pattern': '^[0-9]{2}-[0-9]{3}$', 'placeholder': '00-000'}),
                    }
+
+
+class MentionForm(ModelForm):
+    class Meta:
+        model = Mention
+        fields = ('unit', 'description_date', 'description', 'creation_date', 'change', 'author')
+        exclude = ['creation_date', 'change', 'author']
+        labels = {
+            'unit': 'Jednostka',
+            'description_date': 'Data',
+            'description': 'Informacja',
+            'creation_date': 'Data utworzenia',
+            'change': 'Zmiany',
+            'author': 'Autor'
+        }
+
+        widgets = {
+            'description': Textarea(attrs={'rows': 5})
+        }

@@ -2,8 +2,8 @@ import logging
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views import View
-from units.forms import UnitForm
-from units.models import Unit, County, TypeUnit
+from units.forms import UnitForm, MentionForm
+from units.models import Unit, County, TypeUnit, Mention
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,8 @@ class EditUnitView(LoginRequiredMixin, View):
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
             form = self.form_class(instance=unit)
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard,
+                       'new': False}
             return render(request, self.template_name, context)
 
         except Exception as e:
@@ -64,7 +65,36 @@ class EditUnitView(LoginRequiredMixin, View):
                 instance.author = request.user
                 form.save()
                 return redirect(reverse('main:unitCountyMain', kwargs={'countySlug': unit.county_unit.slug}))
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard,
+                       'new': False}
+            return render(request, self.template_name, context)
+        except Exception as e:
+            logger.error("Error: %s", e)
+
+
+class AddMentionUnit(LoginRequiredMixin, View):
+    template_name = "mention_form.html"
+    form_class = MentionForm
+
+    def get(self, request):
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            form = self.form_class
+            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group}
+            return render(request, self.template_name, context)
+
+        except Exception as e:
+            logger.error("Error: %s", e)
+
+    def post(self, request):
+        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        try:
+            form = self.form_class(request.POST or None)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.author = request.user
+                form.save()
+            context = {'user_belongs_to_admin_group':user_belongs_to_admin_group}
             return render(request, self.template_name, context)
         except Exception as e:
             logger.error("Error: %s", e)

@@ -132,9 +132,29 @@ class Unit(models.Model):
     status = models.BooleanField(default=True, verbose_name='Aktualna')
     slug = models.SlugField(max_length=100, unique=True, blank=True)
     change = models.DateTimeField(auto_now=True, verbose_name='Zmiany')
-    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name='Autor')
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
+                               verbose_name='Autor')
 
     def __str__(self):
         if self.object_name:
             return f"{self.unit_full_name} - {self.object_name}"
         return f"{self.unit_full_name}"
+
+
+class Mention(models.Model):
+    class Meta:
+        verbose_name = "Informacja"
+        verbose_name_plural = "Informacje o jednostkach"
+
+    related_name = "mention"
+
+    unit = models.ForeignKey(Unit, on_delete=models.CASCADE, related_name=related_name)
+    description_date = models.DateTimeField(verbose_name="Data")
+    description = models.TextField(null=False, blank=False, verbose_name="Opis")
+    creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
+    change = models.DateTimeField(auto_now=True, verbose_name="zmiany")
+    author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
+                               verbose_name="Autor")
+
+    def __str__(self):
+        return f"Informacja z dnia {self.description_date} dla {self.unit}"
