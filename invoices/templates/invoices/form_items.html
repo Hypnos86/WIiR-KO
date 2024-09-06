@@ -219,7 +219,7 @@
         const contractTypes = document.getElementById("id_contract_types");
         const paragraph = document.getElementById("id_paragraph");
 
-        function getData() {
+        function getDate() {
             const unitValue = unit.value.trim();
             const contractTypesValue = contractTypes.value.trim();
 
@@ -312,7 +312,7 @@
         function formatDate(dateString){
             if (dateString){
                 const date = new Date()
-                const day = String(date.getData()).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const year = date.getFullYear();
 
@@ -345,10 +345,10 @@
             }
             return true;
         }
-        getData();
-        unit.addEventListener("change", getData);
-        contractTypes.addEventListener("change", getData);
-        paragraph.addEventListener("change", getData);
+        getDate();
+        unit.addEventListener("change", getDate);
+        contractTypes.addEventListener("change", getDate);
+        paragraph.addEventListener("change", getDate);
         });
 
 </script>
