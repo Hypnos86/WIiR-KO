@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+{% block title %}{% if new %} Nowa Informacja {% else %} Edycja informacji {% endif %} {% endblock %}
+{% block content %}
+{% if user.is_authenticated and user_belongs_to_admin_group %}
+<div class="">
+    <form method="GET" action="">
+        {%csrf_token%}
+
+        <div class="row col-md-6 mb-3 d-flex justify-content-center">
+            <div class="col-md-12 col-lg-2 mb-3">
+                <span>{{form.unit|bootstrap}}</span>
+            </div>
+            <div class="col-md-12 col-lg-3 mb-3">
+                <span>{{form.description_date|bootstrap}}</span>
+            </div>
+            <div class="col-md-12 col-lg-3 mb-3">
+                <span>{{form.description|bootstrap}}</span>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+
+            <button type="submit" class="btn btn-main d-inline" onclick="snackbarFunction()">
+                {%if new%}
+                <span class="bi bi-save2"> Zapisz</span>
+                {%else%}
+                <span class="bi bi-save2"> Zapisz edycje</span>
+                {%endif%}
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

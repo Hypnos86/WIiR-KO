@@ -73,7 +73,7 @@ class EditUnitView(LoginRequiredMixin, View):
 
 
 class AddMentionUnit(LoginRequiredMixin, View):
-    template_name = "mention_form.html"
+    template_name = "units/modal_mention_form.html"
     form_class = MentionForm
 
     def get(self, request):

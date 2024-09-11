@@ -1,5 +1,9 @@
-from django.forms import ModelForm, Textarea, widgets
+from django.forms import ModelForm, Textarea, widgets, DateInput
 from units.models import Unit, Mention
+
+
+class DateFile(DateInput):
+    input_type = "date"
 
 
 class UnitForm(ModelForm):
@@ -41,5 +45,6 @@ class MentionForm(ModelForm):
         }
 
         widgets = {
-            'description': Textarea(attrs={'rows': 5})
+            'description': Textarea(attrs={'rows': 5}),
+            'description_date': DateFile()
         }

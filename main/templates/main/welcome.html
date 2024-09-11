@@ -20,6 +20,16 @@
     <div>
       <a
         class="btn-menu"
+        href="{% url 'units:newMention'%}"
+        data-toggle="info"
+        title="Nowa informacja"
+      >
+           <i class="bi bi-folder-plus custom-icon"></i>
+      </a>
+    </div>
+    <div>
+      <a
+        class="btn-menu"
         href="{% url 'units:newUnit' %}"
         data-toggle="info"
         title="Nowa jednostka"
@@ -58,10 +68,16 @@
 </div>
 
 {% endif %}
-<script>
-<!--  document.addEventListener("DOMContentLoaded", function () {-->
-<!--    showHideButton();-->
-<!--    setInterval(showHideButton, 3000);-->
-<!--  });-->
+<div class="modal fade" id="mentionModal">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    function openMentionModal(button) {
+      var url = $(button).data("url");
+      $("#mentionModal .modal-content").load(url);
+      $("#mentionModal").modal("show");
+    }
 </script>
 {% endblock %}
