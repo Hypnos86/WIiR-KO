@@ -206,152 +206,158 @@
     </table>
 </div>
 <script>
-      function cancelEdit(){
-            window.location.href = "{% url 'invoices:addItems' invoice.slug %}";
-        }
+function cancelEdit() {
+  window.location.href = "{% url 'invoices:addItems' invoice.slug %}";
+}
 
-    document.addEventListener("DOMContentLoaded", function () {
-        $('#id_unit').select2({ placeholder: 'Wybierz jednostkę' })
+document.addEventListener("DOMContentLoaded", function () {
+  $("#id_unit").select2({ placeholder: "Wybierz jednostkę" });
 
+  const unit = document.getElementById("id_unit");
+  const contractTypes = document.getElementById("id_contract_types");
+  const paragraph = document.getElementById("id_paragraph");
 
+  function getData() {
+    const unitValue = unit.value.trim();
+    const contractTypesValue = contractTypes.value.trim();
 
-        const unit = document.getElementById("id_unit");
-        const contractTypes = document.getElementById("id_contract_types");
-        const paragraph = document.getElementById("id_paragraph");
+    const unitValidate = unitValue !== "";
+    const contractTypesValidate = contractTypesValue !== "";
 
-        function getData() {
-            const unitValue = unit.value.trim();
-            const contractTypesValue = contractTypes.value.trim();
-
-            const unitValidate = unitValue !== "";
-            const contractTypesValidate = contractTypesValue !== "";
-
-            if (unitValidate && contractTypesValidate && paragraphValidate(paragraph)) {
-            paragraphValue = paragraph.options[paragraph.selectedIndex];
-            try {
-                fetch(
-                `{% url 'invoices:handleRequest' invoiceSlug %}?unit_id=${unit.value}&contractTypes_id=${contractTypes.value}&paragraph_id=${paragraphValue.value}`
-                )
-                .then((response) => {
-                    if (!response.ok) {
-                    throw new Error("Problem z siecią");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const measurementSystemNumber = document.getElementById(
-                    "divMeasurementSystemNumber"
-                    );
-                    const counterReading = document.getElementById("divCounterReading");
-                    const consumption = document.getElementById("divConsumption");
-                    const information = document.getElementById("dataInfo");
-                    const parText = paragraphValue.textContent.substring(0, 4);
-
-                    if (parText === "4260") {
-                            measurementSystemNumber.removeAttribute("hidden");
-                            counterReading.removeAttribute("hidden");
-                            consumption.removeAttribute("hidden");
-                            let measureData = document.getElementById('id_measurementSystemNumber')
-                        if(hasValidValues(data)){
-                            information.removeAttribute("hidden");
-                            information.textContent = ` Ostatni okres rozliczeniowy: ${formatDate(data.period_from)} - ${formatDate(data.period_to)}, stan licznika: ${data.counterReading}, zużycie: ${data.consumption}`;
-                            measureData.value = data.measurementSystemNumber;
-
-                        }else{
-                            information.setAttribute('hidden', 'true');
-                            measurementSystemNumber.innterText = '';
-                            measureData.value = '';
-                        }
-                    } else if (parText === "4210") {
-                    const labelConsumption = document.querySelector(
-                        'label[for="id_consumption"]'
-                    );
-
-                    if (labelConsumption) {
-                        labelConsumption.textContent = 'Ilość surowca'}
-                    consumption.removeAttribute('hidden')
-                    console.log(labelConsumption.value)
-                    measurementSystemNumber.setAttribute('hidden', 'true')
-                    counterReading.setAttribute('hidden', 'true')
-                    information.setAttribute('hidden', 'true')
-
-                    } else {
-                    measurementSystemNumber.setAttribute('hidden', 'true')
-                    counterReading.setAttribute('hidden', 'true')
-                    consumption.setAttribute('hidden', 'true')
-                    information.setAttribute('hidden', 'true')
-                    }
-
-                    console.log("Otrzymane dane:", data);
-                })
-                .catch((err) => {
-                    console.log("error:", err);
-                });
-            } catch (error) {
-                console.error("Wystąpił błąd podczas żądania:", error);
+    if (unitValidate && contractTypesValidate && paragraphValidate(paragraph)) {
+      paragraphValue = paragraph.options[paragraph.selectedIndex];
+      try {
+        fetch(
+          `{% url 'invoices:handleRequest' invoiceSlug %}?unit_id=${unit.value}&contractTypes_id=${contractTypes.value}&paragraph_id=${paragraphValue.value}`
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Problem z siecią");
             }
+            return response.json();
+          })
+          .then((data) => {
+            const measurementSystemNumber = document.getElementById(
+              "divMeasurementSystemNumber"
+            );
+            const counterReading = document.getElementById("divCounterReading");
+            const consumption = document.getElementById("divConsumption");
+            const information = document.getElementById("dataInfo");
+            const parText = paragraphValue.textContent.substring(0, 4);
+
+            if (parText === "4260") {
+              measurementSystemNumber.removeAttribute("hidden");
+              counterReading.removeAttribute("hidden");
+              consumption.removeAttribute("hidden");
+              let measureData = document.getElementById(
+                "id_measurementSystemNumber"
+              );
+              if (hasValidValues(data)) {
+                information.removeAttribute("hidden");
+                information.textContent = ` Ostatni okres rozliczeniowy: ${formatDate(
+                  data.period_from
+                )} - ${formatDate(data.period_to)}, stan licznika: ${
+                  data.counterReading
+                }, zużycie: ${data.consumption}`;
+                measureData.value = data.measurementSystemNumber;
+              } else {
+                information.setAttribute("hidden", "true");
+                measurementSystemNumber.innterText = "";
+                measureData.value = "";
+              }
+            } else if (parText === "4210") {
+              const labelConsumption = document.querySelector(
+                'label[for="id_consumption"]'
+              );
+
+              if (labelConsumption) {
+                labelConsumption.textContent = "Ilość surowca";
+              }
+              consumption.removeAttribute("hidden");
+              console.log(labelConsumption.value);
+              measurementSystemNumber.setAttribute("hidden", "true");
+              counterReading.setAttribute("hidden", "true");
+              information.setAttribute("hidden", "true");
             } else {
-            console.log("Nieprawidłowe dane formularza");
+              measurementSystemNumber.setAttribute("hidden", "true");
+              counterReading.setAttribute("hidden", "true");
+              consumption.setAttribute("hidden", "true");
+              information.setAttribute("hidden", "true");
             }
+
+            console.log("Otrzymane dane:", data);
+          })
+          .catch((err) => {
+            console.log("error:", err);
+          });
+      } catch (error) {
+        console.error("Wystąpił błąd podczas żądania:", error);
+      }
+    } else {
+      console.log("Nieprawidłowe dane formularza");
+    }
+  }
+
+  function paragraphValidate(paragraph) {
+    const validParagraphs = [
+      "4260-01",
+      "4260-02",
+      "4260-03",
+      "4260-04",
+      "4210-03"
+    ];
+    const par = paragraph.options[
+      paragraph.selectedIndex
+    ].textContent.substring(0, 7);
+    return validParagraphs.includes(par);
+  }
+
+  function formatDate(dateString) {
+    if (dateString) {
+      const date = new Date();
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}.${month}.${year}`;
+    }
+    return null;
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      const cookies = document.cookie.split(";");
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
+      }
+    }
+    return cookieValue;
+  }
 
-        function paragraphValidate(paragraph) {
-            const validParagraphs = [
-            "4260-01",
-            "4260-02",
-            "4260-03",
-            "4260-04",
-            "4210-03",
-            ];
-            const par = paragraph.options[
-            paragraph.selectedIndex
-            ].textContent.substring(0, 7);
-            return validParagraphs.includes(par);
-        }
+  function hasValidValues(dataDict) {
+    for (let key in dataDict) {
+      if (
+        dataDict[key] === null ||
+        dataDict[key] === undefined ||
+        dataDict[key] === "" ||
+        dataDict[key] === 0
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-        function formatDate(dateString){
-            if (dateString){
-                const date = new Date()
-                const day = String(date.getData()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-
-                return `${day}.${month}.${year}`
-            }
-            return null
-
-        }
-
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== "") {
-            const cookies = document.cookie.split(";");
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === name + "=") {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-                }
-            }
-            }
-            return cookieValue;
-        }
-
-        function hasValidValues(dataDict) {
-            for (let key in dataDict) {
-                if (dataDict[key] === null || dataDict[key] === undefined || dataDict[key] === '' || dataDict[key] === 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        getData();
-        unit.addEventListener("change", getData);
-        contractTypes.addEventListener("change", getData);
-        paragraph.addEventListener("change", getData);
-
-
+  getData();
+  unit.addEventListener("change", getData);
+  contractTypes.addEventListener("change", getData);
+  paragraph.addEventListener("change", getData);
+});
 </script>
 {% endif %}
 {% endblock %}
