@@ -14,6 +14,7 @@ from django.contrib.auth.models import User
 from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
 from invoices.models import Invoice, InvoiceItems, Paragraph, Section, DocumentTypes, ContractTypes
+from core.permissions import PermissionChecker
 from enum import Enum
 import logging
 import datetime
@@ -51,6 +52,11 @@ class WelcomeView(View):
     def get(self, request):
         user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+
+        permission = PermissionChecker(request.user, 'Viewers', Invoice)
+        print(permission.user_has_perm('delete_invoice'))
+
+
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
