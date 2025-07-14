@@ -8,6 +8,7 @@ from django.db.models import Sum
 from django.http import HttpResponse, FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from enum import Enum
 import csv
 from io import BytesIO
 from django.contrib.auth.models import User
@@ -15,7 +16,7 @@ from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
 from invoices.models import Invoice, InvoiceItems, Paragraph, Section, DocumentTypes, ContractTypes
 from core.permissions import PermissionChecker
-from enum import Enum
+from core.data_db import GroupsApp, DataApp, ParagraphEnum
 import logging
 import datetime
 import matplotlib.pyplot as plt
@@ -23,13 +24,6 @@ from django.db.models import Q
 from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
-
-
-class ParagraphEnum(Enum):
-    MEDIA1 = ['4260-01', 'kWh']
-    MEDIA2 = ['4260-02', 'GJ']
-    MEDIA3 = ['4260-03', 'kWh']
-    MEDIA4 = ['4260-04', 'm3']
 
 
 class CurrentDate():
@@ -50,11 +44,13 @@ class WelcomeView(View):
     method = 'WelcomeView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = request.user.groups.filter(name=GroupsApp.ADMINZRIWT.value).exists()
+        user_belongs_to_group = request.user.groups.filter(name=GroupsApp.VIEWERS.value).exists()
 
-        permission = PermissionChecker(request.user, 'Viewers', Invoice)
-        print(permission.user_has_perm('delete_invoice'))
+        permission1 = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value, Invoice)
+        permission2 = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value, Invoice)
+        print('permission1', permission1.is_user_in_group())
+        print('permission1', permission2.is_user_in_group())
 
 
         try:
@@ -707,10 +703,14 @@ class InvoicesListView(LoginRequiredMixin, View):
     method = 'InvoicesListView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, 'AdminZRiWT')
+        user_belongs_to_group = PermissionChecker(request.user, 'Viewers')
+
+        print('user_belongs_to_admin_group', user_belongs_to_admin_group.is_user_in_group())
+        print('user_belongs_to_group', user_belongs_to_group.is_user_in_group())
+
         try:
-            invoices = Invoice.objects.only('id', 'date', 'no_invoice','doc_types','sum', 'information','slug')
+            invoices = Invoice.objects.only('id', 'date', 'no_invoice', 'doc_types', 'sum', 'information', 'slug')
             paginator = Paginator(invoices, self.paginate_by)
             page_number = request.GET.get('page')
             invoices_pages = paginator.get_page(page_number)

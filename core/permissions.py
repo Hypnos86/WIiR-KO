@@ -27,6 +27,7 @@ class PermissionChecker:
 
     def _get_group(self):
         try:
+            print(Group.objects.get(name=self.group_name))
             return Group.objects.get(name=self.group_name)
         except Group.DoesNotExist:
             return None

@@ -1,6 +1,7 @@
 from django.db import models
 from enum import Enum
 from units.models import Unit, County
+from core.data_db import DataApp
 from main.static_data import SECTION
 
 
@@ -18,11 +19,7 @@ class DocumentTypes(models.Model):
 
     @classmethod
     def create_type(cls):
-        data = [
-            {"type": "Faktura"},
-            {"type": "Korekta"},
-            {"type": "Pismo"}
-        ]
+        data = DataApp.create_invoice_type()
 
         for item in data:
             type = cls(type=item["type"])
