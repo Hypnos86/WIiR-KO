@@ -17,17 +17,11 @@ class PermissionChecker:
         self.content_type = (
             ContentType.objects.get_for_model(model_class) if model_class else None)
         self.app_label = model_class._meta.app_label if model_class else None
-        print('aplikacja', self.app_label)
         self.model_name = model_class._meta.model_name if model_class else None
-        print('model name', self.model_name)
         self.test = ContentType
-        # print(dir(self.test))
-        # print(apps.get_models())
-        print(Group.objects.all())
 
     def _get_group(self):
         try:
-            print(Group.objects.get(name=self.group_name))
             return Group.objects.get(name=self.group_name)
         except Group.DoesNotExist:
             return None

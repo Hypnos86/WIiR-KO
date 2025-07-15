@@ -19,7 +19,7 @@ class DocumentTypes(models.Model):
 
     @classmethod
     def create_type(cls):
-        data = DataApp.create_invoice_type()
+        data = DataApp.invoice_type_data()
 
         for item in data:
             type = cls(type=item["type"])
@@ -40,12 +40,7 @@ class ContractTypes(models.Model):
 
     @classmethod
     def create_contract_types(cls):
-        data = [
-            {"type": "Nie dotyczy"},
-            {"type": "Kompleksowa"},
-            {"type": "OSD"},
-            {"type": "Sprzedaż"}
-        ]
+        data = DataApp.contract_types_data()
 
         for item in data:
             type = cls(type=item["type"])
@@ -98,13 +93,7 @@ class Section(models.Model):
 
     @classmethod
     def create_section(cls):
-        data = [
-            {"section": "75401", "name": "CBŚP"},
-            {"section": "75402", "name": "BSW"},
-            {"section": "75404", "name": "KWP"},
-            {"section": "75405", "name": "Powiaty"},
-            {"section": "75407", "name": "CBZC"}
-        ]
+        data = DataApp.section_data()
 
         for item in data:
             section = cls(section=item["section"], name=item["name"])
@@ -126,9 +115,7 @@ class Group(models.Model):
 
     @classmethod
     def create_group(cls):
-        data = [
-            {"group": "6", "name": "Grupa 6 - Administracja i utrzymanie obiektów"}
-        ]
+        data = DataApp.group_data()
 
         for item in data:
             groups = cls(group=item["group"], name=item["name"])
@@ -152,23 +139,7 @@ class Paragraph(models.Model):
 
     @classmethod
     def create_paragraph(cls):
-        data = [
-            {"paragraph": "4170-01", "name": "Wynagrodzenia płacowe na podstawie umowy zlecenia lub umowy o dzieło"},
-            {"paragraph": "4210-03", "name": "Opał (węgiel, koks, olej opałowy, drewno, paliwa zastępcze)"},
-            {"paragraph": "4260-01", "name": "Energia elektryczna"},
-            {"paragraph": "4260-02", "name": "Energia cieplna"},
-            {"paragraph": "4260-03", "name": "Gaz"},
-            {"paragraph": "4260-04", "name": "Woda"},
-            {"paragraph": "4300-10", "name": "Usługi komunalne i mieszkaniowe"},
-            {"paragraph": "4300-19", "name": "Pozostałe usługi"},
-            {"paragraph": "4400-00",
-             "name": "Opłaty za administrowanie i czynsze za budynki, lokale i pomieszczenia garażowe"},
-            {"paragraph": "4480-00", "name": "Podatek od nieruchomości"},
-            {"paragraph": "4510-02", "name": "Trwały zarząd"},
-            {"paragraph": "4510-03", "name": "Wody opadowe"},
-            {"paragraph": "4520-03", "name": "Opłaty za korzystanie ze środowiska"},
-            {"paragraph": "4520-04", "name": "Inne (podatek od śmieci)"},
-        ]
+        data = DataApp.paragraph_data()
 
         for item in data:
             paragraph = cls(paragraph=item["paragraph"], name=item["name"])

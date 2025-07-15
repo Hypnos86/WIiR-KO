@@ -44,22 +44,16 @@ class WelcomeView(View):
     method = 'WelcomeView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name=GroupsApp.ADMINZRIWT.value).exists()
-        user_belongs_to_group = request.user.groups.filter(name=GroupsApp.VIEWERS.value).exists()
-
-        permission1 = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value, Invoice)
-        permission2 = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value, Invoice)
-        print('permission1', permission1.is_user_in_group())
-        print('permission1', permission2.is_user_in_group())
-
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
 
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
 
             # Tworzenie i przypisywanie zmiennej grup
-            admin, created = Group.objects.get_or_create(name="AdminZRiWT")
-            viewers, created = Group.objects.get_or_create(name="Viewers")
+            admin, created = Group.objects.get_or_create(name=GroupsApp.ADMINZRIWT.value)
+            viewers, created = Group.objects.get_or_create(name=GroupsApp.VIEWERS.value)
 
             # Pobieranie i sprawdzanie, czy istnieją obiekty w bazie
             counties = CountyCard.objects.all()
@@ -117,7 +111,7 @@ class LoginView(View):
     template_error = 'main/error.html'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
         try:
             return render(request, self.template_name)
         except Exception as e:
@@ -177,8 +171,8 @@ class UnitsListMainView(View):
     method = 'UnitsListMainView'
 
     def get(self, request, countySlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
         try:
             yearObject = CurrentDate()
             year = yearObject.current_year()
@@ -368,8 +362,8 @@ class UnitsView(LoginRequiredMixin, View):
 
     def get_user_info(self, request):
         user = request.user
-        user_belongs_to_admin_group = user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
         return user, user_belongs_to_admin_group, user_belongs_to_group
 
     def handle_exception(self, request, error):
@@ -451,8 +445,8 @@ class StatisticsView(LoginRequiredMixin, View):
     method = 'StatisticsView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             paragraphs = Paragraph.objects.all()
@@ -529,8 +523,8 @@ class StatisticsYearView(LoginRequiredMixin, View):
     method = 'StatisticsYearView'
 
     def get(self, request, year):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
         try:
             title = 'Grupa 6 - Administracja i utrzymanie obiektów'
             paragraphs = Paragraph.objects.all()
@@ -590,8 +584,8 @@ class UsersSiteView(LoginRequiredMixin, View):
     method = 'UsersSiteView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
-        user_belongs_to_group = request.user.groups.filter(name='Viewers').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
         try:
             users = User.objects.all()
             context = {'users': users, 'user_belongs_to_group': user_belongs_to_group,
@@ -610,7 +604,7 @@ class ArchiveYearCostListView(View):
     method = 'ArchiveYearCostListView'
 
     def get(self, request, unitSlug, paragraphSlug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
         try:
             currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=unitSlug)
@@ -635,7 +629,7 @@ class ArchiveYearUnitCostListView(View):
     method = 'ArchiveYearUnitCostListView'
 
     def get(self, request, slugCounty):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
         try:
             currentYear = currentDate.current_year()
             # unit = Unit.objects.filter(county_unit__slug=slugCounty)
@@ -657,7 +651,7 @@ class ArchiveYearUnitMainView(View):
     method = 'ArchiveYearUnitMainView'
 
     def get(self, request, slugUnit):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
         try:
             currentYear = currentDate.current_year()
             unit = Unit.objects.get(slug=slugUnit)
@@ -681,7 +675,7 @@ class ArchiveYearStatisticView(View):
     method = 'ArchiveYearStatisticView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
         try:
             currentYear = currentDate.current_year()
             items = InvoiceItems.objects.filter()
@@ -703,11 +697,8 @@ class InvoicesListView(LoginRequiredMixin, View):
     method = 'InvoicesListView'
 
     def get(self, request):
-        user_belongs_to_admin_group = PermissionChecker(request.user, 'AdminZRiWT')
-        user_belongs_to_group = PermissionChecker(request.user, 'Viewers')
-
-        print('user_belongs_to_admin_group', user_belongs_to_admin_group.is_user_in_group())
-        print('user_belongs_to_group', user_belongs_to_group.is_user_in_group())
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        user_belongs_to_group = PermissionChecker(request.user, GroupsApp.VIEWERS.value).is_user_in_group()
 
         try:
             invoices = Invoice.objects.only('id', 'date', 'no_invoice', 'doc_types', 'sum', 'information', 'slug')
