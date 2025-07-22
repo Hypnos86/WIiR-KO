@@ -1631,7 +1631,7 @@ class CreateGraphView(View):
 
     def get(self, request, year, par):
         try:
-            user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
+            user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
             paragraphs = Paragraph.objects.all()
             parObj = Paragraph.objects.get(paragraph=par)
             parTitle = parObj.name
@@ -1694,6 +1694,49 @@ class CreateGraphView(View):
         except Exception as e:
             context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
             logger.error("Error: %s", e)
+            return render(request, self.template_error, context)
+
+
+class CreateCSVForCostListUnitDetails(View):
+    template_error = 'main/error.html'
+    method = 'CreateCSVForCostListUnitDetails'
+
+    # TODO priorytetem jest ja funkcja
+
+    def get(self, request, unitSlug, paragraphSlug, year):
+        user_belongs_to_admin_group = PermissionChecker(request.user, GroupsApp.ADMINZRIWT.value).is_user_in_group()
+        try:
+            nowDate = currentDate.current_date()
+            unit = get_object_or_404(Unit, slug=unitSlug)
+            items = InvoiceItems.objects.filter(unit__slug=unitSlug, paragraph__slug=paragraphSlug,
+                                                invoice_id__date__year=year).order_by('-invoice_id__date')
+            print(items)
+
+            response = HttpResponse(content_type='text/csv')
+            response[
+                'Content-Disposition'] = f'attachment; filename="Zestawienie_kosztów {unit.id} - {nowDate.strftime("%d.%m.%Y")}.csv"'
+            # Ustawienie kodowania utf-8
+            response.write(u'\ufeff'.encode('utf8'))
+            # Tworzenie obiektu writer i zapis do pliku csv
+            writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
+            # response.write(f'Zestawienie jednostek. Stan na {nowDate.strftime("%d.%m.%Y")}\n')
+            writer.writerow([f'Stan na {nowDate.strftime("%d.%m.%Y")}r.'])
+            writer.writerow([f"Zestawienie dokumentów dla {unit}"])
+            writer.writerow(
+                ['Data faktury', 'Nr. Dokumentu', 'Okres', 'Nr. licznika', 'Czynsz', 'Komepleksowa', 'OSD',
+                 'Sprzedaż', 'Kwota', 'Informacje'])
+            #
+            # for unit in units:
+            #     writer.writerow(
+            #         [unit.county_swop.name, unit.county_swop.section.first(), unit.type.type_full, unit.address,
+            #          unit.zip_code, unit.city, unit.object_name, unit.manager, unit.status, unit.information])
+
+            return response
+        except Exception as e:
+            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
+            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
+            logger.error("Error: %s", e)
+            # Zwróć odpowiednią stronę błędu lub obsługę błędu
             return render(request, self.template_error, context)
 
 # class CreateBackupDB(View):

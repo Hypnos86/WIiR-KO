@@ -42,20 +42,18 @@
             </div>
             <div class="mx-2">
                 {% if statisticsSite %}
-                <a
-                        class="btn-menu"
-                        href="{% url 'main:csvForCountySumCurrentYear' %}"
-                        data-toggle="info"
-                        title="Zapisz"
+                <a class="btn-menu"
+                   href="{% url 'main:csvForCountySumCurrentYear' %}"
+                   data-toggle="info"
+                   title="Zapisz"
                 >
                     <span class="bi bi-download custom-icon"></span>
                 </a>
                 {% endif %} {% if statisticYear %}
-                <a
-                        class="btn-menu"
-                        href="{% url 'main:csvForCountyYearSum' year %}"
-                        data-toggle="info"
-                        title="Zapisz"
+                <a class="btn-menu"
+                   href="{% url 'main:csvForCountyYearSum' year %}"
+                   data-toggle="info"
+                   title="Zapisz"
                 >
                     <span class="bi bi-download custom-icon"></span>
                 </a>
@@ -78,18 +76,16 @@
                 Jednostka
             </th>
             {% for paragraph in paragraphs%}
-            <th
-                    align="center"
-                    valign="middle"
-                    width="auto"
-                    scope="col"
-                    data-toggle="info"
-                    title="{{paragraph.name}}"
+            <th align="center"
+                valign="middle"
+                width="auto"
+                scope="col"
+                data-toggle="info"
+                title="{{paragraph.name}}"
             >
                 {% if user_belongs_to_admin_group %}
-                <a
-                        class="link-light text-decoration-none"
-                        href="{% url 'main:createGraph' year paragraph.paragraph %}"
+                <a class="link-light text-decoration-none"
+                   href="{% url 'main:createGraph' year paragraph.paragraph %}"
                 >§ {{paragraph.paragraph}}</a
                 >
                 {%else %} § {{paragraph.paragraph}} {% endif %}
