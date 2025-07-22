@@ -3,10 +3,6 @@ from django import forms
 from invoices.models import Invoice, InvoiceItems
 
 
-class DateField(DateInput):
-    input_type = "date"
-
-
 class InvoiceForm(ModelForm):
     class Meta:
         model = Invoice
@@ -19,9 +15,9 @@ class InvoiceForm(ModelForm):
                   'author': 'Autor'}
         exclude = ['creation_date', 'change_date', 'author']
         widgets = {'information': Textarea(attrs={'rows': 3}),
-                   'date': DateField(),
-                   'date_receipt': DateField(),
-                   'date_of_payment': DateField()
+                   'date': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+                   'date_receipt': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+                   'date_of_payment': DateInput(attrs={'type': 'date', 'class': 'form-control'})
                    }
 
 
@@ -37,7 +33,7 @@ class InvoiceItemsForm(ModelForm):
                   'section': 'Rozdział', 'group': 'Grupa', 'paragraph': 'Paragraf', 'sum': 'Kwota',
                   'infomation': 'Uwagi'}
         exclude = ['creation_date', 'invoice_id', 'section', 'group']
-        widgets = {'period_from': DateField(),
-                   'period_to': DateField(),
+        widgets = {'period_from': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+                   'period_to': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
                    'information': Textarea(attrs={'rows': 1})
                    }
