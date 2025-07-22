@@ -68,8 +68,9 @@
         <ul class="d-flex justify-content-between my-2">
             {% for type in typesList %}
             <li id="{{type.index}}" class="unitLinkLi">
-                <a href="{% url 'main:typeUnitsList' type.type_short %}">
-                    {{ type.type_full }}</a>
+                <div class="unitLinkDiv">
+                    <a href="{% url 'main:typeUnitsList' type.type_short %}">{{ type.type_full }}</a>
+                </div>
             </li>
             {% endfor %}
         </ul>

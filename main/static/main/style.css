@@ -83,7 +83,7 @@ video {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 80%;
+  font-size: 75%;
   font: inherit;
   vertical-align: baseline;
 }
@@ -306,7 +306,7 @@ td .btn-menu {
 }
 
 caption {
-  font-size: 1rem;
+  font-size: rem;
 }
 
 .page-item.active .page-link {
@@ -476,7 +476,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 /*-------------------------------------------------*/
 .font-size {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .success {
@@ -534,18 +534,23 @@ td {
   background-color: #057570;
   border: 1px solid #057570;
   border-radius: 25px;
+  width: 19em;
+  margin: 0 auto;
   transition: background-color 0.3s, border-radius 0.3s;
 }
+
 .unitLinkLi:hover {
   background-color: #f5db90;
   border: 1px solid #f5db90;
 }
+
 .unitLinkLi[active] {
   background-color: #f5db90;
   border: 1px solid #f5db90;
   position: relative;
 }
-.unitLinkLi[active] > a {
+
+.unitLinkLi[active] > div > a {
   color: #057570;
 }
 .unitLinkLi[active]::after {
@@ -554,18 +559,33 @@ td {
   position: absolute;
   color: #057570;
   border-radius: 30px;
-  margin-left: 5px;
+  margin-left:-20px;
   background-color: white;
 }
 .unitLinkLi[active]:hover::after {
   background-color: #057570;
   color: white;
   cursor: pointer;
+  
 }
-.unitLinkLi > a {
+.unitLinkLi > div > a {
   text-decoration: none;
   color: white;
+  display: flex;
+  justify-content: center;
 }
-.unitLinkLi:hover > a {
+.unitLinkLi:hover > div > a {
   color: #057570;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+}
+
+.unitLinkDiv{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: space-around;
+
 }
