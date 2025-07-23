@@ -535,6 +535,7 @@ td {
     border: 1px solid #057570;
     border-radius: 25px;
     width: 19em;
+    height: fit-content;
     margin: 0 auto;
     transition: background-color 0.3s, border-radius 0.3s;
 
@@ -562,34 +563,31 @@ td {
     background-color: #f5db90;
     border: 1px solid #f5db90;
 
-    .unitLinkDiv {
+    a {
+        color: #057570;
+        position: relative;
+        align-items: center;
+        padding-right: 1rem;
+        width:100%;
 
-        a {
+        &::after {
+            content: "X";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
             color: #057570;
-            position: relative;
-            align-items: center;
-            padding-right: 1rem;
-            width:100%;
+            border-radius: 50%;
+            position: absolute;
+            right: 0;
+            background-color: white;
 
-            &::after {
-                content: "X";
-                display: inline-block;
-                width: 20px;
-                height: 20px;
-                line-height: 20px;
-                text-align: center;
-                color: #057570;
-                border-radius: 50%;
-                position: absolute;
-                right: 0;
-                background-color: white;
-
-            }
         }
     }
 }
 
-.unitLinkLi[active] > div > a:hover::after  {
+.unitLinkLi[active] > a:hover::after  {
     background-color: #057570;
     color: white;
     cursor: pointer;
