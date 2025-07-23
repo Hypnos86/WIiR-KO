@@ -198,12 +198,13 @@
                     window.getComputedStyle(idTypeUnit, ':after');
                     idTypeUnit.addEventListener('click', function(event) {
 
-                        if (event.target.getAttribute('active') === '') {
+                        if (event.target.getAttribute(
+                        active') === '') {
                         window.location.href = '{% url 'main:unitsSite'%}';
                     }
                 });
-                }
             }
+        }
         {% endfor %}
     }
 </script>
