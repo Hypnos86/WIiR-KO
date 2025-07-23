@@ -166,7 +166,7 @@ class InvoiceItems(models.Model):
     period_to = models.DateField(verbose_name='Okres do', null=False)
     measurementSystemNumber = models.CharField(verbose_name='Nr. licznika', null=True, blank=True, max_length=15)
     counterReading = models.CharField(verbose_name='Stan licznika', max_length=80, null=True, blank=True)
-    consumption = models.DecimalField(verbose_name='Zużycie', max_digits=10, decimal_places=2, null=True, blank=False)
+    consumption = models.DecimalField(verbose_name='Zużycie', max_digits=10, decimal_places=2, null=True, blank=True)
     unit = models.ForeignKey(to=Unit, on_delete=models.CASCADE, verbose_name='Jednostka', related_name=related_name)
     section = models.ForeignKey(to=Section, null=True, blank=True, on_delete=models.CASCADE,
                                 verbose_name='Rozdział',
@@ -174,12 +174,18 @@ class InvoiceItems(models.Model):
     group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
                                   related_name=related_name)
-    sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=False, blank=False)
+    sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=False,
+                              blank=False)
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
                                verbose_name='Autor')
+
+    def save(self, *args, **kwargs):
+        if self.consumption is None:
+            self.consumption = 0
+        super().save()
 
     def __str__(self):
         return f"{self.section}-{self.group}-{self.paragraph}"
