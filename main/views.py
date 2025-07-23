@@ -1713,14 +1713,15 @@ class CreateCSVForCostListUnitDetails(View):
 
             response = HttpResponse(content_type='text/csv')
             response[
-                'Content-Disposition'] = f'attachment; filename="Zestawienie_kosztów {unit.id} - {nowDate.strftime("%d.%m.%Y")}.csv"'
+                'Content-Disposition'] = f'attachment; filename="Zestawienie_kosztów_{unit.id} - {nowDate.strftime("%d.%m.%Y")}.csv"'
             # Ustawienie kodowania utf-8
             response.write(u'\ufeff'.encode('utf8'))
             # Tworzenie obiektu writer i zapis do pliku csv
             writer = csv.writer(response, delimiter=';', dialect='excel', lineterminator='\n')
             # response.write(f'Zestawienie jednostek. Stan na {nowDate.strftime("%d.%m.%Y")}\n')
+            writer.writerow([f"Zestawienie dokumentów na {year}"])
             writer.writerow([f'Stan na {nowDate.strftime("%d.%m.%Y")}r.'])
-            writer.writerow([f"Zestawienie dokumentów dla {unit}"])
+            writer.writerow([f'Jednostka: {unit}'])
             writer.writerow(
                 ['Data faktury', 'Nr. Dokumentu', 'Okres', 'Nr. licznika', 'Stan licznika', 'Zużycie', 'Kwota',
                  'Typ umowy', 'Informacje'])
