@@ -1710,7 +1710,6 @@ class CreateCSVForCostListUnitDetails(View):
             unit = get_object_or_404(Unit, slug=unitSlug)
             items = InvoiceItems.objects.filter(unit__slug=unitSlug, paragraph__slug=paragraphSlug,
                                                 invoice_id__date__year=year).order_by('-invoice_id__date')
-            print(items)
 
             response = HttpResponse(content_type='text/csv')
             response[
@@ -1723,13 +1722,14 @@ class CreateCSVForCostListUnitDetails(View):
             writer.writerow([f'Stan na {nowDate.strftime("%d.%m.%Y")}r.'])
             writer.writerow([f"Zestawienie dokumentów dla {unit}"])
             writer.writerow(
-                ['Data faktury', 'Nr. Dokumentu', 'Okres', 'Nr. licznika', 'Czynsz', 'Komepleksowa', 'OSD',
-                 'Sprzedaż', 'Kwota', 'Informacje'])
-            #
-            # for unit in units:
-            #     writer.writerow(
-            #         [unit.county_swop.name, unit.county_swop.section.first(), unit.type.type_full, unit.address,
-            #          unit.zip_code, unit.city, unit.object_name, unit.manager, unit.status, unit.information])
+                ['Data faktury', 'Nr. Dokumentu', 'Okres', 'Nr. licznika', 'Stan licznika', 'Zużycie', 'Kwota',
+                 'Typ umowy', 'Informacje'])
+
+            for item in items:
+                writer.writerow(
+                    [item.invoice_id.date, item.invoice_id.no_invoice, f'{item.period_from} - {item.period_to}',
+                     item.measurementSystemNumber, item.counterReading, item.consumption, item.sum, item.contract_types,
+                     item.information])
 
             return response
         except Exception as e:
