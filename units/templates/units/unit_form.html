@@ -1,93 +1,98 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load bootstrap %}
-{% block title %}{% if new %} Nowa jednostka {% else %} Edycja jednostki {% endif %} {% endblock %}
-{% block content %}
-{% if user.is_authenticated and user_belongs_to_admin_group %}
+{% extends 'base.html' %} 
+{% load static %} 
+{% load bootstrap %} 
+{% block title %}
+{% if new %} Nowa jednostka {% else %} Edycja jednostki {% endif %} 
+{%endblock %} 
+{% block content %} 
+{% if user.is_authenticated and perms.units.add_unit %}
 <div class="container pt-5">
-    <div class="row mb-4">
-        <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
-            {% if new %}
-            <a href="{% url 'main:welcome' %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
-            {% else %}
-            <a href="{% url 'main:unitCountyMain' slugCard %}" class="btn-menu">
-                <span class="bi bi-arrow-90deg-left custom-icon"></span>
-            </a>
-            {% endif %}
-        </div>
-        <div class="col-sm-10 col-md-10 col-lg-8">
-            <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">{%if new%} Nowy obiekt {%else%} Edycja obiektu
-                    {%endif%}</h5>
-            </div>
-        </div>
+  <div class="row mb-4">
+    <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
+      {% if new %}
+      <a href="{% url 'main:welcome' %}" class="btn-menu">
+        <span class="bi bi-arrow-90deg-left custom-icon"></span>
+      </a>
+      {% else %}
+      <a href="{% url 'main:unitCountyMain' slugCard %}" class="btn-menu">
+        <span class="bi bi-arrow-90deg-left custom-icon"></span>
+      </a>
+      {% endif %}
     </div>
-    <div class="">
-        <form method="POST">
-            {%csrf_token%}
-
-            <div class="row mb-3 d-flex justify-content-center">
-                <div class="col-md-3 col-lg-2 mb-3">
-                    <span>{{form.county_unit|bootstrap}}</span>
-                </div>
-                <div class="col-md-3 col-lg-3 mb-3">
-                    <span>{{form.county_swop|bootstrap}}</span>
-                </div>
-                <div class="col-md-5 col-lg-3 mb-3">
-                    <span>{{form.type|bootstrap}}</span>
-                </div>
-            </div>
-            <div class="row mb-3 d-flex justify-content-center">
-                <div class="col-md-4 col-lg-3 mb-3">
-                    <span>{{form.address|bootstrap}}</span>
-                </div>
-                <div class="col-md-3 col-lg-2 mb-3">
-                    <span>{{form.zip_code|bootstrap}}</span>
-                </div>
-                <div class="col-md-4 col-lg-3 mb-3">
-                    <span>{{form.city|bootstrap}}</span>
-                </div>
-            </div>
-            <div class="row mb-3 d-flex justify-content-center">
-                <div class="col-md-4 col-lg-3 mb-3">
-                    <span>{{form.object_name|bootstrap}}</span>
-                </div>
-                <div class="col-md-4 col-lg-3 mb-3">
-                    <span>{{form.manager|bootstrap}}</span>
-                </div>
-                <div class="col-md-3 col-lg-2 mb-3">
-                    <label for="id_state">Status jednostki</label>
-                    <div class="form-control" id="id_state">
-                        <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    {{form.status}}
-                                    <span>Aktualna</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3 d-flex justify-content-center">
-                <div class="col-md-11 col-lg-8">
-                    <span>{{form.information|bootstrap}}</span>
-                </div>
-            </div>
-            <div class="d-flex justify-content-center">
-
-                <button type="submit" class="btn btn-main d-inline" onclick="snackbarFunction()">
-                    {%if new%}
-                    <span class="bi bi-save2"> Zapisz</span>
-                    {%else%}
-                    <span class="bi bi-save2"> Zapisz edycje</span>
-                    {%endif%}
-                </button>
-            </div>
-        </form>
+    <div class="col-sm-10 col-md-10 col-lg-8">
+      <div class="text-center">
+        <h5 class="h5 m-0 font-weight-bold text-uppercase">
+          {% if new %} Nowy obiekt {% else %} Edycja obiektu {% endif %}
+        </h5>
+      </div>
     </div>
+  </div>
+  <div class="">
+    <form method="POST">
+      {%csrf_token%}
+      <div class="row mb-3 d-flex justify-content-center">
+        <div class="col-md-3 col-lg-2 mb-3">
+          <span>{{form.county_unit|bootstrap}}</span>
+        </div>
+        <div class="col-md-3 col-lg-3 mb-3">
+          <span>{{form.county_swop|bootstrap}}</span>
+        </div>
+        <div class="col-md-5 col-lg-3 mb-3">
+          <span>{{form.type|bootstrap}}</span>
+        </div>
+      </div>
+      <div class="row mb-3 d-flex justify-content-center">
+        <div class="col-md-4 col-lg-3 mb-3">
+          <span>{{form.address|bootstrap}}</span>
+        </div>
+        <div class="col-md-3 col-lg-2 mb-3">
+          <span>{{form.zip_code|bootstrap}}</span>
+        </div>
+        <div class="col-md-4 col-lg-3 mb-3">
+          <span>{{form.city|bootstrap}}</span>
+        </div>
+      </div>
+      <div class="row mb-3 d-flex justify-content-center">
+        <div class="col-md-4 col-lg-3 mb-3">
+          <span>{{form.object_name|bootstrap}}</span>
+        </div>
+        <div class="col-md-4 col-lg-3 mb-3">
+          <span>{{form.manager|bootstrap}}</span>
+        </div>
+        <div class="col-md-3 col-lg-2 mb-3">
+          <label for="id_state">Status jednostki</label>
+          <div class="form-control" id="id_state">
+            <div class="form-group">
+              <div class="checkbox">
+                <label>
+                  {{form.status}}
+                  <span>Aktualna</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3 d-flex justify-content-center">
+        <div class="col-md-11 col-lg-8">
+          <span>{{form.information|bootstrap}}</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button
+          type="submit"
+          class="btn btn-main d-inline"
+          onclick="snackbarFunction()"
+        >
+          {%if new%}
+          <span class="bi bi-save2"> Zapisz</span>
+          {%else%}
+          <span class="bi bi-save2"> Zapisz edycje</span>
+          {%endif%}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endif %}
 {% endblock %}

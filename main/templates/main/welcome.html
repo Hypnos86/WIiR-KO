@@ -1,67 +1,68 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <div class="container pt-5">
-  <div class="text-center mb-4">
+    <div class="text-center mb-4">
     <span class="h3 font-weight-bold text-uppercase"
-      >Karty Obiektów Wielkopolskiej Policji</span
-    >
-  </div>
-  {% if user.is_authenticated and user_belongs_to_admin_group%}
-  <div class="d-flex justify-content-around mb-3">
-    <div>
-      <a
-        class="btn-menu"
-        href="{% url 'invoices:newInvoice' %}"
-        data-toggle="info"
-        title="Nowa faktura"
-      >
-        <i class="bi bi-plus-circle custom-icon"></i>
-      </a>
+    >Karty Obiektów Wielkopolskiej Policji</span>
     </div>
-    <div>
-      <a
-        class="btn-menu"
-        href="{% url 'units:newUnit' %}"
-        data-toggle="info"
-        title="Nowa jednostka"
-      >
-        <i class="bi bi-building-add custom-icon"></i>
-      </a>
+    <div class="d-flex justify-content-around mb-3">
+        <div>
+            {% if user_has_perm_add_invoice %}
+            <a
+                    class="btn-menu"
+                    href="{% url 'invoices:newInvoice' %}"
+                    data-toggle="info"
+                    title="Nowa faktura"
+            >
+                <i class="bi bi-plus-circle custom-icon"></i>
+            </a>
+            {% endif %}
+        </div>
+        {% if user_has_perm_add_unit %}
+        <div>
+            <a
+                    class="btn-menu"
+                    href="{% url 'units:newUnit' %}"
+                    data-toggle="info"
+                    title="Nowa jednostka"
+            >
+                <i class="bi bi-building-add custom-icon"></i>
+            </a>
+        </div>
+        {% endif %}
     </div>
-  </div>
-  {% endif %}
-  <div class="row">
-    {% for county in counties %}
-    <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center">
-      <a
-        href="{% url 'main:unitCountyMain' county.slug %}"
-        class="btn btn-main d-block"
-        >{{ county }}</a
-      >
+    <div class="row">
+        {% for county in counties %}
+        <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center">
+            <a
+                    href="{% url 'main:unitCountyMain' county.slug %}"
+                    class="btn btn-main d-block"
+            >{{ county }}</a
+            >
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 </div>
 
 {% if messages %}
 <div class="container text-center mt-4">
-  {% for message in messages %} {% if "error" in message.tags %}
-  <span id="logOut" class="log-out">{{ message }}</span>
-  <script>
-    showLogOutSnackbar();
-  </script>
-  {% elif "success" in message.tags %}
-  <span id="logIn" class="log-in">{{ message }}</span>
-  <script>
-    showLogInSnackbar();
-  </script>
-  {% endif %} {% endfor %}
+    {% for message in messages %} {% if "error" in message.tags %}
+    <span id="logOut" class="log-out">{{ message }}</span>
+    <script>
+        showLogOutSnackbar();
+    </script>
+    {% elif "success" in message.tags %}
+    <span id="logIn" class="log-in">{{ message }}</span>
+    <script>
+        showLogInSnackbar();
+    </script>
+    {% endif %} {% endfor %}
 </div>
 
 {% endif %}
 <script>
-<!--  document.addEventListener("DOMContentLoaded", function () {-->
-<!--    showHideButton();-->
-<!--    setInterval(showHideButton, 3000);-->
-<!--  });-->
+    <!--  document.addEventListener("DOMContentLoaded", function () {-->
+    <!--    showHideButton();-->
+    <!--    setInterval(showHideButton, 3000);-->
+    <!--  });-->
 </script>
 {% endblock %}

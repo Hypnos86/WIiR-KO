@@ -7,23 +7,31 @@ from units.models import Unit, County, TypeUnit
 
 logger = logging.getLogger(__name__)
 
+TEMPLATE_ERROR = "main/error.html"
+
+def handle_exception(self, request, e, method):
+    context = {
+        "error": e,
+        "method": method,
+    }
+    logger.error("Error: %s", e)
+    return render(request, TEMPLATE_ERROR, context)
 
 # Create your views here.
 class AddUnitView(LoginRequiredMixin, View):
     template_name = 'units/unit_form.html'
     form_class = UnitForm
+    method = 'AddUnitView'
 
     def get(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             form = self.form_class()
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'new': True}
+            context = {'form': form, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            logger.error("Error: %s", e)
+            return handle_exception(self, e, self.method)
 
     def post(self, request):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             form = self.form_class(request.POST or None)
             if form.is_valid():
@@ -31,30 +39,29 @@ class AddUnitView(LoginRequiredMixin, View):
                 instance.author = request.user
                 form.save()
                 return redirect('main:welcome')
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'new': True}
+            context = {'form': form, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            logger.error("Error:s%", e)
+            return handle_exception(self, e, self.method)
 
 
 class EditUnitView(LoginRequiredMixin, View):
     template_name = 'units/unit_form.html'
     form_class = UnitForm
+    method = 'EditUnitView'
 
     def get(self, request, slug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
             form = self.form_class(instance=unit)
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
 
         except Exception as e:
-            logger.error("Error: %s", e)
+            return handle_exception(self, e, self.method)
 
     def post(self, request, slug):
-        user_belongs_to_admin_group = request.user.groups.filter(name='AdminZRiWT').exists()
         try:
             unit = get_object_or_404(Unit, slug=slug)
             slugCard = unit.county_unit.slug
@@ -64,7 +71,7 @@ class EditUnitView(LoginRequiredMixin, View):
                 instance.author = request.user
                 form.save()
                 return redirect(reverse('main:unitCountyMain', kwargs={'countySlug': unit.county_unit.slug}))
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'slugCard': slugCard, 'new': False}
+            context = {'form': form, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            logger.error("Error: %s", e)
+            return handle_exception(self, e, self.method)

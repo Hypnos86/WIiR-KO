@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 {% block content %}
-{% if user.is_authenticated%}
+{% if user.is_authenticated and perms.invoices.view_invoice %}
 <div class="container pt-5">
     <div class="row mb-2">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
@@ -83,12 +83,14 @@
                 data-toggle="info"
                 title="{{paragraph.name}}"
             >
-                {% if user_belongs_to_admin_group %}
+                {% if perms.invoices.add_invoice %}
                 <a class="link-light text-decoration-none"
                    href="{% url 'main:createGraph' year paragraph.paragraph %}"
-                >§ {{paragraph.paragraph}}</a
-                >
-                {%else %} § {{paragraph.paragraph}} {% endif %}
+                >§ {{paragraph.paragraph}}
+                </a>
+                {%else %}
+                 § {{paragraph.paragraph}} 
+                 {% endif %}
             </th>
             {% endfor %}
         </tr>

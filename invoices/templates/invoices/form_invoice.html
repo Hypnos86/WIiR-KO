@@ -9,7 +9,7 @@ Dokument
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if user.is_authenticated and user_belongs_to_admin_group %}
+{% if user.is_authenticated and perms.invoices.view_invoice %}
 <div class="container pt-5">
     <div class="row mb-4">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
@@ -88,11 +88,12 @@ Dokument
             </div>
             <div class="row d-flex justify-content-center">
                 <div class="col-md-12 col-lg-6 mb-3 d-flex justify-content-between">
-                    {% if new %}
+                    {% if new and perms.invoices.add_invoice %}
                     <button type="submit" class="btn btn-main d-inline" >
                         <span class="bi bi-arrow-return-right"> Zapisz</span>
                     </button>
-                    {% else %}
+                    {% endif %}
+                    {% if not new and perms.invoices.add_invoice %}
                     <button id="editButton" type="button" class="btn btn-main d-inline" >
                         <span class="bi bi-pencil-square"> Edytuj</span>
                     </button>
@@ -100,7 +101,8 @@ Dokument
                     <button id="submitButton" type="submit" class="btn btn-main d-inline">
                         <span class="bi bi-arrow-return-right"> Zapisz</span>
                     </button>
-
+                    {% endif %}
+                    {% if not new and perms.invoices.view_invoice%}
                     <button type="button" onclick="location.href='{% url 'invoices:addItems' invoice.slug %}'"
                             class="btn btn-main d-inline">
                         <span class="bi bi-card-list"> Elementy</span>

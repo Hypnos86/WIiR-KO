@@ -1,84 +1,79 @@
 import csv
 import logging
-from enum import Enum
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.http import require_POST
 from invoices.models import Invoice, InvoiceItems, DocumentTypes, ContractTypes, Group
 from invoices.forms import InvoiceForm, InvoiceItemsForm
 from units.models import Unit
 from django.core.serializers import serialize
+from core.data_db import ParagraphEnum, GroupsApp
 
 logger = logging.getLogger(__name__)
 
+TEMPLATE_ERROR = "main/error.html"
 
-class ParagraphEnum(Enum):
-    MEDIA1 = '4260-01'
-    MEDIA2 = '4260-02'
-    MEDIA3 = '4260-03'
-    MEDIA4 = '4260-04'
+def handle_exception(self, request, e, method):
+    context = {
+        "error": e,
+        "method": method,
+    }
+    logger.error("Error: %s", e)
+    return render(request, TEMPLATE_ERROR, context)
 
-
-def get_user_groups(request):
-    'Sprawdzanie czy użytkownik nalezy do górpy administratorów'
-    return request.user.groups.filter(name='AdminZRiWT').exists()
-
-
-class NewInvoiceView(LoginRequiredMixin, View):
-    template_name = 'invoices/form_invoice.html'
-    template_error = 'main/error.html'
+class NewInvoiceView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    template_name = "invoices/form_invoice.html"
     form_class = InvoiceForm
-    method = 'NewInvoiceView'
+    method = "NewInvoiceView"
 
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
+    # wymagane uprawnienie Django (user + grupy + superuser)
+    permission_required = "invoices.add_invoice"
+    raise_exception = True  # zamiast redirectu na login -> 403 przy braku perms
 
     def get(self, request):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             form = self.form_class()
             doc_types = DocumentTypes.objects.all()
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'doc_types': doc_types,
-                       'new': True}
+            context = {
+                "form": form,
+                "doc_types": doc_types,
+                "new": True,
+            }
             return render(request, self.template_name, context)
         except Exception as e:
-            return self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
     def post(self, request):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             form = self.form_class(request.POST or None)
+
             doc_types = DocumentTypes.objects.all()
             type_contract = ContractTypes.objects.all()
-            if request.method == 'POST':
-                if form.is_valid():
-                    instance = form.save(commit=False)
-                    instance.author = request.user
-                    form.save()
-                    return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': instance.slug}))
-            context = {'form': form, 'doc_types': doc_types, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
-                       'type_contract': type_contract, 'new': True}
+
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.author = request.user
+                instance.save()  # ważne: zapisujemy instancję z ustawionym author
+
+                return redirect(
+                    reverse("invoices:addItems", kwargs={"invoiceSlug": instance.slug})
+                )
+
+            context = {
+                "form": form,
+                "doc_types": doc_types,
+                "type_contract": type_contract,
+                "new": True,
+            }
             return render(request, self.template_name, context)
         except Exception as e:
-            return self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
 
 class EditInvoiceView(LoginRequiredMixin, View):
     template_name = 'invoices/form_invoice.html'
-    template_error = 'main/error.html'
     method = 'EditInvoiceView'
-
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
 
     def get_invoice(self, invoiceSlug):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
@@ -86,18 +81,15 @@ class EditInvoiceView(LoginRequiredMixin, View):
 
     def get(self, request, invoiceSlug):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             invoice = self.get_invoice(invoiceSlug)
             form = InvoiceForm(instance=invoice)
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice,
-                       'new': False}
+            context = {'form': form, 'invoice': invoice, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            return self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
     def post(self, request, invoiceSlug):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             invoice = self.get_invoice(invoiceSlug)
             form = InvoiceForm(request.POST, instance=invoice)
 
@@ -107,16 +99,14 @@ class EditInvoiceView(LoginRequiredMixin, View):
                 form.save()
                 return redirect(reverse('invoices:editInvoice', kwargs={'invoiceSlug': instance.slug}))
 
-            context = {'form': form, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'invoice': invoice,
-                       'new': False}
+            context = {'form': form, 'invoice': invoice,'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            return self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
 
 class AddInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
-    template_error = 'main/error.html'
     form_class = InvoiceItemsForm
     method = 'AddInvoiceItemsView'
 
@@ -124,15 +114,8 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
         invoice = Invoice.objects.only("date", "no_invoice", "slug", "sum")
         return get_object_or_404(invoice, slug=invoiceSlug)
 
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
-
     def get(self, request, invoiceSlug):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             invoice = self.get_invoice(invoiceSlug)
             items = invoice.items.all()  # Pobierz wszystkie pozycje faktury powiązane z tą fakturą
 
@@ -167,7 +150,6 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
 
             context = {'form': form,
                        "invoice": invoice,
-                       'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'countiesSum': counties,
@@ -176,13 +158,10 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            logger.error("Error: %s", e)
-            return render(request, self.template_error, context)
+            return handle_exception(request, e, self.method)
 
     def post(self, request, invoiceSlug):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             form = self.form_class(request.POST)
             items = InvoiceItems.objects.filter(invoice_id=invoice)
@@ -194,29 +173,22 @@ class AddInvoiceItemsView(LoginRequiredMixin, View):
                 form.save()
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
-            context = {'form': form, 'invoice': invoice, 'user_belongs_to_admin_group': user_belongs_to_admin_group,
+            context = {'form': form, 'invoice': invoice,
                        'items': items,
                        'invoiceSlug': invoiceSlug}
             return render(request, self.template_name, context)
         except Exception as e:
-            return self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
 
 class EditInvoiceItemsView(LoginRequiredMixin, View):
     template_name = 'invoices/form_items.html'
-    template_error = 'main/error.html'
     form_class = InvoiceItemsForm
     method = 'EditInvoiceItemsView'
 
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
 
     def get(self, request, invoiceSlug, itemId):
         try:
-            user_belongs_to_admin_group = get_user_groups(request)
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             items = invoice.items.all()
             units = Unit.objects.all()
@@ -258,7 +230,6 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
 
             context = {'form': form,
                        "invoice": invoice,
-                       'user_belongs_to_admin_group': user_belongs_to_admin_group,
                        "items": items,
                        'invoiceSlug': invoiceSlug,
                        'counties_sum': counties,
@@ -268,14 +239,12 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
     def post(self, request, invoiceSlug, itemId):
 
         try:
-            user_belongs_to_group = get_user_groups(request)
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
-            # item_id = request.POST.get('item_id')  # Assuming 'item_id' is a hidden input in your form
             item = get_object_or_404(InvoiceItems, id=itemId)
 
             form = self.form_class(request.POST, instance=item)
@@ -288,63 +257,41 @@ class EditInvoiceItemsView(LoginRequiredMixin, View):
 
                 return redirect(reverse('invoices:addItems', kwargs={'invoiceSlug': invoice.slug}))
 
-            context = {'form': form, 'invoice': invoice, 'user_belongs_to_group': user_belongs_to_group,
+            context = {'form': form, 
+                       'invoice': invoice, 
                        'item_id': itemId}
             return render(request, self.template_name, context)
 
         except Exception as e:
-            self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
 
 class DeleteInvoiceView(LoginRequiredMixin, View):
-    template_error = 'main/error.html'
     method = 'DeleteInvoiceView'
 
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
-
     def get(self, request, invoiceSlug):
-        user_belongs_to_admin_group = get_user_groups(request)
         try:
             invoice = get_object_or_404(Invoice, slug=invoiceSlug)
             invoice.delete()
             return redirect("main:invoiceSite")
         except Exception as e:
-            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            # Zwróć odpowiednią stronę błędu lub obsługę błędu
-            return render(request, self.template_error, context)
+            return handle_exception(self, e, self.method)
 
 
 class DeleteInvoiceItemView(LoginRequiredMixin, View):
-    template_error = 'main/error.html'
     method = 'DeleteInvoiceItemView'
 
     def get(self, request, invoiceSlug, item_id):
-        user_belongs_to_admin_group = get_user_groups(request)
         try:
             item = get_object_or_404(InvoiceItems, pk=item_id)
             item.delete()
             return redirect(reverse("invoices:addItems", kwargs={"invoiceSlug": invoiceSlug}))
         except Exception as e:
-            # Obsłuż wyjątek, jeśli coś pójdzie nie tak
-            context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-            # Zwróć odpowiednią stronę błędu lub obsługę błędu
-            return render(request, self.template_error, context)
+            return handle_exception(self, e, self.method)
 
 
 class CreateCSVForItems(View):
-    template_error = 'main/error.html'
     method = 'CreateCSVForItems'
-
-    def handle_exception(self, request, e):
-        user_belongs_to_admin_group = get_user_groups(request.user)
-        context = {'error': e, 'user_belongs_to_admin_group': user_belongs_to_admin_group, 'method': self.method}
-        logger.error("Error: %s", e)
-        return render(request, self.template_error, context)
 
     def get(self, request, invoice_id):
         try:
@@ -380,7 +327,7 @@ class CreateCSVForItems(View):
                 writer.writerow([row['section'], row['county'], rowSum])
             return response
         except Exception as e:
-            self.handle_exception(request, e)
+            return handle_exception(request, e, self.method)
 
 
 class HandleRequestView(View):
