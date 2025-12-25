@@ -24,14 +24,17 @@
         <div class="mx-2">
           <a class="btn-menu" data-url="{% url 'main:archiveYearsUnitMain' unit.slug %}" onclick="openArchiveModal(this)" data-toggle="info" title="Archiwum wydatku"><i class="bi bi-archive-fill custom-icon"></i></a>
         </div>
-        {% if user.is_authenticated and user_belongs_to_admin_group %}
+        {% if user.is_authenticated and perms.units.add_unit %}
           <div class="mx-2">
             <a class="btn-menu" href="{% url 'units:editUnit' unit.slug %}" data-toggle="info" title="Edytuj"><i class="bi bi-pencil-square custom-icon"></i></a>
           </div>
+          {% endif %}
+          {% if user.is_authenticated and perms.invoices.add_invoice %}
           <div class="mx-2">
             <a class="btn-menu" href="{% url 'invoices:newInvoice' %}" data-toggle="info" title="Nowa faktura"><i class="bi bi-plus-circle custom-icon"></i></a>
           </div>
-        {% endif %}
+          {% endif %}
+        
       </div>
     </div>
   </div>

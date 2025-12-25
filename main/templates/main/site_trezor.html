@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %} {% block content %}
-{% if user.is_authenticated and user_belongs_to_admin_group%}
+{% if user.is_authenticated and perms.invoices.add_invoice %}
 <div class="container pt-5">
     <div class="row mb-1">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">

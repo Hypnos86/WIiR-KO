@@ -56,22 +56,27 @@
                     class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
+                    {% if user.is_authenticated %}
+                    {% if perms.invoices.view_invoice %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:statisticsSite' %}">Statystyki</a>
                     </li>
-                    {% if user_belongs_to_admin_group or user_belongs_to_group %}
+
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:invoiceSite' %}">Faktury</a>
                     </li>
-                    {% endif %}
-                    {% if user_belongs_to_admin_group %}
+                    {%  endif %}
+                    {% if perms.invoices.add_invoice %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
                     </li>
                     {% endif %}
+                    {% if perms.units.view_unit %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:unitsSite' %}">Jednostki</a>
                     </li>
+                    {% endif %}
+                    {%endif%}
                     {% if user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:usersSite' %}">Użytkownicy</a>

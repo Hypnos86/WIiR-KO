@@ -26,10 +26,10 @@
                     <span>Użytkownik</span>
                 </th>
                 <th align="center" valign="middle" width="auto" scope="col">
-                    <span>Rola</span>
+                    <span>Grupa</span>
                 </th>
                 <th align="center" valign="middle" width="auto" scope="col">
-                    <span>Grupa</span>
+                    <span>Rola</span>
                 </th>
                 <th align="center" valign="middle" width="auto" scope="col">
                     <span>Status użytkownika</span>
@@ -49,18 +49,18 @@
                     {% endif %}
                 </td>
                 <td align="center" valign="middle" width="auto" scope="col">
-                    {% if user.is_staff %}
-                    <span>Administrator</span>
-                    {% else %}
-                    <span>Użytkownik zarejestrowany</span>
-                    {% endif %}
+                    {% for group in user.groups.all %}
+                    <span>{{group.name}}</span><br>
+                    {% empty %}
+                    <span>Brak grupy</span>
+                    {% endfor %}
                 </td>
                 <td align="center" valign="middle" width="auto" scope="col">
-                    {% if user.groups.all %}
-                    {{user.groups.all.0}}
-                    {% else %}
-                    <span class="text-warning bg-secondary p-1">Nie przypisany</span>
-                    {% endif %}
+                   {% for perm in user.get_all_permissions %}
+                    <span>{{perm}}</span>
+                    {% empty %}
+                    <span>Brak uprawnień</span>
+                    {% endfor %}
                 </td>
                 <td align="center" valign="middle" width="auto" scope="col">
                     {% if user.is_authenticated and user.is_active %}

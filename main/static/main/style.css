@@ -534,7 +534,13 @@ td {
     background-color: #057570;
     border: 1px solid #057570;
     border-radius: 25px;
+<<<<<<< HEAD
     width: auto;
+=======
+    width: 19em;
+    height: fit-content;
+    margin: 0 auto;
+>>>>>>> feature/permissions
     transition: background-color 0.3s, border-radius 0.3s;
     display: block;
 
@@ -583,3 +589,42 @@ td {
         color: #057570;
     }
 }
+<<<<<<< HEAD
+=======
+
+.unitLinkLi[active] {
+    background-color: #f5db90;
+    border: 1px solid #f5db90;
+
+    a {
+        color: #057570;
+        position: relative;
+        align-items: center;
+        padding-right: 1rem;
+        width:100%;
+
+        &::after {
+            content: "X";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            color: #057570;
+            border-radius: 50%;
+            position: absolute;
+            right: 0;
+            background-color: white;
+
+        }
+    }
+}
+
+.unitLinkLi[active] > a:hover::after  {
+    background-color: #057570;
+    color: white;
+    cursor: pointer;
+}
+
+
+>>>>>>> feature/permissions
