@@ -74,13 +74,14 @@ class HelpInfo(models.Model):
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name, verbose_name="Autor")
 
     @classmethod
-    def create_support(cls):
-        data = [{'authorEmail': 'kamil.kubiak@po.policja.gov.pl', 'authorPhone': '77-124-60', 'author': 1}]
+    def create_support(cls, info, author_email, author_phone, author):
+        # data = [{'authorEmail': 'kamil.kubiak@po.policja.gov.pl', 'authorPhone': f'{authorPhone}', 'author': 1}]
 
-        for item in data:
-            support = cls(authorEmail=item["authorEmail"], authorPhone=item["authorPhone"], author_id=item["author"])
-            support.save()
-        return cls.objects.all()
+        return cls.objects.create(
+                info=info,
+                authorEmail=author_email,
+                authorPhone=author_phone,
+                author=author)
 
     def __str__(self):
         return f'Informacja: {self.id}'

@@ -31,7 +31,7 @@ class InvoiceItemsResource(resources.ModelResource):
     class Meta:
         model = InvoiceItems
         fields = ('invoice_id', 'period_from', 'period_to', 'measurementSystemNumber', 'counterReading', 'consumption',
-                  'combined_section_group_paragraph', 'sum', 'unit', 'information')
+                'combined_section_group_paragraph', 'sum', 'unit', 'information')
         export_order = (
             'invoice_id', 'period_from', 'period_to', 'measurementSystemNumber', 'counterReading', 'consumption',
             'combined_section_group_paragraph', 'sum', 'unit', 'information')
@@ -39,11 +39,27 @@ class InvoiceItemsResource(resources.ModelResource):
 
 @admin.register(InvoiceItems)
 class GroupAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ['id', 'invoice_id', 'unit', 'section', 'group', 'paragraph', 'sum']
-    search_fields = ['invoice_id__no_invoice', 'unit__city', 'unit__county_swop__name', 'paragraph__paragraph', 'sum']
+    list_display = ['id', 'invoice_id', 'unit', 'section', 'group', 'paragraph_number', 'sum','author_full_name']
+    search_fields = ['invoice_id__no_invoice', 'unit__city', 'unit__county_swop__name', 'paragraph__paragraph', 'sum', 'author__first_name', 'author__last_name' ]
     search_help_text = 'Szukaj po nr. faktury'
     autocomplete_fields = ['invoice_id', 'unit']
     resource_class = InvoiceItemsResource
+    
+    def author_full_name(self, obj):
+        user = obj.author
+        if not user:
+            return '-'
+        full_name = user.get_full_name() or user.username
+        return full_name
+
+    author_full_name.short_description = "Autor"
+    
+    def paragraph_number(self, obj):
+        if not obj.paragraph:
+            return '-'
+        return obj.paragraph.paragraph
+
+    paragraph_number.short_description = "Paragraf"
 
 
 @admin.register(Group)
@@ -86,8 +102,17 @@ class InvoiceResource(resources.ModelResource):
 @admin.register(Invoice)
 class CountyAdmin(ExportMixin, admin.ModelAdmin):
     list_display = ['id', 'date_receipt', 'date', 'no_invoice', 'sum', 'creation_date',
-                    'author']
+                    'author_full_name']
     list_display_links = ['no_invoice']
-    search_fields = ['no_invoice']
+    search_fields = ['no_invoice', 'author__first_name', 'author__last_name']
     search_help_text = "Szukaj po: nr. faktury"
     resource_class = InvoiceResource
+    
+    def author_full_name(self, obj):
+        user = obj.author
+        if not user:
+            return '-'
+        full_name = user.get_full_name() or user.username
+        return full_name
+
+    author_full_name.short_description = "Autor"

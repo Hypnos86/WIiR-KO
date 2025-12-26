@@ -46,8 +46,15 @@ class CountyResource(resources.ModelResource):
 
 @admin.register(Unit)
 class ContractorAdmin(ExportMixin, admin.ModelAdmin):
-    list_display = ['county_swop', 'type', 'address', 'city', 'manager', 'status']
+    list_display = ['county_swop', 'type', 'address', 'city', 'manager', 'status', 'author_full_name']
     list_filter = ['county_swop']
     search_fields = ['address', 'city']
     search_help_text = "Szukaj po adresie lub mieście"
     resource_class = CountyResource
+
+    def author_full_name(self, obj):
+        user = obj.author
+        if not user:
+            return '-'
+        full_name = user.get_full_name() or user.username
+        return full_name
