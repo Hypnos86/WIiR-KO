@@ -37,7 +37,7 @@ currentDate = CurrentDate()
 TEMPLATE_ERROR = "main/error.html"
 
 
-def handle_exception(self, request, e, method):
+def handle_exception(request, e, method):
     context = {
         "error": e,
         "method": method,
@@ -105,7 +105,7 @@ class WelcomeView(View):
                        'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class LoginView(View):
@@ -117,7 +117,7 @@ class LoginView(View):
         try:
             return render(request, self.template_name)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
     def post(self, request):
         try:
@@ -160,7 +160,7 @@ class HelpModalView(View):
             context = {'content': content.last(), 'mainEnco': mainEnco}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class UnitsListMainView(View):
@@ -181,7 +181,7 @@ class UnitsListMainView(View):
                        'archiveUnits': archiveUnits, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class TypeUnitsListView(LoginRequiredMixin, View):
@@ -414,7 +414,7 @@ class StatisticsView(LoginRequiredMixin, View):
                        'paragraphs': paragraphs, 'year': year, 'statisticsSite': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class StatisticsYearView(LoginRequiredMixin, View):
@@ -467,7 +467,7 @@ class StatisticsYearView(LoginRequiredMixin, View):
                        'paragraphs': paragraphs, 'year': year, 'statisticYear': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class UsersSiteView(LoginRequiredMixin, View):
@@ -480,7 +480,7 @@ class UsersSiteView(LoginRequiredMixin, View):
             context = {'users': users}
             return render(request, self.template, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ArchiveYearCostListView(View):
@@ -501,7 +501,7 @@ class ArchiveYearCostListView(View):
                        'unitCost': False, 'archiveYears': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ArchiveYearUnitCostListView(View):
@@ -519,7 +519,7 @@ class ArchiveYearUnitCostListView(View):
             context = {'slugCounty': slugCounty, 'years': years, 'archiveYearsUnitCost': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ArchiveYearUnitMainView(View):
@@ -539,7 +539,7 @@ class ArchiveYearUnitMainView(View):
                        'archiveYearsUnitMain': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ArchiveYearStatisticView(View):
@@ -556,7 +556,7 @@ class ArchiveYearStatisticView(View):
             context = {'years': years, 'archiveYearsStatistic': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class InvoicesListView(LoginRequiredMixin, View):
@@ -596,7 +596,7 @@ class InvoicesListView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class InvoiceInfoView(View):
@@ -616,7 +616,7 @@ class InvoiceInfoView(View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CostsDetailsListView(View):
@@ -645,7 +645,7 @@ class CostsDetailsListView(View):
                        'countyCardSlug': countyCardSlug, 'lastUpdate': lastUpdate, 'unitOfMeasure': unitOfMeasure, }
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ParagraphModalView(View):
@@ -659,7 +659,7 @@ class ParagraphModalView(View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class ParagraphCostListView(LoginRequiredMixin, View):
@@ -705,7 +705,7 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                     return render(request, self.template_name_media, context)
 
             except Exception as e:
-                return handle_exception(self, e, self.method)
+                return handle_exception(request, e, self.method)
         else:
             try:
                 paragraph = Paragraph.objects.get(slug=paragraphSlug)
@@ -732,7 +732,7 @@ class ParagraphCostListView(LoginRequiredMixin, View):
                     return render(request, self.template_name_general, context)
 
             except Exception as e:
-                return handle_exception(self, e, self.method)
+                return handle_exception(request, e, self.method)
 
 
 class UnitDetailsView(View):
@@ -782,7 +782,7 @@ class UnitDetailsView(View):
                        'year': current_year}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class MediaInfoUnitView(View):
@@ -828,7 +828,7 @@ class MediaInfoUnitView(View):
             context = {'title': title, 'unit': unit, 'paragraphs': paragraphsModel, 'tableObjects': tableObjects}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class MediaInfoCountyView(View):
@@ -886,7 +886,7 @@ class MediaInfoCountyView(View):
                 context = {'title': title, 'county': county, 'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class MediaInfoAllCountyView(View):
@@ -950,7 +950,7 @@ class MediaInfoAllCountyView(View):
             return render(request, TEMPLATE_ERROR, context)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CountyCostUnitListView(View):
@@ -1007,7 +1007,7 @@ class CountyCostUnitListView(View):
                        "items": objectDatas, 'paragraphSums': paragraphSums}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class TrezorViews(LoginRequiredMixin, View):
@@ -1080,7 +1080,7 @@ class TrezorViews(LoginRequiredMixin, View):
                 context = {'invoices_sum': invoices_sum, 'search': search, 'year': year}
                 return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForCountySum(View):
@@ -1149,7 +1149,7 @@ class CreateCSVForCountySum(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForCountyYearSum(View):
@@ -1215,7 +1215,7 @@ class CreateCSVForCountyYearSum(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForCountyUnit(View):
@@ -1287,7 +1287,7 @@ class CreateCSVForCountyUnit(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForUnit(View):
@@ -1317,7 +1317,7 @@ class CreateCSVForUnit(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForTrezor(View):
@@ -1387,7 +1387,7 @@ class CreateCSVForTrezor(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateGraphView(View):
@@ -1447,10 +1447,10 @@ class CreateGraphView(View):
                 response = FileResponse(buffer, as_attachment=True, filename=f'Wykres §{par}-{year}.png')
                 return response
             except RuntimeError as tk_error:
-                return handle_exception(self, tk_error, self.method)
+                return handle_exception(request, tk_error, self.method)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForCostListUnitDetails(View):
@@ -1488,7 +1488,7 @@ class CreateCSVForCostListUnitDetails(View):
 
             return response
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 # class CreateBackupDB(View):
 #     template_error = 'main/error.html'

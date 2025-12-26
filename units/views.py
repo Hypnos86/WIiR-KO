@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 TEMPLATE_ERROR = "main/error.html"
 
-def handle_exception(self, request, e, method):
+def handle_exception(request, e, method):
     context = {
         "error": e,
         "method": method,
@@ -29,7 +29,7 @@ class AddUnitView(LoginRequiredMixin, View):
             context = {'form': form, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
     def post(self, request):
         try:
@@ -42,7 +42,7 @@ class AddUnitView(LoginRequiredMixin, View):
             context = {'form': form, 'new': True}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class EditUnitView(LoginRequiredMixin, View):
@@ -59,7 +59,7 @@ class EditUnitView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
     def post(self, request, slug):
         try:
@@ -74,4 +74,4 @@ class EditUnitView(LoginRequiredMixin, View):
             context = {'form': form, 'slugCard': slugCard, 'new': False}
             return render(request, self.template_name, context)
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)

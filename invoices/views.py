@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 TEMPLATE_ERROR = "main/error.html"
 
-def handle_exception(self, request, e, method):
+def handle_exception(request, e, method):
     context = {
         "error": e,
         "method": method,
@@ -275,7 +275,7 @@ class DeleteInvoiceView(LoginRequiredMixin, View):
             invoice.delete()
             return redirect("main:invoiceSite")
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class DeleteInvoiceItemView(LoginRequiredMixin, View):
@@ -287,7 +287,7 @@ class DeleteInvoiceItemView(LoginRequiredMixin, View):
             item.delete()
             return redirect(reverse("invoices:addItems", kwargs={"invoiceSlug": invoiceSlug}))
         except Exception as e:
-            return handle_exception(self, e, self.method)
+            return handle_exception(request, e, self.method)
 
 
 class CreateCSVForItems(View):
