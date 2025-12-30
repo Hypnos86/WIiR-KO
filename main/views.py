@@ -83,11 +83,6 @@ class WelcomeView(View):
             if not contract_types.exists():
                 ContractTypes.create_contract_types()
 
-            # Tworzenie grup
-            groups = Group.objects.all()
-            if not groups.exists():
-                Group.create_group()
-
             county = County.objects.all()
             if not county.exists():
                 County.create_county()
@@ -96,13 +91,13 @@ class WelcomeView(View):
             if not type_unit.exists():
                 TypeUnit.create_type_unit()
 
-            if not request.user.is_authenticated or not request.user.has_perm('units.views_unit'):
+            if not request.user.is_authenticated or not request.user.has_perm('units.view_unit'):
                 counties = counties.exclude(name="KWP Poznań")
 
             context = {'counties': counties, 
-                       'user_has_perm_add_invoice': user_has_perm_add_invoice,
-                       'user_has_perm_add_unit': user_has_perm_add_unit,
-                       'year': year}
+                        'user_has_perm_add_invoice': user_has_perm_add_invoice,
+                        'user_has_perm_add_unit': user_has_perm_add_unit,
+                        'year': year}
             return render(request, self.template_name, context)
         except Exception as e:
             return handle_exception(request, e, self.method)
