@@ -66,7 +66,7 @@
                         <a class="nav-link" href="{% url 'main:invoiceSite' %}">Faktury</a>
                     </li>
                     {%  endif %}
-                    {% if perms.invoices.add_invoice %}
+                    {% if perms.main.can_use_trezor %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:trezorSite' %}">Trezor</a>
                     </li>

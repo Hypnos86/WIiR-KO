@@ -85,3 +85,11 @@ class HelpInfo(models.Model):
 
     def __str__(self):
         return f'Informacja: {self.id}'
+
+class GlobalPermission(CountyCard):
+    class Meta:
+        proxy = True
+        default_permissions = ()
+        permissions = (
+            ("can_use_trezor", "Moze korzystac z Trezora"),
+        )
