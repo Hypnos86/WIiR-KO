@@ -83,7 +83,7 @@ video {
   margin: 0;
   padding: 0;
   border: 0;
-  font-size: 80%;
+  font-size: 75%;
   font: inherit;
   vertical-align: baseline;
 }
@@ -306,7 +306,7 @@ td .btn-menu {
 }
 
 caption {
-  font-size: 1rem;
+  font-size: rem;
 }
 
 .page-item.active .page-link {
@@ -476,7 +476,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 /*-------------------------------------------------*/
 .font-size {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .success {
@@ -529,43 +529,100 @@ td {
 }
 
 .unitLinkLi {
-  list-style: none;
-  padding: 5px 32px;
-  background-color: #057570;
-  border: 1px solid #057570;
-  border-radius: 25px;
-  transition: background-color 0.3s, border-radius 0.3s;
+    list-style: none;
+    padding: 5px 32px;
+    background-color: #057570;
+    border: 1px solid #057570;
+    border-radius: 25px;
+    width: 19em;
+    height: fit-content;
+    margin: 0 auto;
+    transition: background-color 0.3s, border-radius 0.3s;
+    display: block;
+
+    &:hover {
+        background-color: #F5DB90;
+        border: 1px solid #F5DB90;
+
+        a {
+            text-decoration: none;
+            color: #057570;
+        }
+    }
+
+    &[active] {
+        background-color: #F5DB90;
+        border: 1px solid #F5DB90;
+
+        a {
+            text-decoration: none;
+            color: #057570;
+        }
+
+        &::after {
+            content: "X";
+            padding: 0 6px;
+            position: absolute;
+            color: #057570;
+            border-radius: 45px;
+            margin-left: 5px;
+            background-color: white;
+        }
+
+        &:hover::after {
+            background-color: #057570;
+            color: white;
+            cursor: pointer;
+        }
+    }
+
+    a {
+        text-decoration: none;
+        color: white;
+    }
+
+    &:hover {
+        color: #057570;
+    }
 }
-.unitLinkLi:hover {
-  background-color: #f5db90;
-  border: 1px solid #f5db90;
-}
+
 .unitLinkLi[active] {
-  background-color: #f5db90;
-  border: 1px solid #f5db90;
-  position: relative;
+    background-color: #f5db90;
+    border: 1px solid #f5db90;
+
+    a {
+        color: #057570;
+        position: relative;
+        align-items: center;
+        padding-right: 1rem;
+        width:100%;
+
+        &::after {
+            content: "X";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            color: #057570;
+            border-radius: 50%;
+            position: absolute;
+            right: 0;
+            background-color: white;
+
+        }
+    }
 }
-.unitLinkLi[active] > a {
-  color: #057570;
+
+.unitLinkLi[active] > a:hover::after  {
+    background-color: #057570;
+    color: white;
+    cursor: pointer;
 }
-.unitLinkLi[active]::after {
-  content: "X";
-  padding: 0 6px;
-  position: absolute;
-  color: #057570;
-  border-radius: 30px;
-  margin-left: 5px;
-  background-color: white;
-}
-.unitLinkLi[active]:hover::after {
-  background-color: #057570;
-  color: white;
-  cursor: pointer;
-}
-.unitLinkLi > a {
-  text-decoration: none;
-  color: white;
-}
-.unitLinkLi:hover > a {
-  color: #057570;
+
+.tag {
+    color: white;
+    background-color: #0a4275;
+    padding: 2px;
+    border-radius: 3px;
 }

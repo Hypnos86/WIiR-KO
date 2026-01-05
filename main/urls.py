@@ -5,6 +5,7 @@ from main.views import WelcomeView, HelpModalView, UnitsListMainView, CostListMa
      CountyCostUnitListView, TrezorViews, ArchiveYearStatisticView, StatisticsYearView, CreateCSVForCountySum, \
      CreateCSVForCountyYearSum, MediaInfoCountyView, MediaInfoAllCountyView, ArchiveYearUnitMainView, CreateCSVForUnit, \
      CreateCSVForTrezor, CreateCSVForCountyUnit, CreateGraphView, TypeUnitsListView, CreateCSVForCostListUnitDetails
+from cpvdict.views import GenreMainView
 
 app_name = 'main'
 urlpatterns = [
@@ -47,12 +48,13 @@ urlpatterns = [
      path('trezor/', TrezorViews.as_view(), name='trezorSite'),
      # Lista kosztów danego paragrafu
      path('invoices/paragraph/<slug:paragraphSlug>/', ParagraphCostListView.as_view(), name='paragraphCostList'),
-
      # Jednostki
      path('units/', UnitsView.as_view(), name='unitsSite'),
      path('units/<slug:type_units>/', TypeUnitsListView.as_view(), name='typeUnitsList'),
      # Uzytkownicy
      path('users/', UsersSiteView.as_view(), name='usersSite'),
+     # Rodzajowość
+     path('genre/', GenreMainView.as_view() ,name='genreMain'),
      # Tworzenie plików CSV
      path('csvForCountySum/', CreateCSVForCountySum.as_view(), name='csvForCountySumCurrentYear'),
      path('csvForCountyYearSum/<int:year>', CreateCSVForCountyYearSum.as_view(), name='csvForCountyYearSum'),
@@ -69,5 +71,6 @@ urlpatterns = [
      path('login/', LoginView.as_view(), name="loginApp"),
      # Lista kart obiektów - strona główna
      path('', WelcomeView.as_view(), name='welcome')
+     
 
 ]

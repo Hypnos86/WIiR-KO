@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block title%} Słownik kodów CPV {%endblock%}
+{%block content%}
+<div class="container pt-5">
+    <div class="row">
+        <div class="text-center">
+            <h4 class="h5 m-0 font-weight-bold text-uppercase">Słownik kodów CPV</h4>
+        </div>
+    </div>
+</div>
+<div class="container p-3">
+    <div class="row">
+        <div class="col-md-3 align-self-end">
+            <p>Liczba kodów CPV: <span class="tag"> {{sumcpv}}</span></p>
+            {%if query%}
+            <p>Znaleziono: <span class="tag">{{qsum}}</span> kodów CPV</span></p>
+            {%endif%}
+        </div>
+        <div class="col-md-6">
+            <section class="w-100 pb-4 d-flex justify-content-center align-items-center flex-column">
+                <div>
+                    <form method="get">
+                        <div class="input-group">
+                            <input name="q" id="q" type="text" class="form-control rounded" placeholder="szukaj kodu lub nazwy" aria-label="Search" aria-describedby="search-addon">
+                            <button type="submit" class="btn btn-outline-primary btn-search">{{query}}{{search}}</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<div class="container">
+    {%if query%}
+    <table class="table table-hover my-table">
+        <thead>
+            <tr class="my-table-tr text-center">
+                <th valign="middle" width="50" scope="col">L.p.</th>
+                <th valign="middle" width="150" scope="col">Kod CPV</th>
+                <th valign="middle" width="500" scope="col">Nazwa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%for cpv in cpvs %}
+            {%if cpv.no_cpv|slice:":2" == "45" %}
+            <tr class="my-table-tr table-secondary">
+                <td class="text-center" scope="row" valign="middle" align="center"></td>
+                <td scope="row" valign="middle" align="center">{{cpv.no_cpv}}</td>
+                <td><span>{{cpv.name}}</span></td>
+            </tr>
+            {%else%}
+            <tr class="my-table-tr">
+                <td class="text-center" valign="middle" scope="row"></td>
+                <td scope="row" valign="middle" align="center">{{cpv.no_cpv}}</td>
+                <td valign="middle">
+                    <span>{{cpv.name}}</span>
+                </td>
+            </tr>
+            {%endif%}
+            {%empty%}
+            <h5 class="text-center text-danger">Nie znaleziono w bazie</h5>
+            {%endfor%}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3">Wydział Inwestycji i Remontów KWP w Poznaniu</th>
+            </tr>
+        </tfoot>
+    </table>
+    {%endif%}
+</div>
+{%endblock%}
+

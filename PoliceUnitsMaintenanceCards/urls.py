@@ -5,10 +5,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-                  path('admin/', admin.site.urls),
-                  path('registration/', auth_views.LoginView.as_view(), name='registration'),
-                  path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-                  path('units/', include('units.urls')),
-                  path('invoices/', include('invoices.urls')),
-                  path('', include('main.urls')),
+                path('admin/', admin.site.urls),
+                path('registration/', auth_views.LoginView.as_view(), name='registration'),
+                path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+                path('units/', include('units.urls')),
+                path('invoices/', include('invoices.urls')),
+                path('genre/', include('cpvdict.urls')),
+                path('', include('main.urls')),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

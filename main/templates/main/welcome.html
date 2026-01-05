@@ -1,17 +1,16 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <div class="container pt-5">
     <div class="text-center mb-4">
-    <span class="h3 font-weight-bold text-uppercase"
-    >Karty Obiektów Wielkopolskiej Policji</span>
+        <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
     </div>
     <div class="d-flex justify-content-around mb-3">
         <div>
             {% if user_has_perm_add_invoice %}
             <a
-                    class="btn-menu"
-                    href="{% url 'invoices:newInvoice' %}"
-                    data-toggle="info"
-                    title="Nowa faktura"
+                class="btn-menu"
+                href="{% url 'invoices:newInvoice' %}"
+                data-toggle="info"
+                title="Nowa faktura"
             >
                 <i class="bi bi-plus-circle custom-icon"></i>
             </a>
@@ -20,10 +19,10 @@
         {% if user_has_perm_add_unit %}
         <div>
             <a
-                    class="btn-menu"
-                    href="{% url 'units:newUnit' %}"
-                    data-toggle="info"
-                    title="Nowa jednostka"
+                class="btn-menu"
+                href="{% url 'units:newUnit' %}"
+                data-toggle="info"
+                title="Nowa jednostka"
             >
                 <i class="bi bi-building-add custom-icon"></i>
             </a>
@@ -33,10 +32,7 @@
     <div class="row">
         {% for county in counties %}
         <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center">
-            <a
-                    href="{% url 'main:unitCountyMain' county.slug %}"
-                    class="btn btn-main d-block"
-            >{{ county }}</a
+            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn btn-main d-block">{{ county }}</a
             >
         </div>
         {% endfor %}

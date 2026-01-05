@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # Moduły projektu
     'units.apps.UnitsConfig',
     'invoices.apps.InvoicesConfig',
+    'cpvdict.apps.CpvdictConfig'
 ]
 
 MIDDLEWARE = [

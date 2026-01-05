@@ -91,5 +91,6 @@ class GlobalPermission(CountyCard):
         proxy = True
         default_permissions = ()
         permissions = (
-            ("can_use_trezor", "Moze korzystac z Trezora"),
+            ("can_use_trezor", "Może korzystać z Trezora"),
+            ("can_see_statistics", "Może oglądać statystyki"),
         )

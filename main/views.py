@@ -1,3 +1,5 @@
+import logging
+import datetime
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import Group
 from django.contrib import messages
@@ -15,9 +17,7 @@ from main.models import CountyCard, HelpInfo
 from units.models import Unit, County, TypeUnit
 from invoices.models import Invoice, InvoiceItems, Paragraph, Section, DocumentTypes, ContractTypes
 from core.permissions import PermissionChecker
-from core.data_db import GroupsApp, ParagraphEnum
-import logging
-import datetime
+from core.data_db import ParagraphEnum
 import matplotlib.pyplot as plt
 from django.db.models import Q
 
@@ -606,8 +606,8 @@ class InvoiceInfoView(View):
             invoice = get_object_or_404(Invoice, pk=id)
             items = invoice.items.all()
             context = {'invoice': invoice, 'accessSection': accessSection,
-                       'items': items, 'id': id,
-                       'year': year}
+                    'items': items, 'id': id,
+                    'year': year}
             return render(request, self.template_name, context)
 
         except Exception as e:
