@@ -1,5 +1,8 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-<div class="container pt-5">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div {% if user.is_authenticated%} class="container pt-5" {% else %} class="container pt-2" {% endif %}>
     <div class="text-center mb-4">
         <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
     </div>

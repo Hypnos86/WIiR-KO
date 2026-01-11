@@ -12,7 +12,7 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
-                <h5 class="h5 m-0 font-weight-bold text-uppercase">Statystyki</h5>
+                <h5 class="h5 m-0  text-uppercase">Statystyki</h5>
             </div>
         </div>
         <div
@@ -43,17 +43,17 @@
             <div class="mx-2">
                 {% if statisticsSite %}
                 <a class="btn-menu"
-                   href="{% url 'main:csvForCountySumCurrentYear' %}"
-                   data-toggle="info"
-                   title="Zapisz"
+                    href="{% url 'main:csvForCountySumCurrentYear' %}"
+                    data-toggle="info"
+                    title="Zapisz"
                 >
                     <span class="bi bi-download custom-icon"></span>
                 </a>
                 {% endif %} {% if statisticYear %}
                 <a class="btn-menu"
-                   href="{% url 'main:csvForCountyYearSum' year %}"
-                   data-toggle="info"
-                   title="Zapisz"
+                    href="{% url 'main:csvForCountyYearSum' year %}"
+                    data-toggle="info"
+                    title="Zapisz"
                 >
                     <span class="bi bi-download custom-icon"></span>
                 </a>
@@ -85,12 +85,12 @@
             >
                 {% if perms.invoices.add_invoice %}
                 <a class="link-light text-decoration-none"
-                   href="{% url 'main:createGraph' year paragraph.paragraph %}"
+                    href="{% url 'main:createGraph' year paragraph.paragraph %}"
                 >§ {{paragraph.paragraph}}
                 </a>
                 {%else %}
-                 § {{paragraph.paragraph}} 
-                 {% endif %}
+                    § {{paragraph.paragraph}} 
+                {% endif %}
             </th>
             {% endfor %}
         </tr>

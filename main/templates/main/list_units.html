@@ -4,7 +4,7 @@
   <div class="container pt-5">
     {% if not user.is_authenticated and perms.units.view_unit%}
       <div class="text-center mb-4">
-        <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
+        <span class="h3 text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
       </div>
     {% endif %}
     <div class="row mb-2">
@@ -12,7 +12,7 @@
         <a href="{% url 'main:welcome' %}" class="btn-menu"><span class="bi bi-arrow-90deg-left custom-icon"></span></a>
       </div>
       <div class="col-4 col-sm-6 col-md-6 col-lg-8 d-flex align-items-center justify-content-center p-0 text-center">
-        <h5 class="h5 m-0 font-weight-bold text-uppercase">{{ county }}</h5>
+        <h5 class="h5 m-0 text-uppercase">{{ county }}</h5>
       </div>
       <div class="col-4 col-sm-3 col-md-3 col-lg-2 d-flex justify-content-end align-items-center">
         <div class="mx-2">

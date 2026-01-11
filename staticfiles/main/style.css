@@ -597,7 +597,6 @@ td {
 .tag {
     color: white;
     background-color: #0a4275;
-    padding: 2px;
     border-radius: 3px;
 }
 
@@ -623,4 +622,12 @@ td {
 .tfoot-genre th{
       border-top: solid 2px #0a4275;
       font-weight: 600;
+}
+
+.tag-cpv {
+    color: white;
+    background-color: #0a4275;
+    padding: 3px;
+    border-radius: 3px;
+    display: inline-block;
 }
