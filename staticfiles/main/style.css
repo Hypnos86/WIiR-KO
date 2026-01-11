@@ -531,93 +531,67 @@ td {
 .unitLinkLi {
     list-style: none;
     padding: 5px 32px;
-    background-color: #057570;
-    border: 1px solid #057570;
-    border-radius: 25px;
+    background-color: #0a4275;
+    border: 1px solid #0a4275;
+    border-radius: 10px;
     width: 19em;
     height: fit-content;
     margin: 0 auto;
     transition: background-color 0.3s, border-radius 0.3s;
     display: block;
+    position: relative;
 
     &:hover {
-        background-color: #F5DB90;
-        border: 1px solid #F5DB90;
+        background-color: #057570;
+        border: 1px solid #057570;
 
         a {
             text-decoration: none;
-            color: #057570;
+            color: white;
         }
     }
 
     &[active] {
-        background-color: #F5DB90;
-        border: 1px solid #F5DB90;
+        background-color: #057570 ;
+        border: 1px solid #057570;
 
         a {
             text-decoration: none;
-            color: #057570;
+            color: white;
         }
 
         &::after {
             content: "X";
-            padding: 0 6px;
             position: absolute;
-            color: #057570;
-            border-radius: 45px;
-            margin-left: 5px;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            color: #0a4275;
+            border-radius: 50%;
             background-color: white;
+            cursor: pointer;
         }
 
         &:hover::after {
-            background-color: #057570;
+            background-color: #0a4275;
             color: white;
-            cursor: pointer;
         }
     }
 
     a {
         text-decoration: none;
         color: white;
+        display: block;
+        padding-right: 1.5rem;
     }
 
     &:hover {
-        color: #057570;
+        color: #0a4275;
     }
-}
-
-.unitLinkLi[active] {
-    background-color: #f5db90;
-    border: 1px solid #f5db90;
-
-    a {
-        color: #057570;
-        position: relative;
-        align-items: center;
-        padding-right: 1rem;
-        width:100%;
-
-        &::after {
-            content: "X";
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-            color: #057570;
-            border-radius: 50%;
-            position: absolute;
-            right: 0;
-            background-color: white;
-
-        }
-    }
-}
-
-.unitLinkLi[active] > a:hover::after  {
-    background-color: #057570;
-    color: white;
-    cursor: pointer;
 }
 
 .tag {
@@ -625,4 +599,28 @@ td {
     background-color: #0a4275;
     padding: 2px;
     border-radius: 3px;
+}
+
+.btn-search{
+  color:#0a4275;
+  border-color: #0a4275;
+}
+
+.my-table {
+  counter-reset: rowNumber -1;
+}
+
+.my-table-tr {
+  counter-increment: rowNumber;
+}
+
+.my-table-tr td:first-child::before {
+  content: counter(rowNumber);
+  min-width: 1em;
+  margin-right: 0.5em;
+}
+
+.tfoot-genre th{
+      border-top: solid 2px #0a4275;
+      font-weight: 600;
 }
