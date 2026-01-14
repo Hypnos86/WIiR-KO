@@ -1,5 +1,7 @@
 import datetime
 import logging
+from django.db.models import Case, When, Value, IntegerField
+from django.db.models.functions import Substr, Cast
 from django.shortcuts import render
 from django.views import View
 from cpvdict.models import Genre, OrderLimit, Typecpv
@@ -34,9 +36,14 @@ class GenreMainView( View):
 
     def get(self, request):
         try:
-            limits = OrderLimit.objects.order_by("-id").first
+            limits = OrderLimit.objects.order_by("-id").first()
             year = CurrentDate().current_year()
-            genres = Genre.objects.all().exclude(name_id="RB")
+            genres = (Genre.objects.annotate(prefix_order=Case(
+                    When(name_id__startswith="D", then=Value(1)),
+                    When(name_id__startswith="U", then=Value(2)),
+                    default=Value(99),
+                    output_field=IntegerField(),),
+                number_part=Cast(Substr("name_id", 3), IntegerField()),).order_by("prefix_order", "number_part"))
 
             context = {'year': year, 'genres':genres, "limits":limits, "site_genre":True}
             return render(request, self.template, context)
