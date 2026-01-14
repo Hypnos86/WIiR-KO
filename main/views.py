@@ -339,7 +339,6 @@ class UnitsView(LoginRequiredMixin, View):
 
 class StatisticsView(LoginRequiredMixin, View):
     template_name = 'main/site_statistics.html'
-    template_error = 'main/error.html'
     method = 'StatisticsView'
 
     def get(self, request):
@@ -371,7 +370,7 @@ class StatisticsView(LoginRequiredMixin, View):
                         costObjectDict[item.paragraph.paragraph] += item.sum
 
                 costObjectList = [{'paragraph': paragraph, 'sum': sumUnit} for paragraph, sumUnit in
-                                  costObjectDict.items()]
+                                costObjectDict.items()]
                 objectDatas.append({'county': county.name, 'section': section, 'data': costObjectList})
 
             paragraphSums = {}
@@ -404,9 +403,9 @@ class StatisticsView(LoginRequiredMixin, View):
             # plt.savefig('nazwa.png')
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums,
-                       'user_has_invoice_view': user_has_invoice_view,
-                       'title': title,
-                       'paragraphs': paragraphs, 'year': year, 'statisticsSite': True}
+                    'user_has_invoice_view': user_has_invoice_view,
+                    'title': title,
+                    'paragraphs': paragraphs, 'year': year, 'statisticsSite': True}
             return render(request, self.template_name, context)
         except Exception as e:
             return handle_exception(request, e, self.method)
@@ -459,7 +458,7 @@ class StatisticsYearView(LoginRequiredMixin, View):
                         paragraphSums[paragraph] = sum_value
 
             context = {'objectDatas': objectDatas, 'paragraphSums': paragraphSums, 'title': title,
-                       'paragraphs': paragraphs, 'year': year, 'statisticYear': True}
+                    'paragraphs': paragraphs, 'year': year, 'statisticYear': True}
             return render(request, self.template_name, context)
         except Exception as e:
             return handle_exception(request, e, self.method)

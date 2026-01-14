@@ -64,15 +64,15 @@ class Invoice(models.Model):
     date = models.DateField("Data wystawienia")
     no_invoice = models.CharField(verbose_name="Nr. faktury", max_length=30)
     doc_types = models.ForeignKey(DocumentTypes, null=False, blank=False, on_delete=models.CASCADE,
-                                  verbose_name="Rodzaj dokumentu",
-                                  related_name=related_name)
+                                verbose_name="Rodzaj dokumentu",
+                                related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota [zł]", max_digits=10, decimal_places=2, null=True, blank=True)
     date_of_payment = models.DateField("Termin płatności")
     information = models.TextField(verbose_name="Informacje", blank=True, null=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
-                               verbose_name='Autor')
+                            verbose_name='Autor')
     slug = models.SlugField(max_length=30, null=True, blank=True, unique=True)
 
     def __str__(self):
@@ -160,7 +160,7 @@ class InvoiceItems(models.Model):
     related_name = "items"
 
     invoice_id = models.ForeignKey(to=Invoice, on_delete=models.CASCADE, verbose_name='Faktura',
-                                   related_name=related_name)
+                                related_name=related_name)
     contract_types = models.ForeignKey(to=ContractTypes, on_delete=models.CASCADE, verbose_name='Typ umowy')
     period_from = models.DateField(verbose_name='Okres od', null=False)
     period_to = models.DateField(verbose_name='Okres do', null=False)
@@ -173,14 +173,14 @@ class InvoiceItems(models.Model):
                                 related_name=related_name)
     group = models.ForeignKey(to=Group, on_delete=models.CASCADE, verbose_name='Grupa', related_name=related_name)
     paragraph = models.ForeignKey(to=Paragraph, on_delete=models.CASCADE, verbose_name='Paragraf',
-                                  related_name=related_name)
+                            related_name=related_name)
     sum = models.DecimalField(verbose_name="Kwota brutto [zł]", max_digits=10, decimal_places=2, null=False,
-                              blank=False)
+                            blank=False)
     information = models.TextField(verbose_name='Informacje', null=True, blank=True)
     creation_date = models.DateTimeField(verbose_name="Data utworzenia", auto_now_add=True)
     change_date = models.DateTimeField(verbose_name="Zmiana", auto_now=True)
     author = models.ForeignKey(to="auth.User", on_delete=models.CASCADE, related_name=related_name,
-                               verbose_name='Autor')
+                            verbose_name='Autor')
 
     def save(self, *args, **kwargs):
         if self.consumption is None:
