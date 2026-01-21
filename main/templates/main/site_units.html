@@ -66,11 +66,15 @@
     </div>
     <div>
         <ul class="d-flex justify-content-between my-2">
-            {% for type in typesList %}
-            <li id="{{type.index}}" class="unitLinkLi">
-                <a class="p-1" href="{% url 'main:typeUnitsList' type.type_short %}">{{ type.type_full }}</a>
+        {% for type in typesList %}
+            <li id="type-{{type.index}}" class="unitLinkLi"
+                data-type-full="{{ type.type_full }}"
+                data-type-short="{{ type.type_short }}">
+                <a class="p-1" href="{% url 'main:typeUnitsList' type.type_short %}">
+                    {{ type.type_full }}
+                </a>
             </li>
-            {% endfor %}
+        {% endfor %}
         </ul>
     </div>
     <div class="d-flex justify-content-around my-3">
@@ -173,49 +177,32 @@
 </nav>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const slugTypeUnits = "{{ slugTypeUnits|default_if_none:''|escapejs }}";
-    if (!slugTypeUnits) {
-        return;
-    }
+  const slugTypeUnits = "{{ slugTypeUnits|default_if_none:''|escapejs }}";
+  if (!slugTypeUnits) return;
 
-    const title = document.getElementById("title");
-    if (title) {
-        title.innerText = slugTypeUnits;
-    }
+  const title = document.getElementById("title");
+  if (title) title.innerText = slugTypeUnits;
 
-    {% for item in typesList %}
-    (function() {
-        // UWAGA: zakładam, że {{ item|safe }} renderuje poprawny obiekt JS,
-        // np. { "type_full": "RB", "index": "some-id" }
-        const typeListItem = {{ item|safe }};
+  document.querySelectorAll(".unitLinkLi").forEach(li => {
+    const shortType = li.dataset.typeShort;   // z URL
+    const fullType = li.dataset.typeFull;     // do wyświetlania
 
-        if (typeListItem.type_full !== slugTypeUnits) {
-            return;
-        }
+    // UWAGA: wybierz co porównujesz:
+    // - jeśli slugTypeUnits to "type_short" → porównuj do shortType
+    // - jeśli to "type_full" → porównuj do fullType
+    if (shortType !== slugTypeUnits && fullType !== slugTypeUnits) return;
 
-        const el = document.getElementById(typeListItem.index);
-        if (!el) {
-            return;
-        }
+    li.setAttribute("active", "");
 
-        // ustaw aktywny, żeby pojawił się ::after
-        el.setAttribute("active", "");
-
-        el.addEventListener("click", function (event) {
-            // ważne: sprawdzamy atrybut na elemencie, nie na event.target
-            if (el.hasAttribute("active")) {
-                // kliknięcie w aktywny → reset + redirect
-                el.removeAttribute("active");
-                window.location.href = "{% url 'main:unitsSite' %}";
-            } else {
-                // jeśli kiedyś będzie potrzeba ponownie "aktywować"
-                el.setAttribute("active", "");
-            }
-        });
-    })();
-    {% endfor %}
+    li.addEventListener("click", function (event) {
+      // jeśli jest aktywny, klik ma działać jako "reset"
+      if (li.hasAttribute("active")) {
+        event.preventDefault();  // zatrzymuje przejście linka
+        window.location.href = "{% url 'main:unitsSite' %}";
+      }
+    });
+  });
 });
 </script>
-
 {% endif %}
 {%endblock%}

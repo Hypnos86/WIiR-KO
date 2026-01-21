@@ -528,59 +528,69 @@ td {
   color: #ca9e56;
 }
 
-.unitLinkLi {
-    list-style: none;
-    padding: 5px 32px;
-    background-color: #0a4275;
-    border: 1px solid #0a4275;
-    border-radius: 10px;
-    width: 19em;
-    height: fit-content;
-    margin: 0 auto;
-    transition: background-color 0.3s, border-radius 0.3s;
-    display: block;
-    position: relative;
+.unitLinkLi{
+  list-style: none;
+  padding: 5px 32px;
+  background-color: #0a4275;
+  border: 1px solid #0a4275;
+  border-radius: 10px;
+  width: 19em;
+  height: fit-content;
+  margin: 0 auto;
+  transition: background-color 0.3s, border-radius 0.3s;
+  display: block;
+  position: relative;
+}
 
-    &:hover {
-        background-color: #057570;
-        border: 1px solid #057570;
+/* link w środku */
+.unitLinkLi a{
+  text-decoration: none;
+  color: white;
+  display: block;
+  padding-right: 1.5rem;
+}
 
-        a {
-            text-decoration: none;
-            color: white;
-        }
-    }
+.unitLinkLi:hover{
+  background-color: #057570;
+  border: 1px solid #057570;
+}
 
-    &[active] {
-        background-color: #057570 ;
-        border: 1px solid #057570;
+.unitLinkLi:hover a{
+  color: white;
+  text-decoration: none;
+}
 
-        a {
-            text-decoration: none;
-            color: white;
-        }
+/* ACTIVE */
+.unitLinkLi[active]{
+  background-color: #057570;
+  border: 1px solid #057570;
+}
 
-        &::after {
-            content: "X";
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            text-align: center;
-            color: #0a4275;
-            border-radius: 50%;
-            background-color: white;
-            cursor: pointer;
-        }
+.unitLinkLi[active] a{
+  color: white;
+  text-decoration: none;
+}
 
-        &:hover::after {
-            background-color: #0a4275;
-            color: white;
-        }
-    }
+.unitLinkLi[active]::after{
+  content: "X";
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  color: #0a4275;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+}
+
+.unitLinkLi[active]:hover::after{
+  background-color: #0a4275;
+  color: white;
+}
 
     a {
         text-decoration: none;
