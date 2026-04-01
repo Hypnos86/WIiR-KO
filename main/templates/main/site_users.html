@@ -26,8 +26,8 @@
                 <div class="table-responsive">
                     <table class="table table-hover table-striped align-middle mb-0 my-table">
                         <thead class="table-dark">
-                            <tr class="text-center">
-				<th colspan="2" scope="col" class="py-3">Użytkownik</th>
+                            <tr class="text-center my-table-tr">
+				                <th colspan="2" scope="col" class="py-3">Użytkownik</th>
                                 <th scope="col" class="py-3">Grupa</th>
                                 <th scope="col" class="py-3">Status</th>
                             </tr>
@@ -35,11 +35,12 @@
                         <tbody>
                             {% for user in users %}
                             <tr class="my-table-tr">
-				<td class="ps-4" width="auto"></td>
-                                <td class="ps-4" width="auto" scope="col>
+				                <td class="ps-4" width="auto"></td>
+                                <td class="ps-4 nowrap" width="auto" scope="col">
                                     <div class="d-flex flex-column">
                                         {% if user.first_name and user.last_name %}
                                             <span class="fw-bold text-dark">{{ user.first_name }} {{ user.last_name.0 }}.</span><br>
+                                            <small class="badge bg-success text-white">{{user.username}}</small>
                                         {% else %}
                                             <span class="fw-bold text-dark">{{ user.username }}</span>
                                         {% endif %}

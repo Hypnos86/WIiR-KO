@@ -661,3 +661,7 @@ td {
     border: none;
 }
 .card { border-radius: 12px; overflow: hidden; }
+
+.nowrap{
+  white-space: nowrap;
+}
