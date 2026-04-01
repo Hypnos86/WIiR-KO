@@ -1,49 +1,51 @@
+// Uniwersalna funkcja do ładowania modali
+function openModal(button, modalId) {
+  const url = $(button).data("url");
+  const $modal = $(modalId);
+
+  if (url) {
+    $modal.find(".modal-content").load(url, function () {
+      $modal.modal("show");
+    });
+  }
+}
+
+// Skrócone funkcje wywołujące (zachowuję nazwy, by pasowały do Twojego HTML)
 function openLoginModal(button) {
-  const url = $(button).data("url");
-  $("#login .modal-content").load(url);
-  $("#login").modal("show");
+  openModal(button, "#login");
 }
-
 function openHelpModal(button) {
-  const url = $(button).data("url");
-  $("#helpModal .modal-content").load(url);
-  $("#helpModal").modal("show");
+  openModal(button, "#helpModal");
 }
 
+// Inicjalizacja Tooltipów i innych elementów po załadowaniu DOM
 $(function () {
-  $('[data-toggle="info"]').tooltip();
+  $('[data-toggle="info"], [data-bs-toggle="tooltip"]').tooltip();
 });
 
-function snackbarFunction() {
-  const tost = document.getElementById("snackbar");
-  tost.className = "show";
-  setTimeout(function () {
-    tost.className = tost.className.replace("show", "");
-  }, 4000);
+// Uniwersalny Snackbar (obsługuje log-in, log-out i inne)
+function showSnackbar(elementId, activeClass = "show", duration = 2000) {
+  const snackbar = document.getElementById(elementId);
+
+  if (snackbar) {
+    snackbar.classList.add("show"); // Użycie classList jest bezpieczniejsze niż className
+
+    setTimeout(function () {
+      snackbar.classList.remove("show");
+    }, duration);
+  }
 }
 
+// Funkcje wywoływane przez Django Messages
 function showLogInSnackbar() {
-  try {
-    const snackbar = document.getElementById("logIn");
-    snackbar.className = "log-in show";
-    setTimeout(function () {
-      snackbar.className = snackbar.className.replace("log-in show", "log-in");
-    }, 2000);
-  } catch (error) {
-    console.error(error);
-  }
+  showSnackbar("logIn");
 }
+
 function showLogOutSnackbar() {
-  try {
-    const snackbar = document.getElementById("logOut");
-    snackbar.className = "log-out show";
-    setTimeout(function () {
-      snackbar.className = snackbar.className.replace(
-        "log-out show",
-        "log-out"
-      );
-    }, 2000);
-  } catch (error) {
-    console.error(error);
-  }
+  showSnackbar("logOut");
+}
+
+// Twoja ogólna funkcja snackbara
+function snackbarFunction() {
+  showSnackbar("snackbar", "show", 4000);
 }

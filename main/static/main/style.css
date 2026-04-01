@@ -607,6 +607,7 @@ td {
     color: white;
     background-color: #0a4275;
     border-radius: 3px;
+    padding: 0.20rem;
 }
 
 .btn-search{
@@ -639,4 +640,24 @@ td {
     padding: 3px;
     border-radius: 3px;
     display: inline-block;
+    user-select: none;
+    cursor: help;
 }
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.02);
+    transition: background-color 0.2s ease;
+}
+.bg-success-soft { background-color: #e8f5e9; border-radius: 50%; }
+.bg-danger-soft { background-color: #ffebee; border-radius: 50%; }
+.table thead th {
+    letter-spacing: 1px;
+    font-weight: 600;
+    border: none;
+}
+.card { border-radius: 12px; overflow: hidden; }
+
+.sticky-top {
+        position: sticky;
+        z-index: 1020;
+    }

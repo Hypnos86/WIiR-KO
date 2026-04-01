@@ -3,9 +3,8 @@
 {% load humanize %}
 {% block title %} Rodzajowość wydatków WIiR {%endblock%}
 {% block content %}
-
-<div {% if user.is_authenticated%} class="container pt-5" {% else %} class="container pt-2" {% endif %}>
-    <div class="row mb-1">
+<div class="container {% if user.is_authenticated %}pt-5{% else %}pt-2{% endif %}">
+    <div class="row mb-1 align-items-center">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-start">
             {% if user.is_authenticated %}
             <a href="{% url 'main:welcome' %}" class="btn-menu">
@@ -13,34 +12,51 @@
             </a>
             {% endif %}
         </div>
+
         <div class="col-sm-10 col-md-10 col-lg-8 text-center">
-                <h5 id="title" class="h5 m-0 text-uppercase">
-                    Klasyfikacja rodzajowa WIiR
-                </h5> 
+            <h5 id="title" class="h5 m-0 text-uppercase text-secondary">
+                Klasyfikacja rodzajowa WIiR
+            </h5> 
         </div>
+
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
-                <a class="btn btn-main " href="{% url 'cpvdict:cpvDictionary' %}">Słownik CPV</a>
-            </div>
+            <a class="btn btn-main shadow-sm" href="{% url 'cpvdict:cpvDictionary' %}">
+                Słownik CPV
+            </a>
+        </div>
     </div>
+
     <div class="row">
-        <div class="my-1 text-center">
-            <p class="p-2"><span>Usługi i dostawy: </span><b class="tag p-1">{{year}} rok</b></p>
-            {% if limits != 0 %}
-            {% if limits.euro_exchange_rate %}
-            <p class="p-2 text-center">Kurs Euro: 
-                <span class="tag p-1">{{limits.euro_exchange_rate|intcomma}} &#8364;</span>
+        <div class="my-3 text-center">
+            <p class="mb-3">
+                <span class="text-muted">Usługi i dostawy:</span> 
+                <b class="tag p-1">{{ year }} rok</b>
             </p>
-            {% endif %}
-            {% if imits.limit_euro %}
-            <p class="p-2 text-center">Limit zmówień &#8364;: 
-                <span class="tag p-1">{{limits.limit_euro|intcomma}} &#8364; </span>
-            </p>
-            {% endif %}
-            {% if limits.limit_netto %}
-            <p class="p-2 text-center">Limit zmówień zł: 
-                <span class="tag p-1" data-toggle="info" title="netto">{{limits.limit_netto|intcomma}} zł</span>
-            </p>
-            {% endif %}
+
+            {% if limits %}
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    {% if limits.euro_exchange_rate %}
+                    <div class="p-2 border rounded shadow-sm bg-light">
+                        <small class="text-muted d-block">Kurs Euro:</small>
+                        <span class="fw-bold">{{ limits.euro_exchange_rate|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+
+                    {% if limits.limit_euro %} <div class="p-2 border rounded shadow-sm bg-light">
+                        <small class="text-muted d-block">Limit zamówień €:</small>
+                        <span class="fw-bold">{{ limits.limit_euro|intcomma }} €</span>
+                    </div>
+                    {% endif %}
+
+                    {% if limits.limit_netto %}
+                    <div class="p-2 border rounded shadow-sm bg-light">
+                        <small class="text-muted d-block" data-toggle="info" title="netto">Limit zamówień zł:</small>
+                        <span class="fw-bold text-success">
+                            {{ limits.limit_netto|intcomma }} zł
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
             {% endif %}
         </div>
     </div>
@@ -58,15 +74,19 @@
         <tbody>
             {%for object in genres %}
             <tr class="my-table-tr">
-                <td class="text-center" valign="middle" scope="row"></td>
-                <th class="text-center" align="center" valign="middle" scope="row">{{object.name_id}}</th>
+                <td class="text-center text-muted fw-light" valign="middle" scope="row"></td>
+                <th class="text-center" align="center" valign="middle" scope="row">
+                    <span class="badge bg-light text-dark border fw-medium text-dark">{{object.name_id}}</span>
+                </th>
                 <td valign="middle">
                     <span>{{object.name}}</span>
                 </td>
                 <td valign="middle">
                     {% for cpv in object.cpv.all%}
                         <span class="tag-cpv m-1" data-toggle="info" title="{{cpv.name}}">{{cpv}}</span>
-                    {%endfor%}
+                    {% empty %}
+                            <span class="text-muted small italic">brak kodów</span>
+                        {% endfor %}
                 </td>
             </tr>
             {%endfor%}

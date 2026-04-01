@@ -12,9 +12,9 @@
 <div class="container p-3">
     <div class="row">
         <div class="col-md-3 align-self-end">
-            <p>Liczba kodów CPV: <span class="tag"> {{sumcpv}}</span></p>
+            <p class="m-1">Liczba kodów CPV: <span class="tag"> {{sumcpv}}</span></p>
             {%if query%}
-            <p>Znaleziono: <span class="tag">{{qsum}}</span> kodów CPV</span></p>
+            <p class="m-1">Znaleziono: <span class="tag">{{qsum}}</span> kodów CPV</span></p>
             {%endif%}
         </div>
         <div class="col-md-6">
@@ -58,9 +58,6 @@
                 </td>
             </tr>
             {%endif%}
-            {%empty%}
-            <h5 class="text-center text-danger">Nie znaleziono w bazie</h5>
-            {%endfor%}
         </tbody>
         <tfoot>
             <tr>
@@ -68,6 +65,9 @@
             </tr>
         </tfoot>
     </table>
+    {%empty%}
+            <h5 class="text-center text-danger">Nie znaleziono w bazie</h5>
+            {%endfor%}
     {%endif%}
 </div>
 {%endblock%}

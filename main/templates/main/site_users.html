@@ -1,10 +1,11 @@
-{%extends 'base.html'%}
-{%load static%}
-{%load bootstrap%}
-{%block content%}
+{% extends 'base.html' %}
+{% load static %}
+{% load bootstrap %}
+
+{% block content %}
 {% if user.is_superuser %}
 <div class="container pt-5">
-    <div class="row mb-2">
+    <div class="row mb-2 align-items-center">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center">
             <a href="{% url 'main:welcome' %}" class="btn-menu">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
@@ -12,77 +13,75 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
-                <h5 class="h5 m-0 text-uppercase">
-                    Użytkownicy z dostępem
+                <h5 class="h5 m-0 text-uppercase text-secondary">
+                    Użytkownicy
                 </h5>
             </div>
         </div>
     </div>
-    <div class="container col-md-8">
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-            <tr class="text-center">
-                <th align="center" valign="middle" width="auto" scope="col">
-                    <span>Użytkownik</span>
-                </th>
-                <th align="center" valign="middle" width="auto" scope="col">
-                    <span>Grupa</span>
-                </th>
-                <th align="center" valign="middle" width="auto" scope="col">
-                    <span>Status użytkownika</span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-            <tr>
-                <th align="left" valign="middle" width="auto" scope="col">
 
-                    {% if user.first_name and user.last_name %}
-                    <span class="px-2">
-                        {{ user.first_name }} {{ user.last_name.0 }}.
-                    </span>
-                    {% if user.is_staff %}
-                    <br>
-                    <span> (grupa adminów) </span>
-                    {% endif %}
-                    {% else %}
-                    <span class="px-2">{{ user.username }}</span>
-                    {% if user.is_staff %}
-                    <br>
-                    <span> (grupa adminów) </span>
-                    {% endif %}
-                    {% endif %}
-                </th>
-                
-                <td align="center" valign="middle" width="auto" scope="col">
-                    
-                    {% for group in user.groups.all %}
-                    <span>{{group.name}}</span><br>
-                    {% empty %}
-                    <span>Brak grupy</span>
-                {% endfor %}
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr class="text-center">
+                                <th scope="col" class="py-3">Użytkownik</th>
+                                <th scope="col" class="py-3">Grupa</th>
+                                <th scope="col" class="py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex flex-column">
+                                        {% if user.first_name and user.last_name %}
+                                            <span class="fw-bold text-dark">{{ user.first_name }} {{ user.last_name.0 }}.</span>
+                                        {% else %}
+                                            <span class="fw-bold text-dark">{{ user.username }}</span>
+                                        {% endif %}
+                                        
+                                        {% if user.is_staff %}
+                                            <small class="text-primary font-monospace" style="font-size: 0.75rem;">
+                                                <i class="bi bi-shield-lock"></i> Administrator
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                
+                                <td class="text-center">
+                                    {% for group in user.groups.all %}
+                                        <span class="badge rounded-pill bg-info text-dark fw-normal px-3">{{ group.name }}</span>
+                                    {% empty %}
+                                        <span class="text-muted small italic">brak przypisania</span>
+                                    {% endfor %}
+                                </td>
 
-                </td>
-
-                <td align="center" valign="middle" width="auto" scope="col">
-
-                    {% if user.is_authenticated and user.is_active %}
-                    <i class="bi bi-check-circle-fill mx-4 success"
-                        data-toggle="info"
-                        title="Aktywny"></i>
-                    {%else%}
-                    <i class="bi bi-dash-circle mx-4 text-danger"
-                        data-toggle="info"
-                        title="Nie aktywny"></i>
-                    {%endif%}
-                    
-                </td>
-            </tr> 
-            {% endfor %}
-            </tbody>
-        </table>
+                                <td class="text-center">
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success-soft text-success p-2">
+                                            <i class="bi bi-check-circle-fill fs-5" title="Aktywny"></i>
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger-soft text-danger p-2">
+                                            <i class="bi bi-dash-circle fs-5" title="Nieaktywny"></i>
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr> 
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-4 text-muted">Brak użytkowników do wyświetlenia.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endif %}
-{%endblock%}
+{% endblock %}

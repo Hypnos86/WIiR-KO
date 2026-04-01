@@ -11,14 +11,14 @@
         </div>
         <div class="col-sm-10 col-md-10 col-lg-8">
             <div class="text-center">
-                <h5 id="title" class="h5 m-0 text-uppercase">
+                <h5 id="title" class="h5 m-0 text-uppercase text-secondary">
                     Jednostki
                 </h5>
             </div>
         </div>
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-end">
             {% if perms.units.add_unit %}
-            <a class="btn-menu mx-2" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
+            <a class="btn-menu mx-2 text-secondary" href="{% url 'units:newUnit' %}" data-toggle="info" title="Nowa jednostka">
                 <i class="bi bi-building-add custom-icon"></i>
             </a>
             {% endif %}
@@ -184,20 +184,16 @@ document.addEventListener("DOMContentLoaded", function () {
   if (title) title.innerText = slugTypeUnits;
 
   document.querySelectorAll(".unitLinkLi").forEach(li => {
-    const shortType = li.dataset.typeShort;   // z URL
-    const fullType = li.dataset.typeFull;     // do wyświetlania
-
-    // UWAGA: wybierz co porównujesz:
-    // - jeśli slugTypeUnits to "type_short" → porównuj do shortType
-    // - jeśli to "type_full" → porównuj do fullType
+    const shortType = li.dataset.typeShort; 
+    const fullType = li.dataset.typeFull;    
     if (shortType !== slugTypeUnits && fullType !== slugTypeUnits) return;
 
     li.setAttribute("active", "");
 
     li.addEventListener("click", function (event) {
-      // jeśli jest aktywny, klik ma działać jako "reset"
+      
       if (li.hasAttribute("active")) {
-        event.preventDefault();  // zatrzymuje przejście linka
+        event.preventDefault();
         window.location.href = "{% url 'main:unitsSite' %}";
       }
     });

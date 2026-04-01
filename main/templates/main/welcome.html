@@ -4,7 +4,7 @@
 
 <div {% if user.is_authenticated%} class="container pt-5" {% else %} class="container pt-2" {% endif %}>
     <div class="text-center mb-4">
-        <span class="h3 font-weight-bold text-uppercase">Karty Obiektów Wielkopolskiej Policji</span>
+        <span class="h3 font-weight-bold text-uppercase text-secondary">Karty Obiektów Wielkopolskiej Policji</span>
     </div>
     <div class="d-flex justify-content-around mb-3">
         <div>
@@ -35,7 +35,7 @@
     <div class="row">
         {% for county in counties %}
         <div class="col-lg-2 col-md-3 col-sm-4 my-3 text-center">
-            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn btn-main d-block">{{ county }}</a
+            <a href="{% url 'main:unitCountyMain' county.slug %}" class="btn btn-main d-block shadow-sm">{{ county }}</a
             >
         </div>
         {% endfor %}
@@ -59,9 +59,9 @@
 
 {% endif %}
 <script>
-    <!--  document.addEventListener("DOMContentLoaded", function () {-->
+     <!-- document.addEventListener("DOMContentLoaded", function () {-->
     <!--    showHideButton();-->
     <!--    setInterval(showHideButton, 3000);-->
-    <!--  });-->
+    <!--  }); -->
 </script>
 {% endblock %}
