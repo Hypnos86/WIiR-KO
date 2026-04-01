@@ -7,7 +7,7 @@
     <div class="row mb-1 align-items-center">
         <div class="col-sm-1 col-md-1 col-lg-2 d-flex align-items-center justify-content-start">
             {% if user.is_authenticated %}
-            <a href="{% url 'main:welcome' %}" class="btn-menu">
+            <a href="{% url 'main:welcome' %}" class="btn-menu shadow-sm">
                 <span class="bi bi-arrow-90deg-left custom-icon"></span>
             </a>
             {% endif %}
@@ -76,7 +76,7 @@
             <tr class="my-table-tr">
                 <td class="text-center text-muted fw-light" valign="middle" scope="row"></td>
                 <th class="text-center" align="center" valign="middle" scope="row">
-                    <span class="badge bg-light text-dark border fw-medium text-dark">{{object.name_id}}</span>
+                    <span class="badge bg-light text-dark border fw-medium text-dark id-size">{{object.name_id}}</span>
                 </th>
                 <td valign="middle">
                     <span>{{object.name}}</span>
